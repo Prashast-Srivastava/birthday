@@ -12,7 +12,7 @@ interface Particle {
   twinklePhase: number;
   wobbleSpeed: number;
   wobbleAmplitude: number;
-  colorType: 'green' | 'amber' | 'cyan' | 'white';
+  colorType: 'yellow' | 'cyan' | 'white' | 'purple';
 }
 
 export const CrtDustOverlay: React.FC = () => {
@@ -30,10 +30,10 @@ export const CrtDustOverlay: React.FC = () => {
     const particleCount = 45; // Subtle, atmospheric density
 
     const colors = {
-      green: '74, 222, 128',
-      amber: '251, 191, 36',
-      cyan: '56, 189, 248',
-      white: '230, 255, 235',
+      yellow: '255, 208, 0',
+      cyan: '0, 240, 255',
+      white: '255, 253, 240',
+      purple: '168, 85, 247',
     };
 
     const resizeCanvas = () => {
@@ -51,8 +51,8 @@ export const CrtDustOverlay: React.FC = () => {
 
     const createParticles = (w: number, h: number) => {
       const list: Particle[] = [];
-      const colorTypes: ('green' | 'amber' | 'cyan' | 'white')[] = [
-        'green', 'green', 'green', 'amber', 'white', 'cyan'
+      const colorTypes: ('yellow' | 'cyan' | 'white' | 'purple')[] = [
+        'yellow', 'yellow', 'white', 'cyan', 'purple'
       ];
 
       for (let i = 0; i < particleCount; i++) {

@@ -85,32 +85,32 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
   };
 
   return (
-    <header className="w-full bg-[#080a08]/95 border-b border-[#4ade80]/30 backdrop-blur-md z-30 sticky top-0 px-4 sm:px-8 py-3.5">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <header className="w-full bg-[#fffdf0] border-b-4 border-[#16192e] shadow-[0_4px_0_#16192e] z-30 sticky top-0 px-3 sm:px-6 py-2.5">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         
         {/* Left: Terminal Identification (Interactive 5-Click Emergency Trigger) */}
         <button
           type="button"
           onClick={handleLogoClick}
-          className="flex flex-col text-left group cursor-pointer select-none rounded p-1 -m-1 transition-all hover:bg-[#4ade80]/10 focus:outline-hidden"
+          className="flex flex-col text-left group cursor-pointer select-none bg-[#ffd000] border-2 border-[#16192e] p-2 brutal-shadow-sm hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[2px] active:translate-y-[2px] transition-transform"
           title="Terminal Identity // [Emergency Access: 5-Click Sequence]"
         >
           <div className="flex items-center gap-2">
-            <span className="text-[10px] tracking-[0.25em] opacity-60 font-mono uppercase text-[#4ade80] group-hover:opacity-90 transition-opacity">
-              CYBER_OS // V1.0.4 // NEKO.EXE
+            <span className="text-[9px] tracking-[0.15em] font-pixel font-bold uppercase text-[#16192e]">
+              NEKO.EXE // V4.2
             </span>
             {showOverrideHint && (
-              <span className="text-[9px] px-1.5 py-0.2 bg-[#ef4444] text-white font-bold tracking-widest uppercase animate-pulse shadow-[0_0_8px_#ef4444]">
+              <span className="text-[9px] px-1.5 py-0.5 bg-[#f43f5e] text-white font-pixel font-bold tracking-widest uppercase border border-[#16192e]">
                 EMERGENCY: {logoClickCount}/5
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className={`w-2 h-2 inline-block transition-all shadow-[0_0_8px_#4ade80] ${
-              logoClickCount > 0 ? 'bg-[#ef4444] shadow-[0_0_12px_#ef4444] scale-125' : 'bg-[#4ade80] animate-pulse'
+          <div className="flex items-center gap-2 mt-1">
+            <span className={`w-2.5 h-2.5 inline-block border border-[#16192e] ${
+              logoClickCount > 0 ? 'bg-[#f43f5e] scale-125' : 'bg-[#22c55e]'
             }`} />
-            <span className={`text-base sm:text-lg font-bold tracking-widest font-mono transition-colors glow-phosphor ${
-              logoClickCount > 0 ? 'text-[#ef4444]' : 'text-[#4ade80] group-hover:text-white'
+            <span className={`text-xs sm:text-sm font-pixel font-black tracking-wider ${
+              logoClickCount > 0 ? 'text-[#f43f5e]' : 'text-[#16192e]'
             }`}>
               THE BIRTHDAY PORTAL
             </span>
@@ -132,12 +132,12 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
                     onNavigateScreen(idx as ScreenIndex);
                   }
                 }}
-                className={`px-2.5 sm:px-3 py-1 text-[10px] font-bold font-mono tracking-wider transition-all uppercase cursor-pointer ${
+                className={`px-2.5 py-1 text-[10px] font-pixel font-bold tracking-wider transition-all uppercase cursor-pointer border-2 border-[#16192e] ${
                   isActive
-                    ? 'bg-[#4ade80] text-black shadow-[0_0_10px_rgba(74,222,128,0.7)] border border-[#4ade80]'
+                    ? 'bg-[#00f0ff] text-[#16192e] translate-x-[-1px] translate-y-[-1px] shadow-[3px_3px_0px_#16192e]'
                     : isCompleted
-                    ? 'border border-[#4ade80] text-[#4ade80] shadow-[0_0_5px_rgba(74,222,128,0.4)] hover:bg-[#4ade80]/15'
-                    : 'border border-[#4ade80]/30 text-[#4ade80]/50 hover:border-[#4ade80]/60 hover:text-[#4ade80] hover:bg-[#4ade80]/5'
+                    ? 'bg-[#ffd000] text-[#16192e] hover:bg-[#ffe169] shadow-[2px_2px_0px_#16192e]'
+                    : 'bg-[#fffdf0] text-[#16192e]/70 hover:bg-[#ff5e97]/20 hover:text-[#16192e]'
                 }`}
                 title={`Screen 0${idx}: ${SCREEN_TITLES[idx as ScreenIndex]}`}
               >
@@ -148,44 +148,44 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
         </div>
 
         {/* Right: Audio Engine & System State */}
-        <div className="flex gap-4 sm:gap-6 items-center uppercase text-[10px] tracking-[0.2em] font-mono self-end md:self-auto">
+        <div className="flex gap-3 sm:gap-4 items-center uppercase text-[10px] font-pixel self-end md:self-auto">
           {/* Audio Toggle */}
           <button
             id="sound-toggle-btn"
             type="button"
             onClick={onToggleSound}
-            className={`flex items-center gap-2 px-2.5 py-1 border transition-all cursor-pointer select-none ${
+            className={`flex items-center gap-2 px-2.5 py-1.5 border-2 border-[#16192e] brutal-btn-sm select-none cursor-pointer ${
               soundEnabled
-                ? 'bg-[#4ade80]/15 border-[#4ade80] text-[#4ade80] shadow-[0_0_10px_rgba(74,222,128,0.4)]'
-                : 'bg-[#121412] border-[#4ade80]/30 text-[#4ade80]/60 hover:border-[#4ade80]/60 hover:text-[#4ade80]'
+                ? 'bg-[#22c55e] text-[#16192e]'
+                : 'bg-[#f43f5e] text-white'
             }`}
             title={soundEnabled ? 'Web Audio Synthesizer: ACTIVE (Click to mute)' : 'Web Audio Synthesizer: MUTED (Click to enable)'}
             aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
           >
             {soundEnabled ? (
-              <Volume2 className="w-3.5 h-3.5 text-[#4ade80] animate-pulse" />
+              <Volume2 className="w-4 h-4 text-[#16192e]" />
             ) : (
-              <VolumeX className="w-3.5 h-3.5 text-[#ef4444]" />
+              <VolumeX className="w-4 h-4 text-white" />
             )}
             <div className="flex flex-col items-start leading-tight text-left">
-              <span className="opacity-50 text-[8px] tracking-widest text-[#4ade80]">♫ AUDIO_SFX</span>
-              <span className={`text-[10px] font-bold tracking-wider ${soundEnabled ? 'text-[#4ade80] glow-phosphor' : 'text-[#ef4444]'}`}>
+              <span className="text-[8px] tracking-wider opacity-80">AUDIO</span>
+              <span className="text-[9px] font-black">
                 {soundEnabled ? 'ONLINE' : 'MUTED'}
               </span>
             </div>
           </button>
 
           {/* System State & Clock */}
-          <div className="flex flex-col items-end border-l border-[#4ade80]/30 pl-4 sm:pl-6">
-            <span className="opacity-50 text-[9px] text-[#4ade80]">SYSTEM_STATE</span>
-            <span className="font-bold text-[#4ade80] tracking-wider">
+          <div className="hidden lg:flex flex-col items-end border-l-2 border-[#16192e] pl-3">
+            <span className="opacity-60 text-[8px] font-mono">SYSTEM_STATE</span>
+            <span className="font-bold text-[#16192e] text-[9px] truncate max-w-[140px]">
               {SCREEN_TITLES[currentScreen]}
             </span>
           </div>
 
-          <div className="hidden xl:flex flex-col items-end border-l border-[#4ade80]/30 pl-4 text-[#4ade80]/70">
-            <span className="opacity-50 text-[9px]">TIME</span>
-            <span>{timeString}</span>
+          <div className="hidden xl:flex flex-col items-end border-l-2 border-[#16192e] pl-3 text-[#16192e]">
+            <span className="opacity-60 text-[8px] font-mono">TIME</span>
+            <span className="font-mono font-bold text-[10px]">{timeString}</span>
           </div>
         </div>
 

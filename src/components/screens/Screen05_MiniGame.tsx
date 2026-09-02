@@ -632,64 +632,64 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
     <div className="w-full max-w-5xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none">
       
       {/* Screen Top Header & Quest HUD */}
-      <div className="border border-[#4ade80]/40 bg-[#080a08]/95 p-4 sm:p-5 mb-4 box-glow-green relative">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#4ade80]/20 pb-3">
+      <div className="bg-[#ffd000] border-3 border-[#16192e] p-3 sm:p-4 mb-4 brutal-shadow relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-[#16192e]/20 pb-2.5">
           <div>
-            <div className="text-[10px] font-mono tracking-widest text-[#fbbf24] uppercase flex items-center gap-1.5">
-              <span className="w-2 h-2 bg-[#fbbf24] inline-block animate-pulse" />
-              MINI-GAME SECTOR 05 // ARCADE KERNEL
+            <div className="text-[10px] font-pixel font-bold text-[#16192e] uppercase flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 bg-[#f43f5e] border border-[#16192e] inline-block" />
+              MINI-GAME SECTOR 05 // ARCADE QUEST
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold font-display uppercase tracking-wider text-white glow-phosphor mt-0.5">
+            <h2 className="text-base sm:text-xl font-pixel font-black uppercase tracking-wide text-[#16192e] mt-0.5">
               SAVE THE BIRTHDAY CAT // CAKE RUSH
             </h2>
           </div>
 
           {/* Quick HUD Metrics */}
-          <div className="flex items-center gap-3 font-mono text-xs">
-            <div className="bg-[#121412] px-3 py-1.5 border border-[#4ade80]/40 flex items-center gap-2">
-              <span className="opacity-60 text-[#4ade80]">TARGET:</span>
-              <span className="text-[#fbbf24] font-bold">{TARGET_SCORE} PTS</span>
+          <div className="flex items-center gap-2 font-pixel text-[10px]">
+            <div className="bg-[#fffdf0] px-2.5 py-1 border-2 border-[#16192e] flex items-center gap-1.5">
+              <span className="opacity-70 text-[#16192e]">TARGET:</span>
+              <span className="text-[#16192e] font-bold">{TARGET_SCORE} PTS</span>
             </div>
-            <div className="bg-[#121412] px-3 py-1.5 border border-[#4ade80]/40 flex items-center gap-2">
-              <span className="opacity-60 text-[#4ade80]">HIGH SCORE:</span>
-              <span className="text-[#4ade80] font-bold">{highScore} PTS</span>
+            <div className="bg-[#00f0ff] px-2.5 py-1 border-2 border-[#16192e] flex items-center gap-1.5">
+              <span className="opacity-70 text-[#16192e]">HIGH:</span>
+              <span className="text-[#16192e] font-bold">{highScore} PTS</span>
             </div>
           </div>
         </div>
 
         {/* Progress Bar & Level 22 Sync Bar */}
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+        <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-center">
           <div className="sm:col-span-2">
-            <div className="flex justify-between text-[11px] font-mono text-[#4ade80] mb-1">
-              <span>LEVEL 22 AWAKENING SYNC:</span>
-              <span className="font-bold text-[#fbbf24]">{progressPercent}% [{score} / {TARGET_SCORE} PTS]</span>
+            <div className="flex justify-between text-[10px] font-pixel font-bold text-[#16192e] mb-1">
+              <span>AWAKENING PROGRESS:</span>
+              <span>{progressPercent}% [{score} / {TARGET_SCORE} PTS]</span>
             </div>
-            <div className="w-full h-3 bg-[#121612] border border-[#4ade80]/40 overflow-hidden relative p-0.5">
+            <div className="w-full h-3.5 bg-[#16192e] border-2 border-[#16192e] overflow-hidden p-0.5">
               <div
-                className="h-full bg-gradient-to-r from-[#4ade80] via-[#fbbf24] to-[#ec4899] transition-all duration-200"
+                className="h-full bg-[#22c55e] transition-all duration-200"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
           </div>
 
           {/* Lives & Combo Indicator */}
-          <div className="flex items-center justify-between sm:justify-end gap-4 font-mono text-xs">
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] text-[#4ade80] opacity-60 mr-1">LIVES:</span>
+          <div className="flex items-center justify-between sm:justify-end gap-3 font-pixel text-xs">
+            <div className="flex items-center gap-1 bg-[#fffdf0] px-2 py-0.5 border-2 border-[#16192e]">
+              <span className="text-[9px] text-[#16192e] mr-1">LIVES:</span>
               {[...Array(INITIAL_LIVES)].map((_, i) => (
                 <span
                   key={i}
-                  className={`text-base transition-transform ${
-                    i < lives ? 'text-[#ef4444] scale-100 animate-pulse' : 'text-gray-600 scale-90 opacity-40'
+                  className={`text-sm transition-transform ${
+                    i < lives ? 'text-[#f43f5e] scale-100' : 'text-[#8E8E8E] scale-90 opacity-40'
                   }`}
                 >
-                  💖
+                  ♥
                 </span>
               ))}
             </div>
 
             {combo > 1 && (
-              <div className="px-2 py-0.5 bg-[#fbbf24]/20 border border-[#fbbf24] text-[#fbbf24] text-[10px] font-bold animate-bounce">
+              <div className="px-2 py-0.5 bg-[#ff5e97] text-white border-2 border-[#16192e] text-[9px] font-pixel font-bold">
                 x{combo} STREAK!
               </div>
             )}
@@ -697,12 +697,13 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         </div>
       </div>
 
-      {/* Main Interactive Canvas Area */}
-      <div className="relative w-full border-2 border-[#4ade80] bg-[#060806] shadow-[0_0_24px_rgba(74,222,128,0.25)] overflow-hidden">
+      {/* Main Interactive Canvas Area with Brutalist HUD Frame */}
+      <div className="relative w-full border-4 border-[#16192e] bg-[#0c0e1a] brutal-shadow-lg overflow-hidden">
         <canvas
           ref={canvasRef}
           id="birthday-cat-game-canvas"
-          className="w-full block cursor-pointer"
+          className="w-full block cursor-pointer pixelated"
+          style={{ imageRendering: 'pixelated' }}
         />
 
         {/* 5 Lane Click Zones (Desktop & Mobile Tap Support) */}
@@ -712,42 +713,42 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
               key={laneIndex}
               type="button"
               onClick={() => jumpToLane(laneIndex)}
-              className="w-full h-full opacity-0 hover:opacity-10 bg-[#4ade80]/5 active:bg-[#4ade80]/20 transition-opacity cursor-pointer flex flex-col justify-end pb-3 items-center text-[10px] font-mono text-[#4ade80]"
+              className="w-full h-full opacity-0 hover:opacity-15 bg-[#ffd000] active:bg-[#ffd000]/30 transition-opacity cursor-pointer flex flex-col justify-end pb-3 items-center text-[9px] font-pixel text-white"
               title={`Move cat to Lane ${laneIndex + 1}`}
             >
-              <span className="opacity-40">LANE {laneIndex + 1}</span>
+              <span className="opacity-60">LANE {laneIndex + 1}</span>
             </button>
           ))}
         </div>
 
         {/* IDLE / START OVERLAY */}
         {gameState === 'IDLE' && (
-          <div className="absolute inset-0 bg-black/85 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center z-20">
-            <div className="p-3 bg-[#121612] border border-[#4ade80] max-w-md w-full shadow-[0_0_20px_rgba(74,222,128,0.3)]">
-              <div className="text-xs font-mono text-[#fbbf24] tracking-widest uppercase mb-1 flex items-center justify-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-[#fbbf24]" />
+          <div className="absolute inset-0 bg-[#16192e]/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20">
+            <div className="p-4 sm:p-5 bg-[#fffdf0] border-4 border-[#16192e] max-w-md w-full brutal-shadow-lg text-[#16192e]">
+              <div className="text-[10px] font-pixel text-[#f43f5e] tracking-wider uppercase mb-1 flex items-center justify-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
                 <span>MISSION BRIEFING</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold font-mono text-white glow-phosphor mb-3">
+              <h3 className="text-base sm:text-lg font-pixel font-black text-[#16192e] mb-3 uppercase">
                 SAVE THE BIRTHDAY CAT
               </h3>
               
-              <div className="text-xs font-mono text-[#4ade80]/90 text-left space-y-1.5 bg-[#080a08] p-3 border border-[#4ade80]/30 mb-4">
-                <p>🎂 <b>Cakes (+20 pts)</b> & 🐟 <b>Fish Snacks (+25 pts)</b> fall from the sky.</p>
-                <p>⭐ <b>Stars (+15 pts)</b> & 💖 <b>Hearts (+10 pts)</b> build combo multipliers.</p>
-                <p className="text-[#ef4444]">💣 <b>Avoid Glitch Bombs!</b> They damage your 3 lives.</p>
-                <p className="text-[#fbbf24]">🏆 Collect <b>100 PTS</b> to unlock the Birthday Cake level!</p>
+              <div className="text-xs font-mono text-[#16192e] text-left space-y-1.5 bg-[#ffd000] p-3 border-2 border-[#16192e] mb-4">
+                <p>🎂 <b>Cakes (+20 pts)</b> & 🐟 <b>Fish Snacks (+25 pts)</b> fall down.</p>
+                <p>⭐ <b>Stars (+15 pts)</b> & 💖 <b>Hearts (+10 pts)</b> build combos.</p>
+                <p className="text-[#f43f5e] font-bold">💣 <b>Avoid Glitch Bombs!</b> They cost 1 life.</p>
+                <p>🏆 Score <b>100 PTS</b> to unlock the Birthday Cake Ceremony!</p>
               </div>
 
-              <div className="text-[11px] font-mono text-white/70 mb-4">
-                DESKTOP: [◀ / ▶] ARROWS OR [A / D] • MOBILE: TAP LANES OR D-PAD
+              <div className="text-[10px] font-mono text-[#16192e]/70 mb-4">
+                KEYBOARD: [◀ / ▶] ARROWS OR [A / D] • TAP: TOUCH LANES OR D-PAD
               </div>
 
               <button
                 type="button"
                 id="start-cat-game-btn"
                 onClick={handleStartGame}
-                className="w-full py-3 bg-[#4ade80] hover:bg-white text-black font-mono font-bold text-sm uppercase tracking-wider transition-all cursor-pointer shadow-[0_0_15px_#4ade80] active:scale-95 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-[#22c55e] text-[#16192e] font-pixel font-bold text-xs sm:text-sm uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>LAUNCH MISSION [START]</span>
@@ -758,30 +759,30 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
 
         {/* MISSION COMPLETE / LEVEL UNLOCKED CELEBRATION OVERLAY */}
         {gameState === 'WON' && (
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-[3px] flex flex-col items-center justify-center p-6 text-center z-30 animate-fadeIn">
-            <div className="p-5 sm:p-6 bg-[#0d140d] border-2 border-[#4ade80] max-w-lg w-full shadow-[0_0_35px_rgba(74,222,128,0.6)]">
-              <div className="inline-block px-3 py-1 bg-[#fbbf24]/20 border border-[#fbbf24] text-[#fbbf24] text-xs font-mono font-bold tracking-widest uppercase mb-2 animate-bounce">
-                ★ HIGH SCORE SYNC CONFIRMED ★
+          <div className="absolute inset-0 bg-[#16192e]/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30 animate-fadeIn">
+            <div className="p-5 sm:p-6 bg-[#fffdf0] border-4 border-[#16192e] max-w-lg w-full brutal-shadow-lg text-[#16192e]">
+              <div className="inline-block px-3 py-1 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] text-[9px] font-pixel font-bold uppercase mb-2">
+                ★ HIGH SCORE CONFIRMED ★
               </div>
-              <h3 className="text-2xl sm:text-3xl font-extrabold font-display text-white glow-phosphor mb-2">
+              <h3 className="text-xl sm:text-2xl font-pixel font-black text-[#16192e] mb-2 uppercase">
                 MISSION COMPLETE!
               </h3>
-              <p className="text-base sm:text-lg font-mono text-[#4ade80] font-bold mb-4">
+              <p className="text-xs sm:text-sm font-pixel text-[#22c55e] font-bold mb-4 uppercase">
                 🎉 BIRTHDAY LEVEL 22 UNLOCKED! 🎉
               </p>
 
-              <div className="p-3 bg-[#121612] border border-[#4ade80]/40 text-xs font-mono text-[#4ade80] space-y-1 mb-5">
+              <div className="p-3 bg-[#ffd000] border-2 border-[#16192e] text-xs font-mono text-[#16192e] space-y-1 mb-5">
                 <div className="flex justify-between">
-                  <span className="opacity-70">RECIPIENT STATUS:</span>
-                  <span className="text-white font-bold">{birthdayConfig.recipientName} // LEVEL 22</span>
+                  <span className="opacity-70">RECIPIENT:</span>
+                  <span className="font-bold">{birthdayConfig.recipientName} // LEVEL 22</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="opacity-70">FINAL SCORE:</span>
-                  <span className="text-[#fbbf24] font-bold">{score} PTS [PERFECT OVERLOAD]</span>
+                  <span className="font-bold text-[#f43f5e]">{score} PTS [VICTORY!]</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="opacity-70">NEXT PROTOCOL:</span>
-                  <span className="text-[#4ade80] font-bold">PIXEL CAKE & CANDLE CEREMONY</span>
+                  <span className="opacity-70">NEXT:</span>
+                  <span className="font-bold text-[#22c55e]">CAKE & CANDLES CEREMONY</span>
                 </div>
               </div>
 
@@ -789,7 +790,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                 <button
                   type="button"
                   onClick={handleStartGame}
-                  className="px-4 py-2.5 bg-[#1a201a] border border-[#4ade80]/50 text-[#4ade80] hover:bg-[#4ade80]/20 font-mono text-xs uppercase transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                  className="px-4 py-2.5 bg-[#fffdf0] border-2 border-[#16192e] text-[#16192e] font-pixel text-[10px] uppercase brutal-btn-sm flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>PLAY AGAIN</span>
@@ -802,7 +803,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                     soundEngine.playFanfare();
                     onNavigate(ScreenIndex.CAKE);
                   }}
-                  className="flex-1 py-3 bg-[#4ade80] hover:bg-white text-black font-mono font-bold text-xs sm:text-sm uppercase tracking-wider transition-all cursor-pointer shadow-[0_0_20px_#4ade80] active:scale-95 flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-[#22c55e] text-[#16192e] font-pixel font-bold text-xs uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>PROCEED TO CAKE CEREMONY</span>
                   <ArrowRight className="w-4 h-4" />
@@ -814,29 +815,29 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
 
         {/* GAME OVER OVERLAY */}
         {gameState === 'GAMEOVER' && (
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-[3px] flex flex-col items-center justify-center p-6 text-center z-30">
-            <div className="p-5 bg-[#180a0a] border-2 border-[#ef4444] max-w-md w-full shadow-[0_0_30px_rgba(239,68,68,0.5)]">
-              <div className="text-xs font-mono text-[#ef4444] tracking-widest uppercase mb-1 flex items-center justify-center gap-1.5">
-                <ShieldAlert className="w-4 h-4 text-[#ef4444]" />
-                <span>SYSTEM INTEGRITY COMPROMISED</span>
+          <div className="absolute inset-0 bg-[#16192e]/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30">
+            <div className="p-5 bg-[#fffdf0] border-4 border-[#16192e] max-w-md w-full brutal-shadow-lg text-[#16192e]">
+              <div className="text-[10px] font-pixel text-[#f43f5e] uppercase mb-1 flex items-center justify-center gap-1.5 font-bold">
+                <ShieldAlert className="w-4 h-4" />
+                <span>MISSION INTERRUPTED</span>
               </div>
-              <h3 className="text-2xl font-bold font-mono text-white mb-2">
+              <h3 className="text-lg font-pixel font-black text-[#16192e] mb-2 uppercase">
                 GLITCH OVERLOAD!
               </h3>
-              <p className="text-xs font-mono text-[#ef4444] mb-4">
-                The birthday cat got caught in the drama matrix. Don't worry, friendship has unlimited continues!
+              <p className="text-xs font-mono text-[#16192e]/80 mb-4">
+                The birthday cat bumped into glitch bombs. Friendship has unlimited continues!
               </p>
 
-              <div className="p-2.5 bg-[#0d0404] border border-[#ef4444]/30 text-xs font-mono text-white/80 mb-4 flex justify-between">
+              <div className="p-2.5 bg-[#ffd000] border-2 border-[#16192e] text-xs font-mono text-[#16192e] mb-4 flex justify-between font-bold">
                 <span>POINTS SCORED:</span>
-                <span className="text-[#fbbf24] font-bold">{score} / {TARGET_SCORE} PTS</span>
+                <span>{score} / {TARGET_SCORE} PTS</span>
               </div>
 
               <button
                 type="button"
                 id="retry-cat-game-btn"
                 onClick={handleStartGame}
-                className="w-full py-2.5 bg-[#ef4444] hover:bg-white hover:text-black text-white font-mono font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-[0_0_15px_#ef4444] active:scale-95 flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-[#f43f5e] text-white font-pixel font-bold text-xs uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>RETRY QUEST // INSERT COIN</span>
@@ -846,13 +847,13 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         )}
       </div>
 
-      {/* Mobile & Desktop Tactile Arcade D-Pad Controls */}
-      <div className="mt-4 p-3 bg-[#0d120d] border border-[#4ade80]/30 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="text-[11px] font-mono text-[#4ade80]/80 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 bg-[#4ade80]" />
-          <span>CONTROLS:</span>
-          <span className="text-white/60 hidden sm:inline">Use Left/Right arrow keys, A/D, or tap the arcade buttons below.</span>
-          <span className="text-white/60 sm:hidden">Tap Left / Right buttons or tap screen lanes.</span>
+      {/* Tactile Arcade D-Pad Controls */}
+      <div className="mt-4 p-3 bg-[#fffdf0] border-3 border-[#16192e] brutal-shadow flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="text-xs font-mono text-[#16192e] flex items-center gap-2">
+          <span className="w-2 h-2 bg-[#f43f5e] inline-block" />
+          <span className="font-bold">CONTROLS:</span>
+          <span className="opacity-75 hidden sm:inline">Use Left/Right arrow keys, A/D, or tap the arcade buttons.</span>
+          <span className="opacity-75 sm:hidden">Tap Left / Right buttons or tap screen lanes.</span>
         </div>
 
         {/* On-Screen D-Pad Buttons */}
@@ -861,10 +862,10 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             type="button"
             id="dpad-left-btn"
             onClick={() => moveCat('left')}
-            className="flex-1 sm:flex-none px-6 py-2.5 bg-[#141c14] border-2 border-[#4ade80] text-[#4ade80] hover:bg-[#4ade80] hover:text-black active:scale-90 font-mono font-bold text-sm tracking-wider uppercase transition-all cursor-pointer flex items-center justify-center gap-1 shadow-[0_0_10px_rgba(74,222,128,0.2)]"
+            className="flex-1 sm:flex-none px-5 py-2 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] font-pixel font-bold text-xs brutal-btn-sm flex items-center justify-center gap-1 cursor-pointer"
             aria-label="Move cat left"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
             <span>◀ LEFT</span>
           </button>
 
@@ -872,26 +873,26 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             type="button"
             id="dpad-right-btn"
             onClick={() => moveCat('right')}
-            className="flex-1 sm:flex-none px-6 py-2.5 bg-[#141c14] border-2 border-[#4ade80] text-[#4ade80] hover:bg-[#4ade80] hover:text-black active:scale-90 font-mono font-bold text-sm tracking-wider uppercase transition-all cursor-pointer flex items-center justify-center gap-1 shadow-[0_0_10px_rgba(74,222,128,0.2)]"
+            className="flex-1 sm:flex-none px-5 py-2 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] font-pixel font-bold text-xs brutal-btn-sm flex items-center justify-center gap-1 cursor-pointer"
             aria-label="Move cat right"
           >
             <span>RIGHT ▶</span>
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
       {/* Bottom Screen Navigation Bar */}
-      <div className="mt-4 flex items-center justify-between gap-4 border-t border-[#4ade80]/20 pt-3 font-mono">
+      <div className="mt-4 flex items-center justify-between gap-4 font-mono">
         <button
           type="button"
           onClick={() => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.MEMORIES);
           }}
-          className="px-3.5 py-1.5 bg-[#121412] border border-[#4ade80]/40 text-[#4ade80] text-xs uppercase hover:bg-[#4ade80]/20 active:scale-95 transition-all cursor-pointer"
+          className="px-3.5 py-2 bg-[#fffdf0] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
         >
-          ◀ PREV: MEMORY DATABASE
+          ◀ PREV: MEMORIES
         </button>
 
         <button
@@ -900,7 +901,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.HERO);
           }}
-          className="px-3.5 py-1.5 bg-[#121412] border border-[#fbbf24]/50 text-[#fbbf24] text-xs uppercase hover:bg-[#fbbf24]/20 active:scale-95 transition-all cursor-pointer"
+          className="px-3.5 py-2 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
         >
           [ HERO HUB ]
         </button>
@@ -911,7 +912,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.CAKE);
           }}
-          className="px-4 py-1.5 bg-[#4ade80]/20 border border-[#4ade80] text-[#4ade80] hover:bg-[#4ade80] hover:text-black text-xs font-bold uppercase active:scale-95 transition-all cursor-pointer"
+          className="px-4 py-2 bg-[#22c55e] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
         >
           SKIP TO CAKE ▶
         </button>

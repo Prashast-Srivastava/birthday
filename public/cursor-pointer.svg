@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" shape-rendering="crispEdges">
+  <!-- 8-Bit Pixel Glove / Hand Pointer -->
+  <!-- Drop Shadow -->
+  <path fill="#16192e" opacity="0.3" d="M7,3 L9,3 L9,10 L19,10 L19,18 L16,21 L8,21 L5,18 L5,14 L7,14 Z" />
+
+  <!-- Black Border Outline -->
+  <!-- Index Finger -->
+  <rect x="5" y="1" width="3" height="2" fill="#16192e" />
+  <rect x="4" y="2" width="2" height="10" fill="#16192e" />
+  <rect x="7" y="2" width="2" height="7" fill="#16192e" />
+
+  <!-- Thumb -->
+  <rect x="1" y="9" width="3" height="2" fill="#16192e" />
+  <rect x="0" y="10" width="2" height="4" fill="#16192e" />
+  <rect x="1" y="13" width="3" height="2" fill="#16192e" />
+  <rect x="3" y="11" width="2" height="4" fill="#16192e" />
+
+  <!-- Middle, Ring, Pinky Top Knuckles -->
+  <rect x="8" y="7" width="3" height="2" fill="#16192e" />
+  <rect x="11" y="8" width="3" height="2" fill="#16192e" />
+  <rect x="14" y="9" width="3" height="2" fill="#16192e" />
+  <rect x="16" y="10" width="2" height="8" fill="#16192e" />
+
+  <!-- Bottom Edge & Wrist -->
+  <rect x="4" y="17" width="12" height="2" fill="#16192e" />
+  <rect x="5" y="19" width="10" height="3" fill="#16192e" />
+
+  <!-- Hand Glove Fill (Cream #fffdf0) -->
+  <rect x="5" y="3" width="2" height="9" fill="#fffdf0" />
+  <rect x="2" y="11" width="3" height="2" fill="#fffdf0" />
+  <rect x="5" y="10" width="11" height="7" fill="#fffdf0" />
+  <rect x="8" y="9" width="3" height="2" fill="#fffdf0" />
+  <rect x="11" y="10" width="3" height="2" fill="#fffdf0" />
+  <rect x="14" y="11" width="2" height="2" fill="#fffdf0" />
+
+  <!-- Finger Dividers inside Glove -->
+  <rect x="8" y="11" width="1" height="3" fill="#16192e" />
+  <rect x="11" y="12" width="1" height="3" fill="#16192e" />
+  <rect x="14" y="13" width="1" height="2" fill="#16192e" />
+
+  <!-- Golden Cuff Band -->
+  <rect x="6" y="18" width="8" height="2" fill="#ffd000" />
+  <!-- Hot Pink Accent Dot on Cuff -->
+  <rect x="9" y="18" width="2" height="2" fill="#ff5e97" />
+</svg>

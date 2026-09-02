@@ -13,6 +13,7 @@ import { Screen04_Memories } from './components/screens/Screen04_Memories';
 import { Screen05_MiniGame } from './components/screens/Screen05_MiniGame';
 import { Screen06_Cake } from './components/screens/Screen06_Cake';
 import { Screen07_FinalMessage } from './components/screens/Screen07_FinalMessage';
+import { PixelHeart } from './components/common/PixelHeart';
 
 export default function App() {
   // Screen state 0–7 (state-driven single page application, linear story flow)
@@ -198,33 +199,86 @@ export default function App() {
   };
 
   return (
-    <div className={`relative min-h-screen bg-[#080a08] text-[#4ade80] font-mono flex flex-col justify-between overflow-x-hidden selection:bg-[#4ade80] selection:text-black transition-all ${
+    <div className={`relative min-h-screen bg-[#ff5e97] text-[#16192e] font-mono flex flex-col justify-between overflow-x-hidden selection:bg-[#ffd000] selection:text-[#16192e] transition-all ${
       isCorrupted ? 'animate-system-corruption' : ''
     }`}>
       
       {/* 
         ========================================================================
-        GLOBAL CRT & PIXEL-GRID LAYER (APPLIED ONCE AT ROOT LAYOUT)
+        RETRO PIXEL-ART LAYER: SKY DOT-GRID & AMBIENT PIXEL CLOUDS
         ========================================================================
       */}
-      {/* 1. Global Radial Dot Grid */}
-      <div className="fixed inset-0 pixel-grid-bg pointer-events-none z-0 opacity-15" />
+      {/* 1. Global Pixel Sky Dot Grid */}
+      <div className="fixed inset-0 pixel-sky-grid pointer-events-none z-0 opacity-25" />
 
-      {/* 2. Global Aging CRT Monitor Layer with Screen-Flicker & Scanlines */}
-      <div className="fixed inset-0 pointer-events-none z-40 animate-crt-flicker">
-        <div className="absolute inset-0 crt-scanlines opacity-70" />
-        <div className="absolute inset-0 crt-vignette opacity-90" />
+      {/* 2. Ambient Retro Pixel Clouds & Pixel Hearts Floating in Background */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        {/* Slow drifting cloud 1 */}
+        <div className="absolute top-12 left-[-150px] animate-cloud-drift-slow opacity-85">
+          <svg width="120" height="48" viewBox="0 0 120 48" className="pixel-art drop-shadow-[4px_4px_0_#16192e]">
+            {/* 8-bit Chunky Pixel Cloud */}
+            <rect x="24" y="8" width="72" height="32" fill="#fffdf0" />
+            <rect x="12" y="16" width="96" height="24" fill="#fffdf0" />
+            <rect x="40" y="0" width="40" height="40" fill="#fffdf0" />
+            <rect x="0" y="24" width="120" height="16" fill="#fffdf0" />
+            {/* Outline highlights */}
+            <rect x="36" y="4" width="48" height="4" fill="#ffffff" />
+            <rect x="16" y="20" width="16" height="4" fill="#ffffff" />
+          </svg>
+        </div>
+
+        {/* Medium drifting cloud 2 */}
+        <div className="absolute top-36 left-[-200px] animate-cloud-drift-fast opacity-75" style={{ animationDelay: '14s' }}>
+          <svg width="90" height="36" viewBox="0 0 90 36" className="pixel-art drop-shadow-[3px_3px_0_#16192e]">
+            <rect x="18" y="6" width="54" height="24" fill="#fffdf0" />
+            <rect x="9" y="12" width="72" height="18" fill="#fffdf0" />
+            <rect x="30" y="0" width="30" height="30" fill="#fffdf0" />
+            <rect x="0" y="18" width="90" height="12" fill="#fffdf0" />
+          </svg>
+        </div>
+
+        {/* Decorative 16x16 Pixel Hearts in Background */}
+        {/* Top-right heart near status bar */}
+        <div className="absolute top-[80px] right-[40px] opacity-90 animate-pixel-cat-bob" style={{ animationDelay: '0.2s' }}>
+          <PixelHeart size={16} color="#f43f5e" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+
+        {/* Upper-left heart drifting below top cloud */}
+        <div className="absolute top-[130px] left-[50px] opacity-80 animate-pixel-cat-bob" style={{ animationDelay: '0.7s' }}>
+          <PixelHeart size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+
+        {/* Mid-screen right heart */}
+        <div className="absolute top-[260px] right-[12%] hidden sm:block opacity-75 animate-pixel-cat-bob" style={{ animationDelay: '1.2s' }}>
+          <PixelHeart size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+
+        {/* Mid-left heart */}
+        <div className="absolute top-[380px] left-[8%] hidden md:block opacity-70 animate-pixel-cat-bob" style={{ animationDelay: '0.4s' }}>
+          <PixelHeart size={16} color="#fffdf0" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+
+        {/* Lower-left heart above ground strip */}
+        <div className="absolute bottom-[100px] left-[32px] opacity-90 animate-pixel-cat-bob" style={{ animationDelay: '0.9s' }}>
+          <PixelHeart size={16} color="#f43f5e" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+
+        {/* Lower-right heart near platform */}
+        <div className="absolute bottom-[90px] right-[60px] opacity-85 animate-pixel-cat-bob" style={{ animationDelay: '0.3s' }}>
+          <PixelHeart size={16} color="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
       </div>
 
-      {/* 3. SYSTEM CORRUPTION FULL-SCREEN DISTORTION OVERLAY */}
+      {/* 3. SYSTEM CORRUPTION FULL-SCREEN BRUTALIST ALERT OVERLAY */}
       {isCorrupted && (
         <div 
           role="status" 
           aria-live="polite"
-          className="fixed inset-0 pointer-events-none z-50 animate-corruption-tear bg-[#ef4444]/15 flex items-center justify-center backdrop-invert-[0.2]"
+          className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center p-4 bg-[#16192e]/40"
         >
-          <div className="px-4 py-2 bg-black/90 border-2 border-[#ef4444] text-[#ef4444] font-mono font-black text-xs sm:text-sm tracking-widest uppercase shadow-[0_0_30px_#ef4444] animate-pulse">
-            ⚠️ SYSTEM CORRUPTION DETECTED // GLITCH BURST #{corruptionCount}
+          <div className="px-6 py-4 bg-[#ffd000] border-4 border-[#16192e] brutal-shadow-lg text-[#16192e] font-pixel text-xs sm:text-sm tracking-wider uppercase flex items-center gap-3">
+            <span className="text-xl">⚠️</span>
+            <span>SYSTEM CORRUPTION DETECTED // GLITCH BURST #{corruptionCount}</span>
           </div>
         </div>
       )}
@@ -239,8 +293,8 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="relative z-10 flex-1 flex flex-col justify-center px-4 sm:px-8 py-4 overflow-hidden">
-        {/* Subtle CRT Dust Particle Layer */}
+      <main className="relative z-10 flex-1 flex flex-col justify-center px-3 sm:px-6 py-4 overflow-hidden">
+        {/* Subtle Pixel Sparkle Dust Layer */}
         <CrtDustOverlay />
         
         {renderActiveScreen()}
@@ -258,17 +312,17 @@ export default function App() {
         onTriggerGlitch={triggerCorruption}
       />
 
-      {/* Global Footer Terminal Bar */}
-      <footer className="relative z-10 w-full border-t border-[#4ade80]/30 bg-[#080a08]/90 py-2.5 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-[10px] tracking-widest font-mono">
+      {/* Global Footer with Authentic 8-bit Platform Brick Ground Strip */}
+      <footer className="relative z-20 w-full pixel-brick-strip py-3 px-3 sm:px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-[10px] font-pixel">
           <div className="flex items-center gap-2 flex-wrap">
             <button
               type="button"
               onClick={triggerCorruption}
-              className={`px-2 py-0.5 font-bold uppercase transition-all cursor-pointer flex items-center gap-1 ${
+              className={`px-3 py-1 font-pixel font-bold uppercase transition-all cursor-pointer flex items-center gap-1.5 border-2 border-[#16192e] brutal-btn-sm ${
                 isCorrupted
-                  ? 'bg-[#ef4444] text-white shadow-[0_0_10px_#ef4444]'
-                  : 'bg-[#4ade80] text-black hover:bg-white'
+                  ? 'bg-[#f43f5e] text-white'
+                  : 'bg-[#22c55e] text-[#16192e] hover:bg-white'
               }`}
               title="Click to trigger momentary Cyberpunk System Corruption glitch"
             >
@@ -278,7 +332,7 @@ export default function App() {
             <button
               type="button"
               onClick={triggerCorruption}
-              className="px-2 py-0.5 border border-[#fbbf24]/60 text-[#fbbf24] hover:bg-[#fbbf24]/20 text-[9px] uppercase tracking-wider transition-all cursor-pointer hidden sm:inline-block"
+              className="px-2.5 py-1 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] font-pixel text-[9px] uppercase tracking-wider brutal-btn-sm cursor-pointer hidden sm:inline-block"
               title="Test System Corruption Inversion & Distortion"
             >
               [⚡ TRIGGER GLITCH]
@@ -290,38 +344,38 @@ export default function App() {
                 soundEngine.playEmergencyAccess();
                 setIsEmergencyModalOpen(true);
               }}
-              className="px-2 py-0.5 border border-[#ef4444]/70 text-[#ef4444] hover:bg-[#ef4444]/20 text-[9px] uppercase tracking-wider transition-all cursor-pointer hidden md:inline-block"
+              className="px-2.5 py-1 bg-[#fffdf0] border-2 border-[#16192e] text-[#f43f5e] font-pixel text-[9px] uppercase tracking-wider brutal-btn-sm cursor-pointer hidden md:inline-block"
               title="Emergency Diagnostic Terminal (or click header logo 5 times)"
             >
               [⚠️ EMERGENCY DIAG]
             </button>
 
-            <div className="px-2 py-0.5 border border-[#4ade80] font-bold text-[#4ade80] shadow-[0_0_5px_#4ade80]">
+            <div className="px-2 py-0.5 bg-[#fffdf0] border-2 border-[#16192e] font-pixel font-bold text-[#16192e] brutal-shadow-sm">
               SCREEN_0{currentScreen}
             </div>
-            <span className="opacity-60 hidden sm:inline ml-1 text-[#4ade80]">
+            <span className="text-[#fffdf0] hidden sm:inline ml-1 drop-shadow-[1px_1px_0_#16192e]">
               NEKO.EXE // V4.2
             </span>
           </div>
 
-          {/* Cyberpunk Periodic Flashing Telemetry Quote (every 30s) */}
-          <div className="flex items-center gap-2 px-3 py-1 bg-[#121412] border border-[#4ade80]/40 shadow-[0_0_12px_rgba(74,222,128,0.12)]">
-            <span className="w-1.5 h-1.5 bg-[#fbbf24] inline-block animate-pulse shadow-[0_0_6px_#fbbf24]" />
-            <span className="text-[#fbbf24] font-bold uppercase text-[9px] tracking-widest">
+          {/* Periodic Telemetry Quote Box */}
+          <div className="flex items-center gap-2 px-3 py-1 bg-[#fffdf0] border-2 border-[#16192e] brutal-shadow-sm max-w-full overflow-hidden">
+            <span className="w-2 h-2 bg-[#ffd000] border border-[#16192e] inline-block animate-pulse" />
+            <span className="text-[#16192e] font-pixel font-bold uppercase text-[8px] tracking-wider shrink-0">
               [TELEMETRY]
             </span>
             <span
               key={quoteFlashKey}
-              className={`text-[#4ade80] font-mono tracking-wider font-semibold ${
-                isQuoteFlashing ? 'animate-quote-flash text-white font-bold' : 'opacity-90'
+              className={`text-[#16192e] font-mono text-[10px] font-bold truncate ${
+                isQuoteFlashing ? 'bg-[#ffd000] px-1' : ''
               }`}
             >
               {telemetryQuote}
             </span>
           </div>
 
-          <div className="text-[10px] opacity-60 tracking-wider text-[#4ade80]">
-            [ STATUS: {isCorrupted ? '⚠️ CORRUPTED' : 'STABLE'} ] — [ RECIPIENT: {birthdayConfig.recipientName} ] — [ AUDIO: {soundEnabled ? '♫ ON' : '♫ OFF'} ]
+          <div className="text-[9px] font-pixel text-[#fffdf0] drop-shadow-[1px_1px_0_#16192e]">
+            [ RECIPIENT: {birthdayConfig.recipientName} ] — [ {soundEnabled ? 'AUDIO: ON' : 'AUDIO: OFF'} ]
           </div>
         </div>
       </footer>

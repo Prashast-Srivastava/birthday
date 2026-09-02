@@ -15,11 +15,11 @@ interface ShowFilterTag {
 
 const SHOW_TAGS: ShowFilterTag[] = [
   { id: 'ALL', label: 'ALL ARCHIVES', shortLabel: 'ALL' },
-  { id: 'anime-slime', label: 'THAT TIME I GOT REINCARNATED AS A SLIME', shortLabel: 'REINCARNATED AS A SLIME' },
+  { id: 'anime-slime', label: 'REINCARNATED AS A SLIME', shortLabel: 'SLIME' },
   { id: 'anime-demon-slayer', label: 'DEMON SLAYER', shortLabel: 'DEMON SLAYER' },
-  { id: 'anime-dangers-heart', label: 'THE DANGERS IN MY HEART', shortLabel: 'THE DANGERS IN MY HEART' },
+  { id: 'anime-dangers-heart', label: 'DANGERS IN MY HEART', shortLabel: 'DANGERS' },
   { id: 'anime-solo-leveling', label: 'SOLO LEVELING', shortLabel: 'SOLO LEVELING' },
-  { id: 'anime-aot', label: 'ATTACK ON TITAN', shortLabel: 'ATTACK ON TITAN' }
+  { id: 'anime-aot', label: 'ATTACK ON TITAN', shortLabel: 'AOT' }
 ];
 
 export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => {
@@ -47,94 +47,89 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto flex flex-col justify-between py-4">
-      {/* Screen Header */}
-      <div className="border-b border-[#4ade80]/30 pb-4 mb-6">
+    <div className="w-full max-w-6xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none">
+      
+      {/* Screen Header Banner */}
+      <div className="flex flex-col gap-3 mb-5 bg-[#ffd000] border-3 border-[#16192e] px-4 py-3 brutal-shadow">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <div className="text-[10px] text-[#fbbf24] font-mono tracking-[0.3em] uppercase mb-1 flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#fbbf24] inline-block animate-pulse" />
-              <span>SCREEN 03 // ANIME ARCHIVE VAULT</span>
+            <div className="text-[10px] font-pixel font-bold text-[#16192e] uppercase flex items-center gap-2 mb-0.5">
+              <span className="w-2.5 h-2.5 bg-[#f43f5e] border border-[#16192e] inline-block" />
+              <span>SECTOR 03 // ANIME ARCHIVE VAULT</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black font-mono text-[#4ade80] glow-phosphor uppercase">
+            <h2 className="text-xl sm:text-2xl font-pixel font-black text-[#16192e] uppercase">
               SHARED ANIME MASTERPIECES
             </h2>
           </div>
-          <div className="text-xs font-mono opacity-70 text-[#4ade80]">
-            ARCHIVE ENCRYPTION: <span className="text-[#fbbf24] font-bold">5 SHOWS UNLOCKED</span>
+          <div className="px-2.5 py-1 bg-[#fffdf0] border-2 border-[#16192e] text-[10px] font-pixel font-bold text-[#16192e]">
+            5 SHOWS UNLOCKED
           </div>
         </div>
 
-        {/* Unlocked Show Tags / Archive Filters */}
-        <div className="mt-4">
-          <div className="text-[10px] uppercase font-mono opacity-50 mb-2 text-[#4ade80] flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-[#4ade80]" />
-            <span>UNLOCKED ARCHIVE ENTRIES // SELECT TITLE TO INSPECT:</span>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            {SHOW_TAGS.map(tag => (
-              <button
-                key={tag.id}
-                type="button"
-                onClick={() => handleFilterClick(tag)}
-                className={`px-2.5 sm:px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
-                  activeFilterId === tag.id
-                    ? 'bg-[#4ade80] text-black shadow-[0_0_10px_rgba(74,222,128,0.7)]'
-                    : 'bg-[#121412] text-[#4ade80]/80 border border-[#4ade80]/30 hover:border-[#4ade80] hover:text-[#4ade80] hover:bg-[#4ade80]/10'
-                }`}
-              >
-                <span className={activeFilterId === tag.id ? 'text-black' : 'text-[#fbbf24]'}>
-                  {activeFilterId === tag.id ? '▶' : '◆'}
-                </span>
-                <span>{tag.label}</span>
-              </button>
-            ))}
-          </div>
+        {/* Filter Tags */}
+        <div className="flex items-center gap-2 flex-wrap pt-2 border-t-2 border-[#16192e]/20">
+          <span className="text-[9px] font-pixel font-bold text-[#16192e] uppercase mr-1">
+            FILTERS:
+          </span>
+          {SHOW_TAGS.map(tag => (
+            <button
+              key={tag.id}
+              type="button"
+              onClick={() => handleFilterClick(tag)}
+              className={`px-2.5 py-1 text-[9px] font-pixel font-bold uppercase transition-all cursor-pointer border-2 border-[#16192e] ${
+                activeFilterId === tag.id
+                  ? 'bg-[#00f0ff] text-[#16192e] translate-x-[-1px] translate-y-[-1px] shadow-[3px_3px_0px_#16192e]'
+                  : 'bg-[#fffdf0] text-[#16192e] hover:bg-[#fff9d9] shadow-[2px_2px_0px_#16192e]'
+              }`}
+            >
+              <span>{tag.shortLabel}</span>
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Main Content Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 my-2">
         
-        {/* Left Column: Anime Cards Grid */}
-        <div className="lg:col-span-7 space-y-3">
+        {/* Left Column: Anime Cards with "Press into Page" Hover Interaction */}
+        <div className="lg:col-span-7 space-y-3.5">
           {filteredAnime.map((item) => {
             const isSelected = selectedAnime.id === item.id;
             return (
               <div
                 key={item.id}
                 onClick={() => handleSelectAnime(item)}
-                className={`p-4 border transition-all cursor-pointer relative ${
+                className={`p-4 border-3 border-[#16192e] transition-all duration-100 cursor-pointer relative select-none ${
                   isSelected
-                    ? 'border-[#4ade80] bg-[#4ade80]/15 shadow-[0_0_15px_rgba(74,222,128,0.15)]'
-                    : 'border-[#4ade80]/30 bg-[#080a08]/90 hover:border-[#4ade80]/60 hover:bg-[#121412]'
+                    ? 'bg-[#00f0ff] translate-x-[3px] translate-y-[3px] shadow-[2px_2px_0px_#16192e]'
+                    : 'bg-[#fffdf0] shadow-[5px_5px_0px_#16192e] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0px_#16192e]'
                 }`}
               >
                 <div className="flex justify-between items-start flex-wrap gap-2">
                   <div>
-                    <div className="text-[9px] font-mono text-[#fbbf24] tracking-widest uppercase mb-0.5">
+                    <div className="text-[9px] font-pixel font-bold text-[#16192e] uppercase mb-1">
                       {item.genre}
                     </div>
-                    <h3 className="text-base sm:text-lg font-black font-mono text-white tracking-wider">
+                    <h3 className="text-sm sm:text-base font-pixel font-bold text-[#16192e] tracking-wide">
                       {item.title}
                     </h3>
                     {item.japaneseTitle && (
-                      <div className="text-xs font-mono opacity-60 text-[#4ade80]">
+                      <div className="text-xs font-mono font-bold opacity-70 text-[#16192e] mt-0.5">
                         {item.japaneseTitle}
                       </div>
                     )}
                   </div>
-                  <div className="px-2 py-0.5 bg-black border border-[#4ade80]/40 text-[#4ade80] text-[10px] font-bold font-mono">
+                  <div className="px-2 py-0.5 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] text-[9px] font-pixel font-bold">
                     {item.rating}
                   </div>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t border-[#4ade80]/20 flex items-center justify-between text-xs font-mono">
-                  <span className="italic opacity-80 text-white truncate max-w-[80%]">
+                <div className="mt-3 pt-2.5 border-t-2 border-[#16192e]/20 flex items-center justify-between text-xs font-mono">
+                  <span className="italic font-bold text-[#16192e] truncate max-w-[75%]">
                     "{item.quote}"
                   </span>
-                  <span className="text-[#4ade80] font-bold">
-                    {isSelected ? '▶ [INSPECTING]' : 'SELECT ▶'}
+                  <span className="text-[9px] font-pixel font-bold text-[#16192e]">
+                    {isSelected ? '[INSPECTING]' : 'SELECT ▶'}
                   </span>
                 </div>
               </div>
@@ -143,56 +138,58 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
         </div>
 
         {/* Right Column: Terminal Quote & Memory Inspector */}
-        <div className="lg:col-span-5 bg-[#080a08]/95 border border-[#4ade80]/30 p-6 flex flex-col justify-between shadow-[0_0_20px_rgba(74,222,128,0.05)] relative">
+        <div className="lg:col-span-5 bg-[#fffdf0] border-4 border-[#16192e] p-5 flex flex-col justify-between brutal-shadow-lg relative">
           <div>
-            <div className="border-b border-[#4ade80]/20 pb-3 mb-4 flex items-center justify-between">
-              <span className="text-xs font-bold font-mono tracking-widest text-[#fbbf24] uppercase flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#fbbf24] shadow-[0_0_8px_#fbbf24]" />
-                TERMINAL DECODER // {selectedAnime.title}
+            <div className="border-b-3 border-[#16192e] pb-2.5 mb-4 flex items-center justify-between">
+              <span className="text-xs font-pixel font-bold text-[#16192e] uppercase flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-[#ffd000] border border-[#16192e] inline-block" />
+                DECODER // {selectedAnime.title}
               </span>
-              <span className="text-[9px] font-mono text-[#4ade80] border border-[#4ade80]/40 px-1.5 py-0.5">
+              <span className="text-[9px] font-pixel bg-[#22c55e] text-[#16192e] border border-[#16192e] px-1.5 py-0.5 font-bold">
                 ACTIVE
               </span>
             </div>
 
             {/* Quote Box */}
-            <div className="p-4 bg-[#121412] border border-[#4ade80]/30 my-3">
-              <div className="text-[9px] text-[#fbbf24] font-mono uppercase tracking-widest mb-1.5">
+            <div className="p-4 bg-[#ffd000] border-3 border-[#16192e] brutal-shadow-sm my-3">
+              <div className="text-[9px] font-pixel font-bold text-[#16192e] uppercase tracking-wider mb-2">
                 ICONIC DECODED QUOTE:
               </div>
-              <blockquote className="text-sm sm:text-base font-bold font-mono text-white leading-relaxed italic">
+              <blockquote className="text-xs sm:text-sm font-pixel font-bold text-[#16192e] leading-relaxed">
                 "{selectedAnime.quote}"
               </blockquote>
             </div>
 
             {/* Telemetry Breakdown */}
-            <div className="space-y-2.5 text-xs font-mono mt-4">
-              <div className="flex justify-between border-b border-[#1a1a1a] pb-1.5">
-                <span className="opacity-50">GENRE:</span>
-                <span className="text-[#4ade80] font-bold">{selectedAnime.genre}</span>
+            <div className="space-y-2.5 text-xs font-mono text-[#16192e] mt-4">
+              <div className="flex justify-between border-b-2 border-[#16192e]/20 pb-1.5">
+                <span className="font-bold opacity-60">GENRE:</span>
+                <span className="font-bold">{selectedAnime.genre}</span>
               </div>
-              <div className="flex justify-between border-b border-[#1a1a1a] pb-1.5">
-                <span className="opacity-50">TIER RATING:</span>
-                <span className="text-[#fbbf24] font-bold">{selectedAnime.rating}</span>
+              <div className="flex justify-between border-b-2 border-[#16192e]/20 pb-1.5">
+                <span className="font-bold opacity-60">TIER RATING:</span>
+                <span className="font-pixel text-[10px] font-bold text-[#16192e] bg-[#00f0ff] px-1 border border-[#16192e]">
+                  {selectedAnime.rating}
+                </span>
               </div>
-              <div className="flex justify-between border-b border-[#1a1a1a] pb-1.5">
-                <span className="opacity-50">RECIPIENT RATING:</span>
-                <span className="text-white font-bold">10 / 10 MUST-WATCH</span>
+              <div className="flex justify-between border-b-2 border-[#16192e]/20 pb-1.5">
+                <span className="font-bold opacity-60">RECIPIENT RATING:</span>
+                <span className="font-bold">10 / 10 MUST-WATCH</span>
               </div>
               <div className="flex justify-between">
-                <span className="opacity-50">CO-OP WATCH STATUS:</span>
-                <span className="text-[#4ade80] font-bold">COMPLETED // ARCHIVED</span>
+                <span className="font-bold opacity-60">CO-OP WATCH STATUS:</span>
+                <span className="font-bold text-[#22c55e]">COMPLETED // ARCHIVED</span>
               </div>
             </div>
 
-            <div className="mt-5 p-3 bg-[#4ade80]/10 border border-[#4ade80]/30 text-[11px] font-mono text-[#4ade80] leading-relaxed">
-              <span className="font-bold block mb-1 text-[#fbbf24]">CO-OP LOG NOTE:</span>
+            <div className="mt-5 p-3 bg-[#ff5e97] border-3 border-[#16192e] brutal-shadow-sm text-xs font-mono text-white leading-relaxed">
+              <span className="font-pixel font-bold block mb-1 text-[10px] text-white">CO-OP LOG NOTE:</span>
               Countless marathons and endless theories shared with <strong>{birthdayConfig.recipientName}</strong>. These shows define our co-op journey!
             </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-[#4ade80]/20 flex justify-between items-center text-[10px] font-mono opacity-60">
-            <span>DATA ENCRYPTION: 256-BIT NEKO_CIPHER</span>
+          <div className="mt-5 pt-3 border-t-2 border-[#16192e]/20 flex justify-between items-center text-[10px] font-pixel text-[#16192e]">
+            <span>CIPHER: 256-BIT NEKO</span>
             <span>SLOT 03/07</span>
           </div>
         </div>
@@ -200,14 +197,14 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
       </div>
 
       {/* Navigation Footer Controls */}
-      <div className="mt-6 flex items-center justify-between gap-4 border-t border-[#4ade80]/20 pt-4 font-mono">
+      <div className="mt-5 flex items-center justify-between gap-4 font-mono">
         <button
           type="button"
           onClick={() => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.STATS);
           }}
-          className="px-4 py-2 bg-[#121412] border border-[#4ade80]/40 text-[#4ade80] text-xs uppercase hover:bg-[#4ade80]/20 active:scale-95 transition-all cursor-pointer"
+          className="px-4 py-2.5 bg-[#fffdf0] border-3 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn cursor-pointer"
         >
           ◀ PREV: STATS
         </button>
@@ -218,7 +215,7 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.HERO);
           }}
-          className="px-4 py-2 bg-[#121412] border border-[#fbbf24]/50 text-[#fbbf24] text-xs uppercase hover:bg-[#fbbf24]/20 active:scale-95 transition-all cursor-pointer"
+          className="px-4 py-2.5 bg-[#ffd000] border-3 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn cursor-pointer"
         >
           [ HERO HUB ]
         </button>
@@ -229,11 +226,12 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.MEMORIES);
           }}
-          className="px-5 py-2 bg-[#4ade80] text-black text-xs font-bold uppercase hover:bg-white active:scale-95 transition-all cursor-pointer shadow-[0_0_12px_rgba(74,222,128,0.5)]"
+          className="px-5 py-2.5 bg-[#22c55e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn cursor-pointer"
         >
           NEXT: MEMORY DATABASE ▶
         </button>
       </div>
+
     </div>
   );
 };
