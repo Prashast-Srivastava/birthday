@@ -78,7 +78,7 @@ export const Screen01_Hero: React.FC<HeroScreenProps> = ({ onNavigate }) => {
               </div>
               <div className="flex justify-between border-b-2 border-[#16192e]/20 pb-1.5">
                 <span className="font-bold opacity-60 uppercase">SYSTEM DATE:</span>
-                <span className="font-bold text-[#f43f5e]">{birthdayConfig.birthdayDate}</span>
+                <span className="font-bold text-[#16192e]">{birthdayConfig.birthdayDate}</span>
               </div>
               <div className="flex justify-between border-b-2 border-[#16192e]/20 pb-1.5">
                 <span className="font-bold opacity-60 uppercase">FRIENDSHIP SYNC:</span>

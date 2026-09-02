@@ -52,7 +52,7 @@ export const Screen02_Stats: React.FC<Screen02StatsProps> = ({ onNavigate }) => 
           fill: 'bg-[#ff5e97]',
           border: 'border-[#16192e]',
           text: 'text-[#16192e]',
-          badge: 'bg-[#ff5e97] text-white'
+          badge: 'bg-[#ff5e97] text-[#16192e]'
         };
       case 'green':
       default:
@@ -233,10 +233,10 @@ export const Screen02_Stats: React.FC<Screen02StatsProps> = ({ onNavigate }) => 
               </div>
 
               <div className="p-2.5 bg-[#ff5e97] border-2 border-[#16192e] brutal-shadow-sm flex items-center gap-2.5">
-                <span className="text-white text-base font-pixel">♥</span>
+                <span className="text-[#16192e] text-base font-pixel">♥</span>
                 <div>
-                  <div className="font-pixel text-[10px] font-bold text-white">UNCONDITIONAL BACKUP</div>
-                  <div className="text-[10px] font-mono text-white/90">100% instant support in any life emergency</div>
+                  <div className="font-pixel text-[10px] font-bold text-[#16192e]">UNCONDITIONAL BACKUP</div>
+                  <div className="text-[10px] font-mono text-[#16192e]/90">100% instant support in any life emergency</div>
                 </div>
               </div>
             </div>

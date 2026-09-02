@@ -3,9 +3,21 @@ import { Sparkles, Wind, RotateCcw, ArrowRight, Heart, Flame, Gift, Check, Send 
 import { ScreenIndex } from '../../types';
 import { birthdayConfig } from '../../birthdayData';
 import { soundEngine } from '../../utils/audio';
+import { PixelConfetti, ConfettiColor, ConfettiShape } from '../common/PixelConfetti';
 
 interface Screen06CakeProps {
   onNavigate: (index: ScreenIndex) => void;
+}
+
+interface BurstConfettiItem {
+  id: number;
+  variant: ConfettiColor;
+  shape: ConfettiShape;
+  size: number;
+  burstX: number;
+  burstY: number;
+  rotation: number;
+  delayMs: number;
 }
 
 interface ConfettiParticle {
@@ -49,6 +61,8 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
   const [selectedPresetWish, setSelectedPresetWish] = useState<string>('');
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const [smokePuffs, setSmokePuffs] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [burstConfetti, setBurstConfetti] = useState<BurstConfettiItem[]>([]);
+  const burstCleanupTimerRef = useRef<number | null>(null);
 
   const particlesRef = useRef<ConfettiParticle[]>([]);
   const animationFrameRef = useRef<number>(0);
@@ -60,6 +74,51 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
   const isReducedMotion = () => {
     if (typeof window === 'undefined') return false;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  };
+
+  // Trigger burst of PixelConfetti components radiating outward from center of screen
+  const triggerPixelConfettiBurst = () => {
+    if (burstCleanupTimerRef.current) {
+      clearTimeout(burstCleanupTimerRef.current);
+    }
+
+    const count = isReducedMotion() ? 16 : 42;
+    const variants: ConfettiColor[] = ['pink', 'yellow', 'cyan', 'green', 'cycle'];
+    const shapes: ConfettiShape[] = ['square', 'triangle', 'ribbon'];
+    const sizes = [14, 16, 18, 20, 24];
+
+    const items: BurstConfettiItem[] = [];
+    for (let i = 0; i < count; i++) {
+      // 360-degree radial explosion
+      const baseAngle = (i / count) * (Math.PI * 2);
+      const angle = baseAngle + (Math.random() - 0.5) * 0.35;
+
+      // Burst outward distance from center (80px to 420px)
+      const distance = 90 + Math.random() * 320;
+      const burstX = Math.round(Math.cos(angle) * distance);
+      const burstY = Math.round(Math.sin(angle) * distance * 0.85 - (Math.random() * 40));
+
+      const rotation = Math.round((Math.random() - 0.5) * 480);
+      const delayMs = Math.round(Math.random() * 120);
+
+      items.push({
+        id: Date.now() + i,
+        variant: variants[i % variants.length],
+        shape: shapes[i % shapes.length],
+        size: sizes[i % sizes.length],
+        burstX,
+        burstY,
+        rotation,
+        delayMs,
+      });
+    }
+
+    setBurstConfetti(items);
+
+    // Clean up burst items after animation completes
+    burstCleanupTimerRef.current = window.setTimeout(() => {
+      setBurstConfetti([]);
+    }, 3500);
   };
 
   // Trigger Hand-rolled Canvas Confetti Burst
@@ -189,13 +248,15 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
     };
   }, []);
 
-  // Handle Blow All Candles
-  const handleBlowAllCandles = () => {
+  // 'Blow Candles' event handler: extinguishes candles, plays fanfare,
+  // locks wish, and triggers a burst of PixelConfetti components radiating outward from screen center
+  const handleBlowCandles = () => {
     soundEngine.playFanfare();
     setCandles(prev => prev.map(c => ({ ...c, lit: false })));
     setIsBlown(true);
     setWishLocked(true);
     triggerConfetti();
+    triggerPixelConfettiBurst();
 
     // Generate cute smoke puffs
     const puffs = CANDLE_DEFS.map((c, idx) => ({
@@ -206,16 +267,16 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
     setSmokePuffs(puffs);
   };
 
+  // Backward compatible alias
+  const handleBlowAllCandles = handleBlowCandles;
+
   // Handle Blow Single Candle
   const handleToggleCandle = (id: number) => {
     setCandles(prev => {
       const updated = prev.map(c => (c.id === id ? { ...c, lit: !c.lit } : c));
       const allOut = updated.every(c => !c.lit);
       if (allOut && !isBlown) {
-        soundEngine.playFanfare();
-        setIsBlown(true);
-        setWishLocked(true);
-        triggerConfetti();
+        setTimeout(() => handleBlowCandles(), 0);
       } else {
         soundEngine.playTone(340, 0.05, 'triangle', 0.08);
       }
@@ -229,7 +290,11 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
     setCandles(CANDLE_DEFS.map(c => ({ ...c, lit: true })));
     setIsBlown(false);
     setShowConfetti(false);
+    setBurstConfetti([]);
     particlesRef.current = [];
+    if (burstCleanupTimerRef.current) {
+      clearTimeout(burstCleanupTimerRef.current);
+    }
   };
 
   const presetWishes = [
@@ -249,6 +314,39 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none z-30 w-full h-full"
       />
+
+      {/* Center-Screen Burst of PixelConfetti Components (Triggered on Blow Candles) */}
+      {burstConfetti.length > 0 && (
+        <div
+          role="presentation"
+          aria-hidden="true"
+          className="fixed inset-0 pointer-events-none z-50 overflow-hidden select-none"
+        >
+          {/* Exact Center Anchor of Screen */}
+          <div className="absolute top-1/2 left-1/2 w-0 h-0">
+            {burstConfetti.map((item) => (
+              <div
+                key={item.id}
+                className="absolute top-0 left-0 animate-pixel-confetti-burst pointer-events-none select-none"
+                style={{
+                  '--burst-x': `${item.burstX}px`,
+                  '--burst-y': `${item.burstY}px`,
+                  '--burst-rot': `${item.rotation}deg`,
+                  animationDelay: `${item.delayMs}ms`,
+                } as React.CSSProperties}
+              >
+                <PixelConfetti
+                  size={item.size}
+                  variant={item.variant}
+                  shape={item.shape}
+                  animate={false}
+                  className="drop-shadow-[2px_2px_0_#16192e]"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Screen Top Header */}
       <div className="bg-[#ffd000] border-3 border-[#16192e] p-3 sm:p-4 mb-4 brutal-shadow relative">
@@ -271,7 +369,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
             <div className={`px-2.5 py-1 border-2 border-[#16192e] font-bold flex items-center gap-1.5 transition-colors ${
               allCandlesOut 
                 ? 'bg-[#22c55e] text-[#16192e]' 
-                : 'bg-[#ff5e97] text-white'
+                : 'bg-[#ff5e97] text-[#16192e]'
             }`}>
               <Flame className="w-3.5 h-3.5" />
               <span>{candles.filter(c => c.lit).length} / {candles.length} LIT</span>
@@ -467,7 +565,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
               <button
                 type="button"
                 id="blow-candles-btn"
-                onClick={handleBlowAllCandles}
+                onClick={handleBlowCandles}
                 className="flex-1 py-3.5 bg-[#22c55e] text-[#16192e] font-pixel font-bold text-xs sm:text-sm uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Wind className="w-4 h-4" />

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ScreenIndex } from './types';
 import { soundEngine } from './utils/audio';
 import { birthdayConfig, cyberpunkTelemetryQuotes } from './birthdayData';
 import { HeaderStatusBar } from './components/common/HeaderStatusBar';
 import { CrtDustOverlay } from './components/common/CrtDustOverlay';
+import { PixelBlockTransition, PixelBlockTransitionPhase } from './components/common/PixelBlockTransition';
 import { EmergencyDiagnosticModal } from './components/common/EmergencyDiagnosticModal';
 import { Screen00_BootSequence } from './components/screens/Screen00_BootSequence';
 import { Screen01_Hero } from './components/screens/Screen01_Hero';
@@ -14,10 +15,18 @@ import { Screen05_MiniGame } from './components/screens/Screen05_MiniGame';
 import { Screen06_Cake } from './components/screens/Screen06_Cake';
 import { Screen07_FinalMessage } from './components/screens/Screen07_FinalMessage';
 import { PixelHeart } from './components/common/PixelHeart';
+import { PixelStar } from './components/common/PixelStar';
+import { PixelPaw } from './components/common/PixelPaw';
+import { PixelConfetti } from './components/common/PixelConfetti';
+import { PixelSparkle } from './components/common/PixelSparkle';
 
 export default function App() {
   // Screen state 0–7 (state-driven single page application, linear story flow)
   const [currentScreen, setCurrentScreen] = useState<ScreenIndex>(ScreenIndex.BOOT);
+  // Displayed screen state for hard-cut transition (holds previous view until blocks fully cover screen)
+  const [displayedScreen, setDisplayedScreen] = useState<ScreenIndex>(ScreenIndex.BOOT);
+  const [transitionPhase, setTransitionPhase] = useState<PixelBlockTransitionPhase>('idle');
+  const isFirstMountRef = useRef<boolean>(true);
   
   // Sound toggle defaults to ON in UI state (♫ AUDIO_SFX ON)
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
@@ -56,6 +65,53 @@ export default function App() {
   useEffect(() => {
     // Only play chirp if not on the very initial boot load (or play on all screen navigations)
     soundEngine.playTerminalChirp();
+  }, [currentScreen]);
+
+  // Hard-cut Pixel-Block Screen Navigation Transition Hook
+  // When currentScreen changes, renders expanding pixel blocks that clear the previous view,
+  // execute the hard cut, and contract to reveal the new screen view.
+  useEffect(() => {
+    // Skip transition on initial app boot load
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      return;
+    }
+
+    if (currentScreen === displayedScreen && transitionPhase === 'idle') {
+      return;
+    }
+
+    // Check prefers-reduced-motion: if enabled, swap instantly without animation
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      setDisplayedScreen(currentScreen);
+      setTransitionPhase('idle');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
+    }
+
+    // Phase 1: Expanding pixel blocks cover and clear the previous view
+    setTransitionPhase('covering');
+
+    // Hard-cut moment: when all 160 pixel blocks have expanded and fully blanket the screen (~230ms)
+    const hardCutTimer = setTimeout(() => {
+      // HARD CUT: swap displayed screen to target view while completely obscured
+      setDisplayedScreen(currentScreen);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      setTransitionPhase('revealing');
+
+      // Phase 2: Contracting pixel blocks shrink away to reveal the new screen (~230ms)
+      const revealTimer = setTimeout(() => {
+        setTransitionPhase('idle');
+      }, 230);
+
+      return () => clearTimeout(revealTimer);
+    }, 230);
+
+    return () => clearTimeout(hardCutTimer);
   }, [currentScreen]);
 
   // Periodic 30-second timer to flash a random cryptic cyberpunk telemetry quote
@@ -135,7 +191,7 @@ export default function App() {
   };
 
   const renderActiveScreen = () => {
-    switch (currentScreen) {
+    switch (displayedScreen) {
       case ScreenIndex.BOOT:
         return (
           <Screen00_BootSequence
@@ -199,7 +255,7 @@ export default function App() {
   };
 
   return (
-    <div className={`relative min-h-screen bg-[#ff5e97] text-[#16192e] font-mono flex flex-col justify-between overflow-x-hidden selection:bg-[#ffd000] selection:text-[#16192e] transition-all ${
+    <div className={`relative min-h-screen bg-[#c92e68] text-[#16192e] font-mono flex flex-col justify-between overflow-x-hidden selection:bg-[#ffd000] selection:text-[#16192e] transition-all ${
       isCorrupted ? 'animate-system-corruption' : ''
     }`}>
       
@@ -237,35 +293,81 @@ export default function App() {
           </svg>
         </div>
 
-        {/* Decorative 16x16 Pixel Hearts in Background */}
-        {/* Top-right heart near status bar */}
+        {/* Decorative 16x16 Pixel Art Icons in Background (Heart, Star, Paw, Confetti, Sparkle) */}
+        {/* 1. Pixel Hearts */}
         <div className="absolute top-[80px] right-[40px] opacity-90 animate-pixel-cat-bob" style={{ animationDelay: '0.2s' }}>
           <PixelHeart size={16} color="#f43f5e" className="drop-shadow-[2px_2px_0_#16192e]" />
         </div>
-
-        {/* Upper-left heart drifting below top cloud */}
         <div className="absolute top-[130px] left-[50px] opacity-80 animate-pixel-cat-bob" style={{ animationDelay: '0.7s' }}>
           <PixelHeart size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" />
         </div>
-
-        {/* Mid-screen right heart */}
-        <div className="absolute top-[260px] right-[12%] hidden sm:block opacity-75 animate-pixel-cat-bob" style={{ animationDelay: '1.2s' }}>
-          <PixelHeart size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-
-        {/* Mid-left heart */}
-        <div className="absolute top-[380px] left-[8%] hidden md:block opacity-70 animate-pixel-cat-bob" style={{ animationDelay: '0.4s' }}>
+        <div className="absolute top-[380px] left-[6%] hidden md:block opacity-75 animate-pixel-cat-bob" style={{ animationDelay: '0.4s' }}>
           <PixelHeart size={16} color="#fffdf0" className="drop-shadow-[2px_2px_0_#16192e]" />
         </div>
-
-        {/* Lower-left heart above ground strip */}
         <div className="absolute bottom-[100px] left-[32px] opacity-90 animate-pixel-cat-bob" style={{ animationDelay: '0.9s' }}>
           <PixelHeart size={16} color="#f43f5e" className="drop-shadow-[2px_2px_0_#16192e]" />
         </div>
-
-        {/* Lower-right heart near platform */}
         <div className="absolute bottom-[90px] right-[60px] opacity-85 animate-pixel-cat-bob" style={{ animationDelay: '0.3s' }}>
           <PixelHeart size={16} color="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+
+        {/* 2. Pixel Stars (16x16 Yellow Stars with Twinkle Animation) */}
+        <div className="absolute top-[95px] left-[20%] hidden sm:block opacity-90">
+          <PixelStar size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.3s' }} />
+        </div>
+        <div className="absolute top-[190px] right-[8%] opacity-85">
+          <PixelStar size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.2s' }} />
+        </div>
+        <div className="absolute top-[480px] right-[14%] hidden md:block opacity-80">
+          <PixelStar size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.8s' }} />
+        </div>
+        <div className="absolute bottom-[150px] left-[14%] hidden sm:block opacity-85">
+          <PixelStar size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.9s' }} />
+        </div>
+
+        {/* 3. Pixel Paws (16x16 Neko Cat Paw Prints) */}
+        <div className="absolute top-[220px] left-[36px] opacity-85 rotate-[-12deg]">
+          <PixelPaw size={16} padColor="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+        <div className="absolute top-[340px] right-[75px] hidden sm:block opacity-80 rotate-[15deg]">
+          <PixelPaw size={16} padColor="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+        <div className="absolute bottom-[230px] right-[40px] opacity-85 rotate-[-8deg]">
+          <PixelPaw size={16} padColor="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+        <div className="absolute bottom-[130px] left-[22%] hidden md:block opacity-75 rotate-[20deg]">
+          <PixelPaw size={16} padColor="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
+        </div>
+
+        {/* 4. Pixel Confetti (16x16 Festive Shapes with Slow Drift Animation) */}
+        <div className="absolute top-[150px] left-[26%] hidden sm:block opacity-80">
+          <PixelConfetti size={16} variant="cyan" shape="square" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.4s' }} />
+        </div>
+        <div className="absolute top-[280px] left-[12%] hidden md:block opacity-85">
+          <PixelConfetti size={16} variant="pink" shape="triangle" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.5s' }} />
+        </div>
+        <div className="absolute top-[110px] right-[24%] hidden sm:block opacity-85">
+          <PixelConfetti size={16} variant="yellow" shape="ribbon" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '2.1s' }} />
+        </div>
+        <div className="absolute top-[430px] right-[22%] hidden lg:block opacity-80">
+          <PixelConfetti size={16} variant="green" shape="square" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.9s' }} />
+        </div>
+        <div className="absolute bottom-[190px] right-[16%] hidden sm:block opacity-85">
+          <PixelConfetti size={16} variant="cycle" shape="triangle" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.1s' }} />
+        </div>
+
+        {/* 5. Pixel Sparkles (16x16 Cyan 4-Point Starbursts with Pulse Animation) */}
+        <div className="absolute top-[65px] left-[34%] hidden md:block opacity-85">
+          <PixelSparkle size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.2s' }} />
+        </div>
+        <div className="absolute top-[250px] right-[26%] hidden lg:block opacity-80">
+          <PixelSparkle size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.4s' }} />
+        </div>
+        <div className="absolute top-[410px] left-[18%] hidden sm:block opacity-85">
+          <PixelSparkle size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.7s' }} />
+        </div>
+        <div className="absolute bottom-[160px] right-[28%] hidden md:block opacity-85">
+          <PixelSparkle size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.8s' }} />
         </div>
       </div>
 
@@ -282,6 +384,9 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* 4. HARD-CUT PIXEL-BLOCK SCREEN NAVIGATION TRANSITION OVERLAY */}
+      <PixelBlockTransition phase={transitionPhase} />
 
       {/* Retro Status / Navigation Bar */}
       <HeaderStatusBar
@@ -344,7 +449,7 @@ export default function App() {
                 soundEngine.playEmergencyAccess();
                 setIsEmergencyModalOpen(true);
               }}
-              className="px-2.5 py-1 bg-[#fffdf0] border-2 border-[#16192e] text-[#f43f5e] font-pixel text-[9px] uppercase tracking-wider brutal-btn-sm cursor-pointer hidden md:inline-block"
+              className="px-2.5 py-1 bg-[#fffdf0] border-2 border-[#16192e] text-[#16192e] font-pixel text-[9px] uppercase tracking-wider brutal-btn-sm cursor-pointer hidden md:inline-block"
               title="Emergency Diagnostic Terminal (or click header logo 5 times)"
             >
               [⚠️ EMERGENCY DIAG]

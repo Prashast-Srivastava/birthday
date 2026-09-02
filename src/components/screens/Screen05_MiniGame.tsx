@@ -725,7 +725,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         {gameState === 'IDLE' && (
           <div className="absolute inset-0 bg-[#16192e]/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20">
             <div className="p-4 sm:p-5 bg-[#fffdf0] border-4 border-[#16192e] max-w-md w-full brutal-shadow-lg text-[#16192e]">
-              <div className="text-[10px] font-pixel text-[#f43f5e] tracking-wider uppercase mb-1 flex items-center justify-center gap-1.5">
+              <div className="text-[10px] font-pixel text-[#16192e] tracking-wider uppercase mb-1 flex items-center justify-center gap-1.5 font-bold">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>MISSION BRIEFING</span>
               </div>
@@ -736,11 +736,11 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
               <div className="text-xs font-mono text-[#16192e] text-left space-y-1.5 bg-[#ffd000] p-3 border-2 border-[#16192e] mb-4">
                 <p>🎂 <b>Cakes (+20 pts)</b> & 🐟 <b>Fish Snacks (+25 pts)</b> fall down.</p>
                 <p>⭐ <b>Stars (+15 pts)</b> & 💖 <b>Hearts (+10 pts)</b> build combos.</p>
-                <p className="text-[#f43f5e] font-bold">💣 <b>Avoid Glitch Bombs!</b> They cost 1 life.</p>
+                <p className="font-bold">💣 <b>Avoid Glitch Bombs!</b> They cost 1 life.</p>
                 <p>🏆 Score <b>100 PTS</b> to unlock the Birthday Cake Ceremony!</p>
               </div>
 
-              <div className="text-[10px] font-mono text-[#16192e]/70 mb-4">
+              <div className="text-[10px] font-mono text-[#16192e]/80 mb-4">
                 KEYBOARD: [◀ / ▶] ARROWS OR [A / D] • TAP: TOUCH LANES OR D-PAD
               </div>
 
@@ -778,7 +778,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                 </div>
                 <div className="flex justify-between">
                   <span className="opacity-70">FINAL SCORE:</span>
-                  <span className="font-bold text-[#f43f5e]">{score} PTS [VICTORY!]</span>
+                  <span className="font-bold text-[#16192e]">{score} PTS [VICTORY!]</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="opacity-70">NEXT:</span>
@@ -817,7 +817,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         {gameState === 'GAMEOVER' && (
           <div className="absolute inset-0 bg-[#16192e]/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30">
             <div className="p-5 bg-[#fffdf0] border-4 border-[#16192e] max-w-md w-full brutal-shadow-lg text-[#16192e]">
-              <div className="text-[10px] font-pixel text-[#f43f5e] uppercase mb-1 flex items-center justify-center gap-1.5 font-bold">
+              <div className="text-[10px] font-pixel text-[#16192e] uppercase mb-1 flex items-center justify-center gap-1.5 font-bold">
                 <ShieldAlert className="w-4 h-4" />
                 <span>MISSION INTERRUPTED</span>
               </div>
@@ -837,7 +837,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                 type="button"
                 id="retry-cat-game-btn"
                 onClick={handleStartGame}
-                className="w-full py-2.5 bg-[#f43f5e] text-white font-pixel font-bold text-xs uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 bg-[#f43f5e] text-[#16192e] font-pixel font-bold text-xs uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>RETRY QUEST // INSERT COIN</span>

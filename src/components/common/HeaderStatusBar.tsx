@@ -92,27 +92,27 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
         <button
           type="button"
           onClick={handleLogoClick}
-          className="flex flex-col text-left group cursor-pointer select-none bg-[#ffd000] border-2 border-[#16192e] p-2 brutal-shadow-sm hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[2px] active:translate-y-[2px] transition-transform"
+          className="flex flex-col text-left group cursor-pointer select-none bg-[#ffd000] border-2 border-[#16192e] header-title-container px-[12px] py-2 sm:py-2.5 h-auto min-h-fit brutal-shadow-sm hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[2px] active:translate-y-[2px] transition-transform"
           title="Terminal Identity // [Emergency Access: 5-Click Sequence]"
         >
           <div className="flex items-center gap-2">
-            <span className="text-[9px] tracking-[0.15em] font-pixel font-bold uppercase text-[#16192e]">
+            <span className="text-[9px] tracking-[0.15em] font-pixel font-bold uppercase text-[#16192e] leading-none">
               NEKO.EXE // V4.2
             </span>
             {showOverrideHint && (
-              <span className="text-[9px] px-1.5 py-0.5 bg-[#f43f5e] text-white font-pixel font-bold tracking-widest uppercase border border-[#16192e]">
+              <span className="text-[9px] px-1.5 py-0.5 bg-[#f43f5e] text-[#16192e] font-pixel font-bold tracking-widest uppercase border border-[#16192e] shrink-0">
                 EMERGENCY: {logoClickCount}/5
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2 mt-1">
-            <span className={`w-2.5 h-2.5 inline-block border border-[#16192e] ${
+          <div className="flex items-center mt-1.5">
+            <span className={`w-2.5 h-2.5 shrink-0 inline-block border border-[#16192e] mr-2.5 ${
               logoClickCount > 0 ? 'bg-[#f43f5e] scale-125' : 'bg-[#22c55e]'
             }`} />
-            <span className={`text-xs sm:text-sm font-pixel font-black tracking-wider ${
+            <span className={`font-pixel font-black tracking-wider leading-none whitespace-nowrap header-title-text ${
               logoClickCount > 0 ? 'text-[#f43f5e]' : 'text-[#16192e]'
             }`}>
-              THE BIRTHDAY PORTAL
+              Happī Bāsudē
             </span>
           </div>
         </button>
@@ -137,7 +137,7 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
                     ? 'bg-[#00f0ff] text-[#16192e] translate-x-[-1px] translate-y-[-1px] shadow-[3px_3px_0px_#16192e]'
                     : isCompleted
                     ? 'bg-[#ffd000] text-[#16192e] hover:bg-[#ffe169] shadow-[2px_2px_0px_#16192e]'
-                    : 'bg-[#fffdf0] text-[#16192e]/70 hover:bg-[#ff5e97]/20 hover:text-[#16192e]'
+                    : 'bg-[#fffdf0] text-[#16192e] hover:bg-[#ff5e97]/20 hover:text-[#16192e]'
                 }`}
                 title={`Screen 0${idx}: ${SCREEN_TITLES[idx as ScreenIndex]}`}
               >
@@ -157,7 +157,7 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
             className={`flex items-center gap-2 px-2.5 py-1.5 border-2 border-[#16192e] brutal-btn-sm select-none cursor-pointer ${
               soundEnabled
                 ? 'bg-[#22c55e] text-[#16192e]'
-                : 'bg-[#f43f5e] text-white'
+                : 'bg-[#f43f5e] text-[#16192e]'
             }`}
             title={soundEnabled ? 'Web Audio Synthesizer: ACTIVE (Click to mute)' : 'Web Audio Synthesizer: MUTED (Click to enable)'}
             aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}

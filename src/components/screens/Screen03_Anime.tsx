@@ -182,8 +182,8 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
               </div>
             </div>
 
-            <div className="mt-5 p-3 bg-[#ff5e97] border-3 border-[#16192e] brutal-shadow-sm text-xs font-mono text-white leading-relaxed">
-              <span className="font-pixel font-bold block mb-1 text-[10px] text-white">CO-OP LOG NOTE:</span>
+            <div className="mt-5 p-3 bg-[#ff5e97] border-3 border-[#16192e] brutal-shadow-sm text-xs font-mono text-[#16192e] leading-relaxed">
+              <span className="font-pixel font-bold block mb-1 text-[10px] text-[#16192e]">CO-OP LOG NOTE:</span>
               Countless marathons and endless theories shared with <strong>{birthdayConfig.recipientName}</strong>. These shows define our co-op journey!
             </div>
           </div>

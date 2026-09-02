@@ -165,8 +165,8 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
                       <span className="truncate">{mem.location}</span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1 mt-1 text-[10px] font-mono text-[#16192e]/50 truncate">
-                      <MapPin className="w-3 h-3 opacity-40 shrink-0" />
+                    <div className="flex items-center gap-1 mt-1 text-[10px] font-mono text-[#16192e]/75 truncate">
+                      <MapPin className="w-3 h-3 opacity-60 shrink-0" />
                       <span className="truncate">[ LOCATION UNSET ]</span>
                     </div>
                   )}
@@ -176,14 +176,14 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
                       {mem.description}
                     </p>
                   ) : (
-                    <div className="mt-2 p-1.5 border border-dashed border-[#16192e]/40 bg-[#fffdf0] text-[9px] font-pixel text-[#16192e]/60 text-center">
+                    <div className="mt-2 p-1.5 border border-dashed border-[#16192e]/40 bg-[#fffdf0] text-[9px] font-pixel text-[#16192e]/75 text-center">
                       <span>[ PENDING ENTRY ]</span>
                     </div>
                   )}
                 </div>
 
                 <div className="mt-3 pt-2 border-t border-[#16192e]/20 flex items-center justify-between text-[9px] font-pixel text-[#16192e]">
-                  <span className="text-[#f43f5e] font-bold">SLOT {slotNumber}</span>
+                  <span className="text-[#16192e] font-bold">SLOT {slotNumber}</span>
                   <span className="font-bold group-hover:translate-x-0.5 transition-transform">
                     EXPAND ▶
                   </span>
@@ -295,7 +295,7 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
                   </div>
                   <div className="p-2 bg-[#fffdf0] border-2 border-[#16192e]">
                     <span className="opacity-60 block">INTEGRITY:</span>
-                    <span className="text-[#f43f5e] font-bold">100% UNFORGETTABLE</span>
+                    <span className="text-[#16192e] font-bold">100% UNFORGETTABLE</span>
                   </div>
                 </div>
               </div>

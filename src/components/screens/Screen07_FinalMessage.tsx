@@ -91,7 +91,7 @@ export const Screen07_FinalMessage: React.FC<Screen07FinalMessageProps> = ({ onN
           </div>
           <div className="p-2 bg-[#fffdf0] border-2 border-[#16192e]">
             <span className="opacity-60 block text-[9px] font-bold">FRIENDSHIP LEVEL:</span>
-            <span className="text-[#f43f5e] font-bold">{birthdayConfig.friendshipLevel}</span>
+            <span className="text-[#16192e] font-bold">{birthdayConfig.friendshipLevel}</span>
           </div>
           <div className="p-2 bg-[#fffdf0] border-2 border-[#16192e]">
             <span className="opacity-60 block text-[9px] font-bold">STATUS:</span>
@@ -105,7 +105,7 @@ export const Screen07_FinalMessage: React.FC<Screen07FinalMessageProps> = ({ onN
         
         {/* Vintage Postal / Ink Stamps */}
         <div className="absolute top-4 right-4 sm:top-6 sm:right-8 flex items-center gap-2.5 pointer-events-none opacity-85 select-none z-10">
-          <div className="border-3 border-[#f43f5e] text-[#f43f5e] font-pixel text-[9px] sm:text-[10px] uppercase font-bold px-2 py-1 rotate-[-6deg] tracking-wider border-dashed">
+          <div className="border-3 border-[#b91c1c] text-[#b91c1c] font-pixel text-[9px] sm:text-[10px] uppercase font-bold px-2 py-1 rotate-[-6deg] tracking-wider border-dashed">
             ★ TOP SECRET ★
           </div>
           <div className="border-3 border-[#22c55e] text-[#22c55e] font-pixel text-[9px] sm:text-[10px] uppercase font-bold px-2 py-1 rotate-[4deg] tracking-wider">
@@ -182,7 +182,7 @@ export const Screen07_FinalMessage: React.FC<Screen07FinalMessageProps> = ({ onN
                 soundEngine.playFanfare();
                 onNavigate(ScreenIndex.CAKE);
               }}
-              className="px-3.5 py-2 bg-[#ff5e97] text-white border-2 border-[#16192e] text-[10px] font-pixel font-bold brutal-btn-sm flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 bg-[#ff5e97] text-[#16192e] border-2 border-[#16192e] text-[10px] font-pixel font-bold brutal-btn-sm flex items-center gap-1.5 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>REPLAY CAKE</span>

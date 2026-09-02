@@ -9,7 +9,7 @@
     --font-vt: "VT323", monospace;
 
     /* Design Tokens: Retro Pixel-Art + Neo-Brutalism Hybrid */
-    --color-bg-pink: #ff5e97;
+    --color-bg-pink: #c92e68;
     --color-ink: #16192e;
     --color-cream: #fffdf0;
     --color-yellow: #ffd000;
@@ -311,6 +311,89 @@ textarea {
   animation: brutal-glitch-burst 0.4s steps(3, end);
 }
 
+/* Header Title Responsiveness & Overflow Prevention */
+.header-title-container {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+.header-title-text {
+  font-size: 13px;
+}
+
+@media (max-width: 639px) {
+  .header-title-text {
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Pixel Art Decorative Animations */
+@keyframes star-twinkle {
+  0%, 100% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.88);
+  }
+}
+
+.animate-star-twinkle {
+  animation: star-twinkle 2.5s ease-in-out infinite;
+}
+
+@keyframes sparkle-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+    opacity: 1;
+  }
+}
+
+.animate-sparkle-pulse {
+  animation: sparkle-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes confetti-drift {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(9px) rotate(12deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+.animate-confetti-drift {
+  animation: confetti-drift 3.6s ease-in-out infinite;
+}
+
+@keyframes confetti-color-cycle {
+  0%, 100% {
+    fill: var(--color-yellow);
+  }
+  25% {
+    fill: var(--color-cyan);
+  }
+  50% {
+    fill: #ff5e97;
+  }
+  75% {
+    fill: var(--color-green);
+  }
+}
+
+.animate-confetti-cycle {
+  animation: confetti-color-cycle 4s steps(1, end) infinite;
+}
+
 /* Crisp Pixelated Graphics Rendering */
 .pixelated, svg.pixel-art, img.pixel-art {
   image-rendering: pixelated;
@@ -341,6 +424,77 @@ textarea {
   background: #ff5e97;
 }
 
+/* Hard-cut Pixel-Block Screen Navigation Transition */
+@keyframes pixel-block-expand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes pixel-block-contract {
+  0% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  99% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.animate-pixel-block-expand {
+  animation: pixel-block-expand 0.12s steps(3, end) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-pixel-block-contract {
+  animation: pixel-block-contract 0.12s steps(3, end) forwards;
+  will-change: transform, opacity;
+}
+
+/* Pixel Confetti Center Screen Burst Animation */
+@keyframes pixel-confetti-burst {
+  0% {
+    transform: translate(-50%, -50%) translate(0px, 0px) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  24% {
+    transform: translate(-50%, -50%) translate(calc(var(--burst-x) * 0.5), calc(var(--burst-y) * 0.5)) scale(1.3) rotate(calc(var(--burst-rot) * 0.45));
+    opacity: 1;
+  }
+  60% {
+    transform: translate(-50%, -50%) translate(var(--burst-x), var(--burst-y)) scale(1) rotate(var(--burst-rot));
+    opacity: 1;
+  }
+  85% {
+    transform: translate(-50%, -50%) translate(calc(var(--burst-x) * 1.12), calc(var(--burst-y) + 70px)) scale(0.92) rotate(calc(var(--burst-rot) + 25deg));
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(calc(var(--burst-x) * 1.18), calc(var(--burst-y) + 140px)) scale(0.75) rotate(calc(var(--burst-rot) + 55deg));
+    opacity: 0;
+  }
+}
+
+.animate-pixel-confetti-burst {
+  animation: pixel-confetti-burst 3.2s cubic-bezier(0.12, 0.85, 0.32, 1) forwards;
+  will-change: transform, opacity;
+}
+
 /* Prefers-reduced-motion support */
 @media (prefers-reduced-motion: reduce) {
   .animate-system-corruption,
@@ -348,7 +502,10 @@ textarea {
   .animate-pixel-cat-bob,
   .animate-balloon-float,
   .animate-cloud-drift-slow,
-  .animate-cloud-drift-fast {
+  .animate-cloud-drift-fast,
+  .animate-pixel-block-expand,
+  .animate-pixel-block-contract,
+  .animate-pixel-confetti-burst {
     animation: none !important;
     transform: none !important;
   }
