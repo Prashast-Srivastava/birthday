@@ -45,15 +45,15 @@ function generateBlockTiles(): BlockTile[] {
       const combinedStagger = Math.min(1, Math.max(0, diagProgress * 0.72 + jitter * 0.28));
       const delayMs = Math.round(combinedStagger * maxDelayMs);
 
-      // Neo-brutalist retro color styling:
-      // Mostly solid midnight ink (#16192e), peppered with subtle cyberpunk accent tiles
-      let bgClass = 'bg-[#16192e] border-[#222744]';
+      // Modern dark dev-tool palette:
+      // Dark navy surface (#0a0e17), with subtle dark panels and occasional amber accent
+      let bgClass = 'bg-[#0a0e17] border-[#1a1f2e]';
       if ((c * 5 + r * 3) % 19 === 0) {
-        bgClass = 'bg-[#ffd000] border-[#16192e]'; // Brutalist yellow accent
+        bgClass = 'bg-[#f5a524]/30 border-[#f5a524]/40'; // Soft amber accent
       } else if ((c * 7 + r * 11) % 23 === 0) {
-        bgClass = 'bg-[#00f0ff] border-[#16192e]'; // Cyan pixel flare
+        bgClass = 'bg-[#1a1f2e] border-[#ffffff1a]'; // Secondary dark panel
       } else if ((c * 3 + r * 7) % 29 === 0) {
-        bgClass = 'bg-[#c92e68] border-[#16192e]'; // Hot pink accent
+        bgClass = 'bg-[#121723] border-[#ffffff1a]'; // Surface panel
       }
 
       tiles.push({ id, col: c, row: r, delayMs, bgClass });

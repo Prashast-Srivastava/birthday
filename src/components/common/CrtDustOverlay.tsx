@@ -30,10 +30,10 @@ export const CrtDustOverlay: React.FC = () => {
     const particleCount = 45; // Subtle, atmospheric density
 
     const colors = {
-      yellow: '255, 208, 0',
-      cyan: '0, 240, 255',
-      white: '255, 253, 240',
-      purple: '168, 85, 247',
+      yellow: '245, 165, 36',   // amber
+      cyan: '74, 222, 128',     // dev green
+      white: '245, 245, 247',   // text primary
+      purple: '156, 163, 175',  // text secondary
     };
 
     const resizeCanvas = () => {

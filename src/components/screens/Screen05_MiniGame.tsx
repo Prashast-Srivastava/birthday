@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion } from 'motion/react';
 import { Play, RotateCcw, Award, Heart, Sparkles, ChevronLeft, ChevronRight, Zap, Trophy, ShieldAlert, ArrowRight } from 'lucide-react';
 import { ScreenIndex } from '../../types';
 import { birthdayConfig } from '../../birthdayData';
 import { soundEngine } from '../../utils/audio';
+import { screenContainerVariants, cardVariants } from '../../utils/animations';
 
 interface Screen05MiniGameProps {
   onNavigate: (index: ScreenIndex) => void;
@@ -206,16 +208,16 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         ctx.translate(shakeX, shakeY);
       }
 
-      // 1. Draw Retro Arcade Grid Background
+      // 1. Draw Dev-Tool Grid Background
       const laneWidth = width / TOTAL_LANES;
 
-      ctx.fillStyle = '#060806';
+      ctx.fillStyle = '#0a0e17'; // near-black navy
       ctx.fillRect(0, 0, width, height);
 
-      // Draw subtle phosphor lane dividers
+      // Draw subtle hairline lane dividers
       for (let i = 0; i <= TOTAL_LANES; i++) {
         const lx = i * laneWidth;
-        ctx.strokeStyle = i === 0 || i === TOTAL_LANES ? 'rgba(74, 222, 128, 0.4)' : 'rgba(74, 222, 128, 0.12)';
+        ctx.strokeStyle = i === 0 || i === TOTAL_LANES ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.08)';
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
@@ -225,15 +227,15 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         ctx.setLineDash([]);
       }
 
-      // Highlight active cat lane
+      // Highlight active cat lane with subtle amber sheen
       const activeLaneX = stateRef.current.catLane * laneWidth;
-      ctx.fillStyle = 'rgba(74, 222, 128, 0.04)';
+      ctx.fillStyle = 'rgba(245, 165, 36, 0.06)';
       ctx.fillRect(activeLaneX, 0, laneWidth, height);
 
       // Draw Danger Baseline
       const targetY = height - 55;
-      ctx.strokeStyle = 'rgba(251, 191, 36, 0.3)';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(245, 165, 36, 0.3)';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(0, targetY + 20);
       ctx.lineTo(width, targetY + 20);
@@ -629,58 +631,63 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
   const progressPercent = Math.min(100, Math.round((score / TARGET_SCORE) * 100));
 
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none">
+    <motion.div
+      variants={screenContainerVariants}
+      initial="hidden"
+      animate="visible"
+      className="w-full max-w-5xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none"
+    >
       
       {/* Screen Top Header & Quest HUD */}
-      <div className="bg-[#ffd000] border-3 border-[#16192e] p-3 sm:p-4 mb-4 brutal-shadow relative">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-[#16192e]/20 pb-2.5">
+      <motion.div variants={cardVariants} className="dev-card bg-[#121723]/90 border border-[#ffffff1a] p-4 sm:p-5 mb-5 rounded-xl shadow-xl relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ffffff1a] pb-3">
           <div>
-            <div className="text-[10px] font-pixel font-bold text-[#16192e] uppercase flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 bg-[#f43f5e] border border-[#16192e] inline-block" />
-              MINI-GAME SECTOR 05 // ARCADE QUEST
+            <div className="dev-eyebrow-pill mb-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#f5a524]" />
+              <span>MINI-GAME SECTOR 05 // INTERACTIVE MODULE</span>
             </div>
-            <h2 className="text-base sm:text-xl font-pixel font-black uppercase tracking-wide text-[#16192e] mt-0.5">
-              SAVE THE BIRTHDAY CAT // CAKE RUSH
+            <h2 className="text-xl sm:text-2xl font-sans font-bold text-[#f5f5f7] tracking-tight">
+              Save The Birthday Cat // <span className="text-[#f5a524]">Cake Rush</span>
             </h2>
           </div>
 
           {/* Quick HUD Metrics */}
-          <div className="flex items-center gap-2 font-pixel text-[10px]">
-            <div className="bg-[#fffdf0] px-2.5 py-1 border-2 border-[#16192e] flex items-center gap-1.5">
-              <span className="opacity-70 text-[#16192e]">TARGET:</span>
-              <span className="text-[#16192e] font-bold">{TARGET_SCORE} PTS</span>
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <div className="bg-[#1a1f2e] px-3 py-1 border border-[#ffffff1a] rounded-lg flex items-center gap-1.5">
+              <span className="text-[#9ca3af]">TARGET:</span>
+              <span className="text-[#f5f5f7] font-semibold">{TARGET_SCORE} PTS</span>
             </div>
-            <div className="bg-[#00f0ff] px-2.5 py-1 border-2 border-[#16192e] flex items-center gap-1.5">
-              <span className="opacity-70 text-[#16192e]">HIGH:</span>
-              <span className="text-[#16192e] font-bold">{highScore} PTS</span>
+            <div className="bg-[#1a1f2e] px-3 py-1 border border-[#f5a524]/30 rounded-lg flex items-center gap-1.5">
+              <span className="text-[#9ca3af]">HIGH:</span>
+              <span className="text-[#f5a524] font-semibold">{highScore} PTS</span>
             </div>
           </div>
         </div>
 
-        {/* Progress Bar & Level 22 Sync Bar */}
-        <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-center">
+        {/* Progress Bar & Sync Bar */}
+        <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
           <div className="sm:col-span-2">
-            <div className="flex justify-between text-[10px] font-pixel font-bold text-[#16192e] mb-1">
+            <div className="flex justify-between text-xs font-mono text-[#9ca3af] mb-1.5">
               <span>AWAKENING PROGRESS:</span>
-              <span>{progressPercent}% [{score} / {TARGET_SCORE} PTS]</span>
+              <span className="text-[#f5f5f7] font-medium">{progressPercent}% [{score} / {TARGET_SCORE} PTS]</span>
             </div>
-            <div className="w-full h-3.5 bg-[#16192e] border-2 border-[#16192e] overflow-hidden p-0.5">
+            <div className="w-full h-2.5 bg-[#0a0e17] rounded-full border border-[#ffffff1a] overflow-hidden p-0.5">
               <div
-                className="h-full bg-[#22c55e] transition-all duration-200"
+                className="h-full bg-gradient-to-r from-[#f5a524] to-[#fbbf24] rounded-full transition-all duration-300"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
           </div>
 
           {/* Lives & Combo Indicator */}
-          <div className="flex items-center justify-between sm:justify-end gap-3 font-pixel text-xs">
-            <div className="flex items-center gap-1 bg-[#fffdf0] px-2 py-0.5 border-2 border-[#16192e]">
-              <span className="text-[9px] text-[#16192e] mr-1">LIVES:</span>
+          <div className="flex items-center justify-between sm:justify-end gap-3 font-mono text-xs">
+            <div className="flex items-center gap-1.5 bg-[#1a1f2e] px-3 py-1 border border-[#ffffff1a] rounded-lg">
+              <span className="text-xs text-[#9ca3af] mr-1">LIVES:</span>
               {[...Array(INITIAL_LIVES)].map((_, i) => (
                 <span
                   key={i}
                   className={`text-sm transition-transform ${
-                    i < lives ? 'text-[#f43f5e] scale-100' : 'text-[#8E8E8E] scale-90 opacity-40'
+                    i < lives ? 'text-[#f43f5e] scale-100' : 'text-[#4b5563] scale-90 opacity-40'
                   }`}
                 >
                   ♥
@@ -689,21 +696,20 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             </div>
 
             {combo > 1 && (
-              <div className="px-2 py-0.5 bg-[#ff5e97] text-white border-2 border-[#16192e] text-[9px] font-pixel font-bold">
+              <div className="px-2.5 py-1 bg-[#f5a524]/15 text-[#f5a524] border border-[#f5a524]/30 rounded-lg text-xs font-mono font-semibold">
                 x{combo} STREAK!
               </div>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Main Interactive Canvas Area with Brutalist HUD Frame */}
-      <div className="relative w-full border-4 border-[#16192e] bg-[#0c0e1a] brutal-shadow-lg overflow-hidden">
+      {/* Main Interactive Canvas Area with Modern Frame */}
+      <motion.div variants={cardVariants} className="relative w-full border border-[#ffffff1a] bg-[#0a0e17] rounded-2xl shadow-2xl overflow-hidden">
         <canvas
           ref={canvasRef}
           id="birthday-cat-game-canvas"
-          className="w-full block cursor-pointer pixelated"
-          style={{ imageRendering: 'pixelated' }}
+          className="w-full block cursor-pointer"
         />
 
         {/* 5 Lane Click Zones (Desktop & Mobile Tap Support) */}
@@ -713,42 +719,42 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
               key={laneIndex}
               type="button"
               onClick={() => jumpToLane(laneIndex)}
-              className="w-full h-full opacity-0 hover:opacity-15 bg-[#ffd000] active:bg-[#ffd000]/30 transition-opacity cursor-pointer flex flex-col justify-end pb-3 items-center text-[9px] font-pixel text-white"
+              className="w-full h-full opacity-0 hover:opacity-10 bg-[#f5a524] active:bg-[#f5a524]/20 transition-opacity cursor-pointer flex flex-col justify-end pb-3 items-center text-[10px] font-mono text-[#f5f5f7]"
               title={`Move cat to Lane ${laneIndex + 1}`}
             >
-              <span className="opacity-60">LANE {laneIndex + 1}</span>
+              <span className="opacity-70">LANE {laneIndex + 1}</span>
             </button>
           ))}
         </div>
 
         {/* IDLE / START OVERLAY */}
         {gameState === 'IDLE' && (
-          <div className="absolute inset-0 bg-[#16192e]/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20">
-            <div className="p-4 sm:p-5 bg-[#fffdf0] border-4 border-[#16192e] max-w-md w-full brutal-shadow-lg text-[#16192e]">
-              <div className="text-[10px] font-pixel text-[#16192e] tracking-wider uppercase mb-1 flex items-center justify-center gap-1.5 font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
+          <div className="absolute inset-0 bg-[#0a0e17]/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20">
+            <div className="dev-card p-6 bg-[#121723] border border-[#ffffff1a] rounded-2xl max-w-md w-full shadow-2xl text-[#f5f5f7]">
+              <div className="dev-eyebrow-pill mb-2 mx-auto inline-flex">
+                <Sparkles className="w-3.5 h-3.5 text-[#f5a524]" />
                 <span>MISSION BRIEFING</span>
               </div>
-              <h3 className="text-base sm:text-lg font-pixel font-black text-[#16192e] mb-3 uppercase">
-                SAVE THE BIRTHDAY CAT
+              <h3 className="text-xl font-sans font-bold text-[#f5f5f7] mb-3">
+                Save The Birthday Cat
               </h3>
               
-              <div className="text-xs font-mono text-[#16192e] text-left space-y-1.5 bg-[#ffd000] p-3 border-2 border-[#16192e] mb-4">
-                <p>🎂 <b>Cakes (+20 pts)</b> & 🐟 <b>Fish Snacks (+25 pts)</b> fall down.</p>
-                <p>⭐ <b>Stars (+15 pts)</b> & 💖 <b>Hearts (+10 pts)</b> build combos.</p>
-                <p className="font-bold">💣 <b>Avoid Glitch Bombs!</b> They cost 1 life.</p>
-                <p>🏆 Score <b>100 PTS</b> to unlock the Birthday Cake Ceremony!</p>
+              <div className="text-xs font-mono text-[#9ca3af] text-left space-y-2 bg-[#1a1f2e] p-3.5 rounded-xl border border-[#ffffff1a] mb-5">
+                <p>🎂 <b className="text-[#f5f5f7]">Cakes (+20 pts)</b> & 🐟 <b className="text-[#f5f5f7]">Fish Snacks (+25 pts)</b> fall down.</p>
+                <p>⭐ <b className="text-[#f5f5f7]">Stars (+15 pts)</b> & 💖 <b className="text-[#f5f5f7]">Hearts (+10 pts)</b> build combos.</p>
+                <p><b className="text-[#f43f5e]">💣 Avoid Glitch Bombs!</b> They cost 1 life.</p>
+                <p>🏆 Score <b className="text-[#f5a524]">100 PTS</b> to unlock the Birthday Cake Ceremony!</p>
               </div>
 
-              <div className="text-[10px] font-mono text-[#16192e]/80 mb-4">
-                KEYBOARD: [◀ / ▶] ARROWS OR [A / D] • TAP: TOUCH LANES OR D-PAD
+              <div className="text-xs font-mono text-[#9ca3af] mb-5">
+                Keyboard: [◀ / ▶] Arrows or [A / D] • Tap: Touch lanes or buttons
               </div>
 
               <button
                 type="button"
                 id="start-cat-game-btn"
                 onClick={handleStartGame}
-                className="w-full py-3 bg-[#22c55e] text-[#16192e] font-pixel font-bold text-xs sm:text-sm uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>LAUNCH MISSION [START]</span>
@@ -759,30 +765,30 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
 
         {/* MISSION COMPLETE / LEVEL UNLOCKED CELEBRATION OVERLAY */}
         {gameState === 'WON' && (
-          <div className="absolute inset-0 bg-[#16192e]/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30 animate-fadeIn">
-            <div className="p-5 sm:p-6 bg-[#fffdf0] border-4 border-[#16192e] max-w-lg w-full brutal-shadow-lg text-[#16192e]">
-              <div className="inline-block px-3 py-1 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] text-[9px] font-pixel font-bold uppercase mb-2">
+          <div className="absolute inset-0 bg-[#0a0e17]/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30 animate-fadeIn">
+            <div className="dev-card p-6 sm:p-7 bg-[#121723] border border-[#ffffff1a] rounded-2xl max-w-lg w-full shadow-2xl text-[#f5f5f7]">
+              <div className="inline-block px-3 py-1 bg-[#f5a524]/15 text-[#f5a524] border border-[#f5a524]/30 rounded-full text-xs font-mono font-medium mb-3">
                 ★ HIGH SCORE CONFIRMED ★
               </div>
-              <h3 className="text-xl sm:text-2xl font-pixel font-black text-[#16192e] mb-2 uppercase">
-                MISSION COMPLETE!
+              <h3 className="text-2xl font-sans font-bold text-[#f5f5f7] mb-1">
+                Mission Complete!
               </h3>
-              <p className="text-xs sm:text-sm font-pixel text-[#22c55e] font-bold mb-4 uppercase">
-                🎉 BIRTHDAY LEVEL 22 UNLOCKED! 🎉
+              <p className="text-sm font-mono text-[#4ade80] font-medium mb-4">
+                🎉 Birthday Level 22 Unlocked! 🎉
               </p>
 
-              <div className="p-3 bg-[#ffd000] border-2 border-[#16192e] text-xs font-mono text-[#16192e] space-y-1 mb-5">
-                <div className="flex justify-between">
-                  <span className="opacity-70">RECIPIENT:</span>
-                  <span className="font-bold">{birthdayConfig.recipientName} // LEVEL 22</span>
+              <div className="p-4 bg-[#1a1f2e] border border-[#ffffff1a] rounded-xl text-xs font-mono space-y-2 mb-6">
+                <div className="flex justify-between items-center py-1 border-b border-[#ffffff0f]">
+                  <span className="text-[#9ca3af]">RECIPIENT:</span>
+                  <span className="font-semibold text-[#f5f5f7]">{birthdayConfig.recipientName} // LEVEL 22</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="opacity-70">FINAL SCORE:</span>
-                  <span className="font-bold text-[#16192e]">{score} PTS [VICTORY!]</span>
+                <div className="flex justify-between items-center py-1 border-b border-[#ffffff0f]">
+                  <span className="text-[#9ca3af]">FINAL SCORE:</span>
+                  <span className="font-semibold text-[#f5a524]">{score} PTS [VICTORY!]</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="opacity-70">NEXT:</span>
-                  <span className="font-bold text-[#22c55e]">CAKE & CANDLES CEREMONY</span>
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-[#9ca3af]">NEXT PHASE:</span>
+                  <span className="font-medium text-[#4ade80]">CAKE & CANDLES CEREMONY</span>
                 </div>
               </div>
 
@@ -790,7 +796,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                 <button
                   type="button"
                   onClick={handleStartGame}
-                  className="px-4 py-2.5 bg-[#fffdf0] border-2 border-[#16192e] text-[#16192e] font-pixel text-[10px] uppercase brutal-btn-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] text-[#f5f5f7] font-mono text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-all"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>PLAY AGAIN</span>
@@ -803,7 +809,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                     soundEngine.playFanfare();
                     onNavigate(ScreenIndex.CAKE);
                   }}
-                  className="flex-1 py-3 bg-[#22c55e] text-[#16192e] font-pixel font-bold text-xs uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
                 >
                   <span>PROCEED TO CAKE CEREMONY</span>
                   <ArrowRight className="w-4 h-4" />
@@ -815,54 +821,54 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
 
         {/* GAME OVER OVERLAY */}
         {gameState === 'GAMEOVER' && (
-          <div className="absolute inset-0 bg-[#16192e]/85 flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30">
-            <div className="p-5 bg-[#fffdf0] border-4 border-[#16192e] max-w-md w-full brutal-shadow-lg text-[#16192e]">
-              <div className="text-[10px] font-pixel text-[#16192e] uppercase mb-1 flex items-center justify-center gap-1.5 font-bold">
-                <ShieldAlert className="w-4 h-4" />
+          <div className="absolute inset-0 bg-[#0a0e17]/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30">
+            <div className="dev-card p-6 bg-[#121723] border border-[#ffffff1a] rounded-2xl max-w-md w-full shadow-2xl text-[#f5f5f7]">
+              <div className="dev-eyebrow-pill mb-2 mx-auto inline-flex border-[#f43f5e]/30 text-[#f43f5e]">
+                <ShieldAlert className="w-3.5 h-3.5" />
                 <span>MISSION INTERRUPTED</span>
               </div>
-              <h3 className="text-lg font-pixel font-black text-[#16192e] mb-2 uppercase">
-                GLITCH OVERLOAD!
+              <h3 className="text-xl font-sans font-bold text-[#f5f5f7] mb-2">
+                Glitch Overload!
               </h3>
-              <p className="text-xs font-mono text-[#16192e]/80 mb-4">
+              <p className="text-xs font-mono text-[#9ca3af] mb-4 leading-relaxed">
                 The birthday cat bumped into glitch bombs. Friendship has unlimited continues!
               </p>
 
-              <div className="p-2.5 bg-[#ffd000] border-2 border-[#16192e] text-xs font-mono text-[#16192e] mb-4 flex justify-between font-bold">
-                <span>POINTS SCORED:</span>
-                <span>{score} / {TARGET_SCORE} PTS</span>
+              <div className="p-3 bg-[#1a1f2e] border border-[#ffffff1a] rounded-xl text-xs font-mono mb-5 flex justify-between">
+                <span className="text-[#9ca3af]">POINTS SCORED:</span>
+                <span className="text-[#f5f5f7] font-semibold">{score} / {TARGET_SCORE} PTS</span>
               </div>
 
               <button
                 type="button"
                 id="retry-cat-game-btn"
                 onClick={handleStartGame}
-                className="w-full py-2.5 bg-[#f43f5e] text-[#16192e] font-pixel font-bold text-xs uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
               >
                 <RotateCcw className="w-4 h-4" />
-                <span>RETRY QUEST // INSERT COIN</span>
+                <span>RETRY QUEST // CONTINUE</span>
               </button>
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
 
-      {/* Tactile Arcade D-Pad Controls */}
-      <div className="mt-4 p-3 bg-[#fffdf0] border-3 border-[#16192e] brutal-shadow flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="text-xs font-mono text-[#16192e] flex items-center gap-2">
-          <span className="w-2 h-2 bg-[#f43f5e] inline-block" />
-          <span className="font-bold">CONTROLS:</span>
-          <span className="opacity-75 hidden sm:inline">Use Left/Right arrow keys, A/D, or tap the arcade buttons.</span>
-          <span className="opacity-75 sm:hidden">Tap Left / Right buttons or tap screen lanes.</span>
+      {/* Tactile D-Pad Controls */}
+      <motion.div variants={cardVariants} className="mt-4 p-4 dev-card bg-[#121723]/90 border border-[#ffffff1a] rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+        <div className="text-xs font-mono text-[#9ca3af] flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#f5a524]" />
+          <span className="font-medium text-[#f5f5f7]">CONTROLS:</span>
+          <span className="hidden sm:inline">Use Left/Right arrow keys, A/D, or click the control buttons.</span>
+          <span className="sm:hidden">Tap Left / Right buttons or screen lanes.</span>
         </div>
 
         {/* On-Screen D-Pad Buttons */}
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <button
             type="button"
             id="dpad-left-btn"
             onClick={() => moveCat('left')}
-            className="flex-1 sm:flex-none px-5 py-2 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] font-pixel font-bold text-xs brutal-btn-sm flex items-center justify-center gap-1 cursor-pointer"
+            className="flex-1 sm:flex-none px-4 py-2 bg-[#1a1f2e] hover:bg-[#222838] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] font-mono text-xs rounded-lg flex items-center justify-center gap-1 cursor-pointer transition-all"
             aria-label="Move cat left"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -873,24 +879,24 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             type="button"
             id="dpad-right-btn"
             onClick={() => moveCat('right')}
-            className="flex-1 sm:flex-none px-5 py-2 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] font-pixel font-bold text-xs brutal-btn-sm flex items-center justify-center gap-1 cursor-pointer"
+            className="flex-1 sm:flex-none px-4 py-2 bg-[#1a1f2e] hover:bg-[#222838] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] font-mono text-xs rounded-lg flex items-center justify-center gap-1 cursor-pointer transition-all"
             aria-label="Move cat right"
           >
             <span>RIGHT ▶</span>
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Bottom Screen Navigation Bar */}
-      <div className="mt-4 flex items-center justify-between gap-4 font-mono">
+      <motion.div variants={cardVariants} className="mt-5 flex items-center justify-between gap-4 font-mono">
         <button
           type="button"
           onClick={() => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.MEMORIES);
           }}
-          className="px-3.5 py-2 bg-[#fffdf0] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
+          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
         >
           ◀ PREV: MEMORIES
         </button>
@@ -901,7 +907,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.HERO);
           }}
-          className="px-3.5 py-2 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
+          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#9ca3af] hover:text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
         >
           [ HERO HUB ]
         </button>
@@ -912,12 +918,12 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.CAKE);
           }}
-          className="px-4 py-2 bg-[#22c55e] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
+          className="px-5 py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] text-xs font-semibold rounded-xl shadow-lg shadow-[#f5a524]/20 transition-all cursor-pointer hover:scale-[1.01]"
         >
           SKIP TO CAKE ▶
         </button>
-      </div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   );
 };

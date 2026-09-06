@@ -1,6 +1,6 @@
 {
   "name": "The Birthday Portal",
-  "description": "Retro cyberpunk pixel-art birthday celebration terminal with 8-bit sound, mini-games, memory database, and CRT aesthetic.",
+  "description": "Dev-tool aesthetic birthday celebration portal with interactive memories, anime archive, mini-games, and ceremony.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

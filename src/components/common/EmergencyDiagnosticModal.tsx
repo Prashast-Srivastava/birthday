@@ -273,44 +273,50 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
       role="dialog"
       aria-modal="true"
       aria-labelledby="emergency-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-fadeIn select-text"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/75 backdrop-blur-md animate-fadeIn select-text"
     >
-      <div className="relative w-full max-w-5xl h-[92vh] max-h-[850px] bg-[#090d09] border-2 border-[#ef4444] text-[#4ade80] font-mono flex flex-col shadow-[0_0_50px_rgba(239,68,68,0.4)] overflow-hidden">
+      <div className="relative w-full max-w-5xl h-[92vh] max-h-[850px] bg-[#121723] border border-[#ffffff1a] text-[#f5f5f7] font-mono flex flex-col rounded-2xl shadow-2xl overflow-hidden">
         
         {/* Top Emergency Access Banner */}
-        <div className="bg-[#ef4444] text-black px-4 py-2 flex items-center justify-between font-bold text-xs sm:text-sm tracking-wider uppercase border-b border-[#ef4444]">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 animate-bounce" />
-            <span id="emergency-modal-title">EMERGENCY ACCESS // KERNEL DIAGNOSTIC & RAW STATE DUMP</span>
+        <div className="bg-[#1a1f2e] text-[#f5f5f7] px-4 py-3 flex items-center justify-between border-b border-[#ffffff1a]">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#f5a524]/15 border border-[#f5a524]/30 flex items-center justify-center text-[#f5a524]">
+              <ShieldAlert className="w-4 h-4" />
+            </div>
+            <span id="emergency-modal-title" className="font-sans font-semibold text-sm text-[#f5f5f7]">
+              System Diagnostic & Telemetry Inspector
+            </span>
           </div>
-          <div className="flex items-center gap-3 text-[11px]">
-            <span className="bg-black text-[#ef4444] px-2 py-0.5 font-mono">AUTH: ROOT</span>
+          <div className="flex items-center gap-3 text-xs">
+            <span className="bg-[#f5a524]/10 text-[#f5a524] border border-[#f5a524]/30 px-2.5 py-0.5 rounded-md font-mono text-[11px]">
+              AUTH: ROOT
+            </span>
             <button
               type="button"
               onClick={() => {
                 soundEngine.playKeyClick();
                 onClose();
               }}
-              className="bg-black text-white hover:bg-white hover:text-black px-2 py-0.5 transition-colors cursor-pointer flex items-center gap-1 font-mono uppercase"
-              title="Close Emergency Mode (Esc)"
+              className="bg-[#121723] hover:bg-[#222838] text-[#9ca3af] hover:text-[#f5f5f7] border border-[#ffffff1a] px-2.5 py-1 rounded-lg transition-colors cursor-pointer flex items-center gap-1 font-mono text-xs"
+              title="Close Inspector (Esc)"
             >
               <X className="w-3.5 h-3.5" />
-              <span>[ESC]</span>
+              <span>ESC</span>
             </button>
           </div>
         </div>
 
         {/* Diagnostic Subheader Info */}
-        <div className="bg-[#121812] border-b border-[#4ade80]/30 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#4ade80]">
+        <div className="bg-[#0e131d] border-b border-[#ffffff1a] px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs text-[#9ca3af]">
           <div className="flex items-center gap-4 flex-wrap">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#ef4444] animate-ping" />
-              <strong className="text-[#ef4444]">ALERT:</strong> 5-CLICK OVERRIDE ACTIVE
+            <span className="flex items-center gap-1.5 text-[#f5a524]">
+              <span className="w-2 h-2 rounded-full bg-[#f5a524] animate-ping" />
+              <strong className="font-semibold">INSPECTOR ACTIVE</strong>
             </span>
-            <span className="opacity-70">UPTIME: {sessionUptime}s</span>
-            <span className="opacity-70">SCREEN: 0{currentScreen}</span>
-            <span className="opacity-70">AUDIO: {soundEnabled ? 'ACTIVE' : 'MUTED'}</span>
-            <span className="opacity-70">BURSTS: {corruptionCount}</span>
+            <span>UPTIME: <span className="text-[#f5f5f7]">{sessionUptime}s</span></span>
+            <span>SCREEN: <span className="text-[#f5f5f7]">0{currentScreen}</span></span>
+            <span>AUDIO: <span className={soundEnabled ? 'text-[#4ade80]' : 'text-[#f43f5e]'}>{soundEnabled ? 'ACTIVE' : 'MUTED'}</span></span>
+            <span>BURSTS: <span className="text-[#f5f5f7]">{corruptionCount}</span></span>
           </div>
 
           {/* Quick Actions */}
@@ -321,39 +327,39 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
                 soundEngine.playSelect();
                 onTriggerGlitch();
               }}
-              className="px-2 py-1 bg-[#ef4444]/20 border border-[#ef4444] text-[#ef4444] hover:bg-[#ef4444] hover:text-black text-[10px] uppercase font-bold transition-all cursor-pointer flex items-center gap-1"
+              className="px-2.5 py-1 bg-[#f43f5e]/10 border border-[#f43f5e]/30 text-[#f43f5e] hover:bg-[#f43f5e]/20 text-[11px] rounded-lg transition-all cursor-pointer flex items-center gap-1"
             >
               <Activity className="w-3 h-3" />
-              <span>TEST GLITCH</span>
+              <span>TRIGGER GLITCH</span>
             </button>
 
             <button
               type="button"
               onClick={handleCopyState}
-              className="px-2 py-1 bg-[#4ade80]/20 border border-[#4ade80] text-[#4ade80] hover:bg-[#4ade80] hover:text-black text-[10px] uppercase font-bold transition-all cursor-pointer flex items-center gap-1"
+              className="px-2.5 py-1 bg-[#1a1f2e] border border-[#ffffff1a] text-[#f5f5f7] hover:bg-[#222838] text-[11px] rounded-lg transition-all cursor-pointer flex items-center gap-1"
             >
-              {copiedState ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3 text-[#4ade80]" />}
-              <span>{copiedState ? 'COPIED!' : 'COPY JSON'}</span>
+              {copiedState ? <Check className="w-3 h-3 text-[#4ade80]" /> : <Copy className="w-3 h-3 text-[#9ca3af]" />}
+              <span>{copiedState ? 'COPIED!' : 'COPY STATE JSON'}</span>
             </button>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-[#4ade80]/30 bg-[#080c08] px-4 pt-2 gap-2 overflow-x-auto">
+        <div className="flex border-b border-[#ffffff1a] bg-[#0a0e17] px-4 pt-2 gap-2 overflow-x-auto">
           <button
             type="button"
             onClick={() => {
               soundEngine.playKeyClick();
               setActiveTab('logs');
             }}
-            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all cursor-pointer flex items-center gap-1.5 border-t border-x ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-t-lg transition-all cursor-pointer flex items-center gap-1.5 border-t border-x ${
               activeTab === 'logs'
-                ? 'bg-[#121812] border-[#4ade80] text-[#4ade80] shadow-[0_-2px_6px_rgba(74,222,128,0.2)]'
-                : 'border-transparent text-[#4ade80]/50 hover:text-[#4ade80]'
+                ? 'bg-[#121723] border-[#ffffff1a] text-[#f5a524]'
+                : 'border-transparent text-[#9ca3af] hover:text-[#f5f5f7]'
             }`}
           >
             <Terminal className="w-3.5 h-3.5" />
-            <span>RAW CONSOLE LOGS ({logs.length})</span>
+            <span>CONSOLE LOGS ({logs.length})</span>
           </button>
 
           <button
@@ -362,10 +368,10 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
               soundEngine.playKeyClick();
               setActiveTab('state');
             }}
-            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all cursor-pointer flex items-center gap-1.5 border-t border-x ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-t-lg transition-all cursor-pointer flex items-center gap-1.5 border-t border-x ${
               activeTab === 'state'
-                ? 'bg-[#121812] border-[#4ade80] text-[#4ade80] shadow-[0_-2px_6px_rgba(74,222,128,0.2)]'
-                : 'border-transparent text-[#4ade80]/50 hover:text-[#4ade80]'
+                ? 'bg-[#121723] border-[#ffffff1a] text-[#f5a524]'
+                : 'border-transparent text-[#9ca3af] hover:text-[#f5f5f7]'
             }`}
           >
             <Cpu className="w-3.5 h-3.5" />
@@ -378,14 +384,14 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
               soundEngine.playKeyClick();
               setActiveTab('hardware');
             }}
-            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all cursor-pointer flex items-center gap-1.5 border-t border-x ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-t-lg transition-all cursor-pointer flex items-center gap-1.5 border-t border-x ${
               activeTab === 'hardware'
-                ? 'bg-[#121812] border-[#4ade80] text-[#4ade80] shadow-[0_-2px_6px_rgba(74,222,128,0.2)]'
-                : 'border-transparent text-[#4ade80]/50 hover:text-[#4ade80]'
+                ? 'bg-[#121723] border-[#ffffff1a] text-[#f5a524]'
+                : 'border-transparent text-[#9ca3af] hover:text-[#f5f5f7]'
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
-            <span>HARDWARE & TELEMETRY</span>
+            <span>TELEMETRY & HARDWARE</span>
           </button>
 
           <button
@@ -395,10 +401,10 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
               setActiveTab('console');
               setTimeout(() => commandInputRef.current?.focus(), 50);
             }}
-            className={`px-3 py-1.5 text-xs font-bold uppercase transition-all cursor-pointer flex items-center gap-1.5 border-t border-x ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-t-lg transition-all cursor-pointer flex items-center gap-1.5 border-t border-x ${
               activeTab === 'console'
-                ? 'bg-[#121812] border-[#4ade80] text-[#4ade80] shadow-[0_-2px_6px_rgba(74,222,128,0.2)]'
-                : 'border-transparent text-[#4ade80]/50 hover:text-[#4ade80]'
+                ? 'bg-[#121723] border-[#ffffff1a] text-[#f5a524]'
+                : 'border-transparent text-[#9ca3af] hover:text-[#f5f5f7]'
             }`}
           >
             <Play className="w-3.5 h-3.5" />
@@ -407,15 +413,15 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
         </div>
 
         {/* Tab Body Contents */}
-        <div className="flex-1 p-4 overflow-y-auto bg-[#080b08] font-mono text-xs">
+        <div className="flex-1 p-4 overflow-y-auto bg-[#0a0e17] font-mono text-xs">
           
           {/* TAB 1: RAW CONSOLE LOGS */}
           {activeTab === 'logs' && (
             <div className="flex flex-col h-full gap-3">
               {/* Log Level Filters */}
-              <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#4ade80]/20 flex-wrap">
+              <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#ffffff1a] flex-wrap">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] opacity-60">FILTER LEVEL:</span>
+                  <span className="text-[10px] text-[#9ca3af]">FILTER:</span>
                   {['ALL', 'SYS', 'AUTH', 'INFO', 'WARN', 'DEBUG'].map((lvl) => (
                     <button
                       key={lvl}
@@ -424,10 +430,10 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
                         soundEngine.playKeyClick();
                         setFilterLevel(lvl);
                       }}
-                      className={`px-2 py-0.5 text-[10px] uppercase font-bold transition-all cursor-pointer ${
+                      className={`px-2 py-0.5 text-[10px] uppercase font-mono rounded transition-all cursor-pointer ${
                         filterLevel === lvl
-                          ? 'bg-[#4ade80] text-black'
-                          : 'border border-[#4ade80]/30 text-[#4ade80]/60 hover:text-[#4ade80]'
+                          ? 'bg-[#f5a524] text-[#0a0e17] font-bold'
+                          : 'border border-[#ffffff1a] text-[#9ca3af] hover:text-[#f5f5f7]'
                       }`}
                     >
                       {lvl}
@@ -442,35 +448,35 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
                       soundEngine.playKeyClick();
                       setLogs([]);
                     }}
-                    className="text-[10px] opacity-60 hover:opacity-100 flex items-center gap-1 hover:text-[#ef4444] transition-colors cursor-pointer"
+                    className="text-[11px] text-[#9ca3af] hover:text-[#f43f5e] flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-3 h-3" />
-                    <span>CLEAR LOGS</span>
+                    <span>Clear</span>
                   </button>
                 </div>
               </div>
 
               {/* Log Stream Terminal */}
-              <div className="flex-1 bg-black/60 border border-[#4ade80]/20 p-3 rounded overflow-y-auto space-y-1.5 select-text font-mono text-[11px] leading-relaxed">
+              <div className="flex-1 bg-[#121723] border border-[#ffffff1a] p-3.5 rounded-xl overflow-y-auto space-y-1.5 select-text font-mono text-[11px] leading-relaxed">
                 {filteredLogs.length === 0 ? (
-                  <div className="text-center py-8 opacity-40">No logs found matching filter [{filterLevel}].</div>
+                  <div className="text-center py-8 text-[#9ca3af]/50">No logs found matching filter [{filterLevel}].</div>
                 ) : (
                   filteredLogs.map((log) => {
                     const levelColors: Record<string, string> = {
-                      SYS: 'text-[#4ade80] bg-[#4ade80]/10 border-[#4ade80]/40',
-                      AUTH: 'text-[#ef4444] bg-[#ef4444]/15 border-[#ef4444]/40 font-bold',
-                      INFO: 'text-[#38bdf8] bg-[#38bdf8]/10 border-[#38bdf8]/40',
-                      WARN: 'text-[#fbbf24] bg-[#fbbf24]/10 border-[#fbbf24]/40',
-                      DEBUG: 'text-[#c084fc] bg-[#c084fc]/10 border-[#c084fc]/40',
+                      SYS: 'text-[#f5a524] bg-[#f5a524]/10 border-[#f5a524]/30',
+                      AUTH: 'text-[#4ade80] bg-[#4ade80]/10 border-[#4ade80]/30',
+                      INFO: 'text-[#38bdf8] bg-[#38bdf8]/10 border-[#38bdf8]/30',
+                      WARN: 'text-[#fbbf24] bg-[#fbbf24]/10 border-[#fbbf24]/30',
+                      DEBUG: 'text-[#c084fc] bg-[#c084fc]/10 border-[#c084fc]/30',
                     };
                     return (
-                      <div key={log.id} className="flex items-start gap-2 hover:bg-white/5 px-1 py-0.5 rounded transition-colors">
+                      <div key={log.id} className="flex items-start gap-2 hover:bg-white/5 px-2 py-1 rounded-md transition-colors">
                         <span className="text-gray-500 shrink-0 select-none">[{log.timestamp}]</span>
-                        <span className={`px-1.5 py-0.2 text-[9px] uppercase border rounded-xs shrink-0 select-none ${levelColors[log.level]}`}>
+                        <span className={`px-1.5 py-0.2 text-[9px] uppercase border rounded shrink-0 select-none ${levelColors[log.level]}`}>
                           {log.level}
                         </span>
-                        <span className="text-[#fbbf24] shrink-0 font-semibold select-none">&lt;{log.source}&gt;</span>
-                        <span className="text-gray-300 break-all">{log.message}</span>
+                        <span className="text-[#f5a524] shrink-0 font-medium select-none">&lt;{log.source}&gt;</span>
+                        <span className="text-[#f5f5f7] break-all">{log.message}</span>
                       </div>
                     );
                   })
@@ -483,11 +489,11 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
           {/* TAB 2: RAW STATE TREE (JSON) */}
           {activeTab === 'state' && (
             <div className="flex flex-col h-full gap-2">
-              <div className="flex items-center justify-between text-[11px] text-[#4ade80]/70 pb-1">
-                <span>RAW APPLICATION STATE TREE // LIVE RUNTIME HEAP DUMP</span>
+              <div className="flex items-center justify-between text-[11px] text-[#9ca3af] pb-1">
+                <span>APPLICATION HEAP SNAPSHOT</span>
                 <span>SCHEMA: PROTOCOL_CELEBRATION_V22</span>
               </div>
-              <pre className="flex-1 bg-black/70 border border-[#4ade80]/30 p-4 rounded text-[11px] text-[#4ade80] overflow-auto select-all leading-relaxed">
+              <pre className="flex-1 bg-[#121723] border border-[#ffffff1a] p-4 rounded-xl text-[11px] text-[#4ade80] overflow-auto select-all leading-relaxed">
                 {JSON.stringify(rawAppState, null, 2)}
               </pre>
             </div>
@@ -496,66 +502,66 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
           {/* TAB 3: HARDWARE & TELEMETRY */}
           {activeTab === 'hardware' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-black/50 border border-[#4ade80]/30 p-4 rounded space-y-3">
-                <div className="flex items-center gap-2 text-sm font-bold border-b border-[#4ade80]/30 pb-2 text-[#4ade80]">
-                  <Cpu className="w-4 h-4" />
-                  <span>CORE RUNTIME & PERFORMANCE</span>
+              <div className="bg-[#121723] border border-[#ffffff1a] p-4 rounded-xl space-y-3">
+                <div className="flex items-center gap-2 text-sm font-semibold border-b border-[#ffffff1a] pb-2 text-[#f5f5f7]">
+                  <Cpu className="w-4 h-4 text-[#f5a524]" />
+                  <span>Core Runtime & Performance</span>
                 </div>
                 <div className="space-y-2 text-xs">
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">TARGET_RECIPIENT:</span>
-                    <span className="font-bold text-white">{birthdayConfig.recipientName}</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">TARGET_RECIPIENT:</span>
+                    <span className="font-semibold text-white">{birthdayConfig.recipientName}</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">UNLOCKED_LEVEL:</span>
-                    <span className="font-bold text-[#fbbf24]">LEVEL {birthdayConfig.age || 22}</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">UNLOCKED_LEVEL:</span>
+                    <span className="font-semibold text-[#f5a524]">LEVEL {birthdayConfig.age || 22}</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">CLIENT_VIEWPORT:</span>
-                    <span className="font-bold">{clientDimensions.width} x {clientDimensions.height} px</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">CLIENT_VIEWPORT:</span>
+                    <span className="font-medium text-[#f5f5f7]">{clientDimensions.width} x {clientDimensions.height} px</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">DEVICE_PIXEL_RATIO:</span>
-                    <span className="font-bold">{typeof window !== 'undefined' ? window.devicePixelRatio : 1}x</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">DEVICE_PIXEL_RATIO:</span>
+                    <span className="font-medium text-[#f5f5f7]">{typeof window !== 'undefined' ? window.devicePixelRatio : 1}x</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">HEAP_MEMORY_USAGE:</span>
-                    <span className="font-bold text-[#38bdf8]">{memoryMetric.usedHeap} / {memoryMetric.heapLimit}</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">HEAP_MEMORY_USAGE:</span>
+                    <span className="font-medium text-[#38bdf8]">{memoryMetric.usedHeap} / {memoryMetric.heapLimit}</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">TARGET_REFRESH_RATE:</span>
-                    <span className="font-bold text-[#4ade80]">60.0 FPS</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">TARGET_REFRESH_RATE:</span>
+                    <span className="font-medium text-[#4ade80]">60.0 FPS</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-black/50 border border-[#4ade80]/30 p-4 rounded space-y-3">
-                <div className="flex items-center gap-2 text-sm font-bold border-b border-[#4ade80]/30 pb-2 text-[#4ade80]">
-                  <Activity className="w-4 h-4" />
-                  <span>SYNTHESIZER & PERIPHERALS</span>
+              <div className="bg-[#121723] border border-[#ffffff1a] p-4 rounded-xl space-y-3">
+                <div className="flex items-center gap-2 text-sm font-semibold border-b border-[#ffffff1a] pb-2 text-[#f5f5f7]">
+                  <Activity className="w-4 h-4 text-[#f5a524]" />
+                  <span>Synthesizer & Peripherals</span>
                 </div>
                 <div className="space-y-2 text-xs">
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">WEB_AUDIO_ENGINE:</span>
-                    <span className={`font-bold ${soundEnabled ? 'text-[#4ade80]' : 'text-[#ef4444]'}`}>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">WEB_AUDIO_ENGINE:</span>
+                    <span className={`font-semibold ${soundEnabled ? 'text-[#4ade80]' : 'text-[#f43f5e]'}`}>
                       {soundEnabled ? 'ONLINE // 44.1 kHz' : 'OFFLINE // MUTED'}
                     </span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">CORRUPTION_BURSTS:</span>
-                    <span className="font-bold text-[#ef4444]">{corruptionCount} triggers logged</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">CORRUPTION_BURSTS:</span>
+                    <span className="font-semibold text-[#f43f5e]">{corruptionCount} triggers logged</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">ACTIVE_CRT_SHADERS:</span>
-                    <span className="font-bold text-[#4ade80]">SCANLINES + VIGNETTE + FLICKER</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">THEME_ENGINE:</span>
+                    <span className="font-medium text-[#f5a524]">DEV-TOOL DARK (AMBER)</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">TOTAL_PHOTO_MEMORIES:</span>
-                    <span className="font-bold">{birthdayConfig.totalMemoriesCount} ENTRIES LOADED</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">PHOTO_ARCHIVE:</span>
+                    <span className="font-medium text-[#f5f5f7]">{birthdayConfig.totalMemoriesCount} ENTRIES LOADED</span>
                   </div>
-                  <div className="flex justify-between border-b border-[#4ade80]/10 pb-1">
-                    <span className="opacity-60">USER_AGENT:</span>
-                    <span className="font-mono text-[10px] break-all opacity-80">{typeof navigator !== 'undefined' ? navigator.userAgent.substring(0, 45) : 'Antigravity'}...</span>
+                  <div className="flex justify-between border-b border-white/5 pb-1.5">
+                    <span className="text-[#9ca3af]">USER_AGENT:</span>
+                    <span className="font-mono text-[10px] break-all text-[#9ca3af]">{typeof navigator !== 'undefined' ? navigator.userAgent.substring(0, 45) : 'Antigravity'}...</span>
                   </div>
                 </div>
               </div>
@@ -565,34 +571,34 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
           {/* TAB 4: INTERACTIVE CLI COMMAND RUNNER */}
           {activeTab === 'console' && (
             <div className="flex flex-col h-full gap-3">
-              <div className="flex-1 bg-black/80 border border-[#4ade80]/30 p-3 rounded font-mono text-xs overflow-y-auto space-y-2">
+              <div className="flex-1 bg-[#121723] border border-[#ffffff1a] p-4 rounded-xl font-mono text-xs overflow-y-auto space-y-2">
                 <div className="text-[#38bdf8]">
-                  NEKO.EXE Diagnostic Terminal Shell v22.0.0 [x86_64-quantum]<br />
-                  Type <span className="text-[#fbbf24] font-bold">help</span> to view available system commands.
+                  NEKO.EXE DevTools Shell v22.0.0 [x86_64]<br />
+                  Type <span className="text-[#f5a524] font-bold">help</span> to view available system commands.
                 </div>
                 {commandHistory.map((line, idx) => (
-                  <div key={idx} className={`whitespace-pre-wrap ${line.startsWith('>') ? 'text-[#fbbf24] font-bold' : 'text-gray-300'}`}>
+                  <div key={idx} className={`whitespace-pre-wrap ${line.startsWith('>') ? 'text-[#f5a524] font-bold' : 'text-[#f5f5f7]'}`}>
                     {line}
                   </div>
                 ))}
               </div>
 
               <form onSubmit={handleExecuteCommand} className="flex gap-2">
-                <div className="flex-1 flex items-center bg-black border border-[#4ade80] px-3 py-2 text-xs">
-                  <span className="text-[#ef4444] font-bold mr-2 select-none">root@neko-os:~#</span>
+                <div className="flex-1 flex items-center bg-[#121723] border border-[#ffffff1a] focus-within:border-[#f5a524] px-3.5 py-2.5 rounded-xl text-xs transition-colors">
+                  <span className="text-[#f5a524] font-mono font-semibold mr-2 select-none">root@neko-dev:~#</span>
                   <input
                     ref={commandInputRef}
                     type="text"
                     value={commandInput}
                     onChange={(e) => setCommandInput(e.target.value)}
                     placeholder="Enter command (e.g. status, glitch, jump 6, help)..."
-                    className="flex-1 bg-transparent text-[#4ade80] focus:outline-hidden font-mono text-xs"
+                    className="flex-1 bg-transparent text-[#f5f5f7] focus:outline-hidden font-mono text-xs"
                     autoFocus
                   />
                 </div>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#4ade80] text-black font-bold uppercase text-xs hover:bg-white transition-colors cursor-pointer"
+                  className="px-5 py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-xl transition-all cursor-pointer"
                 >
                   EXECUTE
                 </button>
@@ -603,9 +609,9 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
         </div>
 
         {/* Terminal Footer */}
-        <div className="bg-[#121812] border-t border-[#4ade80]/30 px-4 py-2 flex items-center justify-between text-[10px] text-[#4ade80]/60">
-          <span>PRESS [ESC] OR CLICK CLOSE TO RETURN TO CELEBRATION</span>
-          <span>SECURITY LEVEL: 0 // READ-WRITE DIAGNOSTIC</span>
+        <div className="bg-[#1a1f2e] border-t border-[#ffffff1a] px-4 py-2.5 flex items-center justify-between text-[11px] text-[#9ca3af]">
+          <span>PRESS [ESC] OR CLICK CLOSE TO RETURN</span>
+          <span>SECURITY LEVEL: 0 // READ-WRITE DEVTOOLS</span>
         </div>
 
       </div>

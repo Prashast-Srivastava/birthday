@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { ScreenIndex, AnimeItem } from '../../types';
 import { animeArchiveData, birthdayConfig } from '../../birthdayData';
 import { soundEngine } from '../../utils/audio';
+import { screenContainerVariants, cardVariants, itemVariants } from '../../utils/animations';
 
 interface Screen03AnimeProps {
   onNavigate: (index: ScreenIndex) => void;
@@ -47,164 +49,172 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none">
+    <motion.div
+      variants={screenContainerVariants}
+      initial="hidden"
+      animate="visible"
+      className="w-full max-w-6xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none"
+    >
       
       {/* Screen Header Banner */}
-      <div className="flex flex-col gap-3 mb-5 bg-[#ffd000] border-3 border-[#16192e] px-4 py-3 brutal-shadow">
+      <motion.div variants={cardVariants} className="flex flex-col gap-3 mb-5">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <div className="text-[10px] font-pixel font-bold text-[#16192e] uppercase flex items-center gap-2 mb-0.5">
-              <span className="w-2.5 h-2.5 bg-[#f43f5e] border border-[#16192e] inline-block" />
+            <div className="dev-eyebrow-pill mb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#f5a524]" />
               <span>SECTOR 03 // ANIME ARCHIVE VAULT</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-pixel font-black text-[#16192e] uppercase">
-              SHARED ANIME MASTERPIECES
+            <h2 className="text-2xl sm:text-3xl font-sans font-bold text-[#f5f5f7] tracking-tight">
+              Shared Anime <span className="text-[#f5a524]">Masterpieces</span>
             </h2>
           </div>
-          <div className="px-2.5 py-1 bg-[#fffdf0] border-2 border-[#16192e] text-[10px] font-pixel font-bold text-[#16192e]">
+          <span className="dev-status-pill">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
             5 SHOWS UNLOCKED
-          </div>
+          </span>
         </div>
 
-        {/* Filter Tags */}
-        <div className="flex items-center gap-2 flex-wrap pt-2 border-t-2 border-[#16192e]/20">
-          <span className="text-[9px] font-pixel font-bold text-[#16192e] uppercase mr-1">
-            FILTERS:
+        {/* Filter Tags (Rounded Pill Badges) */}
+        <div className="flex items-center gap-2 flex-wrap pt-2">
+          <span className="text-xs font-mono text-[#9ca3af] mr-1 uppercase">
+            Filters:
           </span>
           {SHOW_TAGS.map(tag => (
             <button
               key={tag.id}
               type="button"
               onClick={() => handleFilterClick(tag)}
-              className={`px-2.5 py-1 text-[9px] font-pixel font-bold uppercase transition-all cursor-pointer border-2 border-[#16192e] ${
+              className={`px-3 py-1 text-xs font-medium rounded-full transition-all cursor-pointer ${
                 activeFilterId === tag.id
-                  ? 'bg-[#00f0ff] text-[#16192e] translate-x-[-1px] translate-y-[-1px] shadow-[3px_3px_0px_#16192e]'
-                  : 'bg-[#fffdf0] text-[#16192e] hover:bg-[#fff9d9] shadow-[2px_2px_0px_#16192e]'
+                  ? 'bg-[#f5a524] text-[#0a0e17] font-semibold shadow-sm'
+                  : 'bg-[#121723] hover:bg-[#1a1f2e] text-[#9ca3af] hover:text-[#f5f5f7] border border-[#ffffff1a]'
               }`}
             >
               <span>{tag.shortLabel}</span>
             </button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Content Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 my-2">
         
-        {/* Left Column: Anime Cards with "Press into Page" Hover Interaction */}
-        <div className="lg:col-span-7 space-y-3.5">
+        {/* Left Column: Anime Cards */}
+        <motion.div variants={cardVariants} className="lg:col-span-7 space-y-3.5">
           {filteredAnime.map((item) => {
             const isSelected = selectedAnime.id === item.id;
             return (
-              <div
+              <motion.div
                 key={item.id}
+                variants={itemVariants}
                 onClick={() => handleSelectAnime(item)}
-                className={`p-4 border-3 border-[#16192e] transition-all duration-100 cursor-pointer relative select-none ${
+                className={`p-4 rounded-xl border transition-all cursor-pointer relative select-none ${
                   isSelected
-                    ? 'bg-[#00f0ff] translate-x-[3px] translate-y-[3px] shadow-[2px_2px_0px_#16192e]'
-                    : 'bg-[#fffdf0] shadow-[5px_5px_0px_#16192e] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0px_#16192e]'
+                    ? 'dev-card bg-[#1a1f2e] border-[#f5a524]/60 shadow-lg'
+                    : 'dev-card bg-[#121723]/90 hover:bg-[#1a1f2e]/70 border-[#ffffff1a] hover:border-[#ffffff2a] shadow-md'
                 }`}
               >
                 <div className="flex justify-between items-start flex-wrap gap-2">
                   <div>
-                    <div className="text-[9px] font-pixel font-bold text-[#16192e] uppercase mb-1">
+                    <div className="text-[11px] font-mono font-medium text-[#f5a524] uppercase mb-1">
                       {item.genre}
                     </div>
-                    <h3 className="text-sm sm:text-base font-pixel font-bold text-[#16192e] tracking-wide">
+                    <h3 className="text-base font-semibold text-[#f5f5f7] tracking-tight">
                       {item.title}
                     </h3>
                     {item.japaneseTitle && (
-                      <div className="text-xs font-mono font-bold opacity-70 text-[#16192e] mt-0.5">
+                      <div className="text-xs font-mono text-[#9ca3af] mt-0.5">
                         {item.japaneseTitle}
                       </div>
                     )}
                   </div>
-                  <div className="px-2 py-0.5 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] text-[9px] font-pixel font-bold">
+                  <div className="px-2.5 py-0.5 bg-white/5 border border-[#ffffff1a] rounded-full text-[#f5f5f7] text-xs font-mono">
                     {item.rating}
                   </div>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t-2 border-[#16192e]/20 flex items-center justify-between text-xs font-mono">
-                  <span className="italic font-bold text-[#16192e] truncate max-w-[75%]">
+                <div className="mt-3.5 pt-2.5 border-t border-[#ffffff0f] flex items-center justify-between text-xs font-mono">
+                  <span className="italic text-[#9ca3af] truncate max-w-[75%]">
                     "{item.quote}"
                   </span>
-                  <span className="text-[9px] font-pixel font-bold text-[#16192e]">
-                    {isSelected ? '[INSPECTING]' : 'SELECT ▶'}
+                  <span className={`text-[11px] font-medium ${isSelected ? 'text-[#f5a524]' : 'text-[#9ca3af]'}`}>
+                    {isSelected ? '● INSPECTING' : 'SELECT ▶'}
                   </span>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Right Column: Terminal Quote & Memory Inspector */}
-        <div className="lg:col-span-5 bg-[#fffdf0] border-4 border-[#16192e] p-5 flex flex-col justify-between brutal-shadow-lg relative">
+        <motion.div variants={cardVariants} className="lg:col-span-5 dev-card bg-[#121723]/90 border border-[#ffffff1a] rounded-xl p-5 sm:p-6 flex flex-col justify-between shadow-xl relative">
           <div>
-            <div className="border-b-3 border-[#16192e] pb-2.5 mb-4 flex items-center justify-between">
-              <span className="text-xs font-pixel font-bold text-[#16192e] uppercase flex items-center gap-2">
-                <span className="w-2.5 h-2.5 bg-[#ffd000] border border-[#16192e] inline-block" />
-                DECODER // {selectedAnime.title}
+            <div className="border-b border-[#ffffff1a] pb-3 mb-4 flex items-center justify-between">
+              <span className="text-xs font-mono font-medium text-[#f5f5f7] uppercase tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#f5a524]" />
+                Decoder // {selectedAnime.title}
               </span>
-              <span className="text-[9px] font-pixel bg-[#22c55e] text-[#16192e] border border-[#16192e] px-1.5 py-0.5 font-bold">
+              <span className="dev-status-pill">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
                 ACTIVE
               </span>
             </div>
 
             {/* Quote Box */}
-            <div className="p-4 bg-[#ffd000] border-3 border-[#16192e] brutal-shadow-sm my-3">
-              <div className="text-[9px] font-pixel font-bold text-[#16192e] uppercase tracking-wider mb-2">
-                ICONIC DECODED QUOTE:
+            <div className="p-4 bg-[#1a1f2e] border border-[#ffffff1a] rounded-xl my-4">
+              <div className="text-[11px] font-mono font-semibold text-[#f5a524] uppercase tracking-wider mb-2">
+                Iconic Decoded Quote:
               </div>
-              <blockquote className="text-xs sm:text-sm font-pixel font-bold text-[#16192e] leading-relaxed">
+              <blockquote className="text-sm font-sans italic text-[#f5f5f7] leading-relaxed">
                 "{selectedAnime.quote}"
               </blockquote>
             </div>
 
             {/* Telemetry Breakdown */}
-            <div className="space-y-2.5 text-xs font-mono text-[#16192e] mt-4">
-              <div className="flex justify-between border-b-2 border-[#16192e]/20 pb-1.5">
-                <span className="font-bold opacity-60">GENRE:</span>
-                <span className="font-bold">{selectedAnime.genre}</span>
+            <div className="space-y-3 text-xs font-mono mt-4">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#ffffff0f]">
+                <span className="text-[#9ca3af]">GENRE:</span>
+                <span className="font-medium text-[#f5f5f7]">{selectedAnime.genre}</span>
               </div>
-              <div className="flex justify-between border-b-2 border-[#16192e]/20 pb-1.5">
-                <span className="font-bold opacity-60">TIER RATING:</span>
-                <span className="font-pixel text-[10px] font-bold text-[#16192e] bg-[#00f0ff] px-1 border border-[#16192e]">
+              <div className="flex justify-between items-center py-1.5 border-b border-[#ffffff0f]">
+                <span className="text-[#9ca3af]">TIER RATING:</span>
+                <span className="font-mono text-xs text-[#f5a524] bg-[#f5a524]/10 border border-[#f5a524]/30 px-2 py-0.5 rounded">
                   {selectedAnime.rating}
                 </span>
               </div>
-              <div className="flex justify-between border-b-2 border-[#16192e]/20 pb-1.5">
-                <span className="font-bold opacity-60">RECIPIENT RATING:</span>
-                <span className="font-bold">10 / 10 MUST-WATCH</span>
+              <div className="flex justify-between items-center py-1.5 border-b border-[#ffffff0f]">
+                <span className="text-[#9ca3af]">RECIPIENT RATING:</span>
+                <span className="font-medium text-[#f5f5f7]">10 / 10 MUST-WATCH</span>
               </div>
-              <div className="flex justify-between">
-                <span className="font-bold opacity-60">CO-OP WATCH STATUS:</span>
-                <span className="font-bold text-[#22c55e]">COMPLETED // ARCHIVED</span>
+              <div className="flex justify-between items-center py-1.5">
+                <span className="text-[#9ca3af]">CO-OP WATCH STATUS:</span>
+                <span className="font-medium text-[#4ade80]">COMPLETED // ARCHIVED</span>
               </div>
             </div>
 
-            <div className="mt-5 p-3 bg-[#ff5e97] border-3 border-[#16192e] brutal-shadow-sm text-xs font-mono text-[#16192e] leading-relaxed">
-              <span className="font-pixel font-bold block mb-1 text-[10px] text-[#16192e]">CO-OP LOG NOTE:</span>
-              Countless marathons and endless theories shared with <strong>{birthdayConfig.recipientName}</strong>. These shows define our co-op journey!
+            <div className="mt-5 p-3.5 bg-[#1a1f2e] border border-[#ffffff1a] rounded-lg text-xs leading-relaxed text-[#9ca3af]">
+              <span className="font-mono font-semibold text-[#f5a524] block mb-1 text-[11px] uppercase tracking-wider">CO-OP LOG NOTE:</span>
+              Countless marathons and endless theories shared with <strong className="text-[#f5f5f7]">{birthdayConfig.recipientName}</strong>. These shows define our co-op journey!
             </div>
           </div>
 
-          <div className="mt-5 pt-3 border-t-2 border-[#16192e]/20 flex justify-between items-center text-[10px] font-pixel text-[#16192e]">
+          <div className="mt-6 pt-3 border-t border-[#ffffff1a] flex justify-between items-center text-xs font-mono text-[#9ca3af]">
             <span>CIPHER: 256-BIT NEKO</span>
             <span>SLOT 03/07</span>
           </div>
-        </div>
+        </motion.div>
 
       </div>
 
       {/* Navigation Footer Controls */}
-      <div className="mt-5 flex items-center justify-between gap-4 font-mono">
+      <motion.div variants={cardVariants} className="mt-6 flex items-center justify-between gap-4 font-mono">
         <button
           type="button"
           onClick={() => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.STATS);
           }}
-          className="px-4 py-2.5 bg-[#fffdf0] border-3 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn cursor-pointer"
+          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
         >
           ◀ PREV: STATS
         </button>
@@ -215,7 +225,7 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.HERO);
           }}
-          className="px-4 py-2.5 bg-[#ffd000] border-3 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn cursor-pointer"
+          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#9ca3af] hover:text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
         >
           [ HERO HUB ]
         </button>
@@ -226,12 +236,12 @@ export const Screen03_Anime: React.FC<Screen03AnimeProps> = ({ onNavigate }) => 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.MEMORIES);
           }}
-          className="px-5 py-2.5 bg-[#22c55e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn cursor-pointer"
+          className="px-5 py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] text-xs font-semibold rounded-xl shadow-lg shadow-[#f5a524]/20 transition-all cursor-pointer hover:scale-[1.01]"
         >
           NEXT: MEMORY DATABASE ▶
         </button>
-      </div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   );
 };

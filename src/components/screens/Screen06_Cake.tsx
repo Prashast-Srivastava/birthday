@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import { Sparkles, Wind, RotateCcw, ArrowRight, Heart, Flame, Gift, Check, Send } from 'lucide-react';
 import { ScreenIndex } from '../../types';
 import { birthdayConfig } from '../../birthdayData';
 import { soundEngine } from '../../utils/audio';
 import { PixelConfetti, ConfettiColor, ConfettiShape } from '../common/PixelConfetti';
+import { screenContainerVariants, cardVariants } from '../../utils/animations';
 
 interface Screen06CakeProps {
   onNavigate: (index: ScreenIndex) => void;
@@ -305,7 +307,12 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none">
+    <motion.div
+      variants={screenContainerVariants}
+      initial="hidden"
+      animate="visible"
+      className="relative w-full max-w-5xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none"
+    >
       
       {/* Hand-rolled Confetti Canvas Layer */}
       <canvas
@@ -349,27 +356,27 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
       )}
 
       {/* Screen Top Header */}
-      <div className="bg-[#ffd000] border-3 border-[#16192e] p-3 sm:p-4 mb-4 brutal-shadow relative">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-[#16192e]/20 pb-2.5">
+      <motion.div variants={cardVariants} className="dev-card bg-[#121723]/90 border border-[#ffffff1a] p-4 sm:p-5 mb-5 rounded-xl shadow-xl relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ffffff1a] pb-3">
           <div>
-            <div className="text-[10px] font-pixel font-bold text-[#16192e] uppercase flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 bg-[#f43f5e] border border-[#16192e] inline-block" />
-              SECTOR 06 // BIRTHDAY CAKE & CANDLE CEREMONY
+            <div className="dev-eyebrow-pill mb-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#f5a524]" />
+              <span>SECTOR 06 // BIRTHDAY CAKE & CANDLE CEREMONY</span>
             </div>
-            <h2 className="text-base sm:text-xl font-pixel font-black uppercase tracking-wide text-[#16192e] mt-0.5">
-              LEVEL 22 // WISH PROTOCOL ENGAGED
+            <h2 className="text-xl sm:text-2xl font-sans font-bold text-[#f5f5f7] tracking-tight">
+              Level 22 // <span className="text-[#f5a524]">Wish Protocol Engaged</span>
             </h2>
           </div>
 
-          <div className="flex items-center gap-2 font-pixel text-[10px]">
-            <div className="bg-[#fffdf0] px-2.5 py-1 border-2 border-[#16192e] flex items-center gap-1.5">
-              <span className="opacity-70 text-[#16192e]">RECIPIENT:</span>
-              <span className="text-[#16192e] font-bold">{birthdayConfig.recipientName} (LVL 22)</span>
+          <div className="flex items-center gap-2 font-mono text-xs">
+            <div className="bg-[#1a1f2e] px-3 py-1 border border-[#ffffff1a] rounded-lg flex items-center gap-1.5">
+              <span className="text-[#9ca3af]">RECIPIENT:</span>
+              <span className="text-[#f5f5f7] font-semibold">{birthdayConfig.recipientName} (LVL 22)</span>
             </div>
-            <div className={`px-2.5 py-1 border-2 border-[#16192e] font-bold flex items-center gap-1.5 transition-colors ${
+            <div className={`px-3 py-1 border rounded-lg font-semibold flex items-center gap-1.5 transition-colors ${
               allCandlesOut 
-                ? 'bg-[#22c55e] text-[#16192e]' 
-                : 'bg-[#ff5e97] text-[#16192e]'
+                ? 'bg-[#4ade80]/15 text-[#4ade80] border-[#4ade80]/30' 
+                : 'bg-[#f5a524]/15 text-[#f5a524] border-[#f5a524]/30'
             }`}>
               <Flame className="w-3.5 h-3.5" />
               <span>{candles.filter(c => c.lit).length} / {candles.length} LIT</span>
@@ -377,17 +384,17 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        <p className="mt-2 text-xs font-mono text-[#16192e]/80">
-          Make a wish, input your custom birthday intention into the matrix, and blow out the pixel candles to trigger the celebration protocol.
+        <p className="mt-2.5 text-xs font-mono text-[#9ca3af]">
+          Make a wish, input your custom birthday intention into the matrix, and blow out the candles to trigger the celebration protocol.
         </p>
-      </div>
+      </motion.div>
 
-      {/* Main Cake Stage Container: Styled as a Brutalist Birthday Gift Card Box */}
-      <div className="relative border-4 border-[#16192e] bg-[#fffdf0] p-6 sm:p-8 flex flex-col items-center justify-center min-h-[380px] brutal-shadow-lg overflow-hidden">
+      {/* Main Cake Stage Container */}
+      <motion.div variants={cardVariants} className="relative border border-[#ffffff1a] bg-[#0a0e17] p-6 sm:p-8 flex flex-col items-center justify-center min-h-[380px] rounded-2xl shadow-2xl overflow-hidden">
         
-        {/* Gift Box Ribbon Accent Bars */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-full bg-[#f43f5e]/15 border-x-2 border-[#16192e]/20 pointer-events-none" />
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-8 bg-[#f43f5e]/15 border-y-2 border-[#16192e]/20 pointer-events-none" />
+        {/* Subtle Background Guide Grid Lines */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-white/[0.04] pointer-events-none" />
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-[1px] bg-white/[0.04] pointer-events-none" />
 
         {/* 1. CANDLE ROW (ABOVE CAKE) */}
         <div className="relative z-20 flex items-end justify-center gap-3 sm:gap-6 mb-2">
@@ -401,113 +408,113 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
               {/* Animated Flame */}
               {candle.lit ? (
                 <div className="relative flex flex-col items-center mb-1 animate-pulse">
-                  {/* Outer Flame */}
-                  <div className="w-4 h-6 bg-[#ffd000] border-2 border-[#16192e] shadow-sm transform group-hover:scale-110 transition-transform" />
+                  {/* Outer Flame Glow */}
+                  <div className="w-4 h-6 bg-[#f5a524] rounded-full blur-[1px] shadow-[0_0_12px_#f5a524] transform group-hover:scale-110 transition-transform" />
                   {/* Inner Core */}
-                  <div className="absolute bottom-1 w-2 h-3 bg-[#f43f5e]" />
+                  <div className="absolute bottom-1 w-2 h-3 bg-white rounded-full" />
                 </div>
               ) : (
                 <div className="flex flex-col items-center mb-1 h-6 justify-end">
                   {/* Smoke Trail */}
-                  <div className="w-1.5 h-3 bg-[#16192e]/40 animate-ping mb-1" />
-                  <div className="w-1 h-2 bg-[#16192e]" />
+                  <div className="w-1.5 h-3 bg-white/20 animate-ping mb-1 rounded-full" />
+                  <div className="w-1 h-2 bg-[#9ca3af] rounded-full" />
                 </div>
               )}
 
               {/* Candle Wick */}
-              <div className="w-0.5 h-2 bg-[#16192e]" />
+              <div className="w-0.5 h-2 bg-white/40" />
 
-              {/* Candle Body (Pixel Stripes) */}
+              {/* Candle Body */}
               <div
-                className="w-4 sm:w-5 h-14 sm:h-16 border-2 border-[#16192e] flex flex-col justify-between p-0.5"
+                className="w-4 sm:w-5 h-14 sm:h-16 rounded-t-sm border border-white/20 shadow-md flex flex-col justify-between p-0.5"
                 style={{ backgroundColor: candle.color }}
               >
-                <div className="w-full h-1.5 bg-white" />
-                <div className="w-full h-1.5 bg-[#16192e]/30" />
-                <div className="w-full h-1.5 bg-white" />
-                <div className="w-full h-1.5 bg-[#16192e]/30" />
+                <div className="w-full h-1.5 bg-white/80 rounded-sm" />
+                <div className="w-full h-1.5 bg-black/25 rounded-sm" />
+                <div className="w-full h-1.5 bg-white/80 rounded-sm" />
+                <div className="w-full h-1.5 bg-black/25 rounded-sm" />
               </div>
 
               {/* Candle Tag / Meaning */}
-              <span className="mt-1.5 text-[8px] font-pixel text-[#16192e] text-center max-w-[65px] line-clamp-1 font-bold">
+              <span className="mt-1.5 text-[9px] font-mono text-[#9ca3af] text-center max-w-[70px] line-clamp-1 font-medium">
                 {candle.label}
               </span>
             </div>
           ))}
         </div>
 
-        {/* 2. THE MULTI-TIER RETRO PIXEL BIRTHDAY CAKE */}
+        {/* 2. THE MULTI-TIER BIRTHDAY CAKE */}
         <div className="relative z-10 flex flex-col items-center select-none">
           
           {/* Top Tier (Small) */}
-          <div className="w-48 sm:w-64 h-12 bg-[#ffd000] border-3 border-[#16192e] relative flex flex-col justify-between brutal-shadow-sm">
+          <div className="w-48 sm:w-64 h-12 bg-[#1a1f2e] border border-[#ffffff20] rounded-t-lg relative flex flex-col justify-between shadow-lg">
             {/* White Cream Drippings */}
-            <div className="w-full h-3.5 bg-white flex justify-between items-end px-1 border-b-2 border-[#16192e]">
+            <div className="w-full h-3.5 bg-white/90 flex justify-between items-end px-1 rounded-t-lg border-b border-[#ffffff20]">
               {[...Array(12)].map((_, i) => (
-                <div key={i} className={`w-2.5 bg-white border-x border-b border-[#16192e] ${i % 2 === 0 ? 'h-3.5' : 'h-2'}`} />
+                <div key={i} className={`w-2.5 bg-white/90 rounded-b-md ${i % 2 === 0 ? 'h-3.5' : 'h-2'}`} />
               ))}
             </div>
             {/* Strawberry Jewels */}
             <div className="flex justify-around items-center px-2 py-0.5">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-3 h-3 bg-[#f43f5e] border-2 border-[#16192e]" />
+                <div key={i} className="w-3 h-3 bg-[#f43f5e] rounded-full shadow-sm" />
               ))}
             </div>
             {/* Sponge Layer Separator */}
-            <div className="w-full h-2 bg-[#ff5e97] border-t-2 border-[#16192e]" />
+            <div className="w-full h-2 bg-[#f5a524]/60" />
           </div>
 
           {/* Middle Tier (Medium) */}
-          <div className="w-64 sm:w-80 h-14 bg-[#ffd000] border-3 border-[#16192e] relative flex flex-col justify-between brutal-shadow-sm -mt-0.5">
+          <div className="w-64 sm:w-80 h-14 bg-[#161c28] border border-[#ffffff20] rounded-t-lg relative flex flex-col justify-between shadow-lg -mt-0.5">
             {/* Cream Frosting Pattern */}
-            <div className="w-full h-3.5 bg-white flex justify-between items-end px-1 border-b-2 border-[#16192e]">
+            <div className="w-full h-3.5 bg-white/90 flex justify-between items-end px-1 rounded-t-lg border-b border-[#ffffff20]">
               {[...Array(16)].map((_, i) => (
-                <div key={i} className={`w-3 bg-white border-x border-b border-[#16192e] ${i % 2 === 0 ? 'h-4' : 'h-2.5'}`} />
+                <div key={i} className={`w-3 bg-white/90 rounded-b-md ${i % 2 === 0 ? 'h-4' : 'h-2.5'}`} />
               ))}
             </div>
             {/* LEVEL 22 Frosting Text Badge */}
-            <div className="text-center text-[10px] font-pixel font-bold text-[#16192e] tracking-wider bg-[#00f0ff] py-0.5 border-y-2 border-[#16192e]">
+            <div className="text-center text-xs font-mono font-bold text-[#f5a524] tracking-wider py-0.5 bg-[#121723]/90 border-y border-[#ffffff15]">
               ★ LEVEL 22 // HAPPY BIRTHDAY ★
             </div>
             {/* Sponge Layer Separator */}
-            <div className="w-full h-2.5 bg-[#f43f5e] border-t-2 border-[#16192e]" />
+            <div className="w-full h-2.5 bg-[#f5a524]/60" />
           </div>
 
           {/* Bottom Tier (Base) */}
-          <div className="w-80 sm:w-96 h-16 bg-[#ffd000] border-3 border-[#16192e] relative flex flex-col justify-between brutal-shadow-sm -mt-0.5">
+          <div className="w-80 sm:w-96 h-16 bg-[#121723] border border-[#ffffff20] rounded-t-lg relative flex flex-col justify-between shadow-lg -mt-0.5">
             {/* Cream Base */}
-            <div className="w-full h-3.5 bg-white flex justify-between items-end px-1 border-b-2 border-[#16192e]">
+            <div className="w-full h-3.5 bg-white/90 flex justify-between items-end px-1 rounded-t-lg border-b border-[#ffffff20]">
               {[...Array(20)].map((_, i) => (
-                <div key={i} className={`w-3 bg-white border-x border-b border-[#16192e] ${i % 2 === 0 ? 'h-4.5' : 'h-2.5'}`} />
+                <div key={i} className={`w-3 bg-white/90 rounded-b-md ${i % 2 === 0 ? 'h-4.5' : 'h-2.5'}`} />
               ))}
             </div>
-            {/* Decorative Pixel Accents */}
+            {/* Decorative Accents */}
             <div className="flex justify-around items-center px-4">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="w-3.5 h-3.5 bg-[#22c55e] border-2 border-[#16192e]" />
+                <div key={i} className="w-3 h-3 bg-[#4ade80] rounded-full shadow-sm" />
               ))}
             </div>
-            <div className="w-full h-3 bg-[#ff5e97] border-t-2 border-[#16192e]" />
+            <div className="w-full h-3 bg-[#f5a524]/60" />
           </div>
 
           {/* Cake Stand / Plate */}
-          <div className="w-96 sm:w-[420px] h-5 bg-[#00f0ff] border-3 border-[#16192e] brutal-shadow-sm flex items-center justify-center -mt-0.5">
-            <div className="w-48 h-1 bg-[#16192e]" />
+          <div className="w-96 sm:w-[420px] h-4 bg-[#1a1f2e] border border-[#ffffff25] rounded-full shadow-xl flex items-center justify-center -mt-0.5">
+            <div className="w-48 h-1 bg-[#ffffff15] rounded-full" />
           </div>
         </div>
 
         {/* 3. INTERACTIVE WISH / BLOW ACTION BAR */}
-        <div className="relative z-20 mt-6 max-w-xl w-full flex flex-col items-center gap-3">
+        <div className="relative z-20 mt-7 max-w-xl w-full flex flex-col items-center gap-3">
           
           {/* Wish Input Box */}
-          <div className="w-full bg-[#ffd000] border-3 border-[#16192e] p-3.5 brutal-shadow-sm">
-            <div className="flex items-center justify-between text-[10px] font-pixel font-bold text-[#16192e] mb-2">
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+          <div className="w-full bg-[#121723] border border-[#ffffff1a] rounded-xl p-4 shadow-xl">
+            <div className="flex items-center justify-between text-xs font-mono text-[#f5f5f7] mb-2.5">
+              <span className="flex items-center gap-1.5 font-medium">
+                <Sparkles className="w-3.5 h-3.5 text-[#f5a524]" />
                 MAKE A BIRTHDAY WISH:
               </span>
               {wishLocked && (
-                <span className="text-[#16192e] bg-[#22c55e] px-1.5 py-0.5 border border-[#16192e] flex items-center gap-1 font-bold">
+                <span className="text-[#4ade80] bg-[#4ade80]/15 px-2 py-0.5 rounded-md border border-[#4ade80]/30 flex items-center gap-1 font-mono text-[10px]">
                   <Check className="w-3 h-3" /> REGISTERED
                 </span>
               )}
@@ -520,7 +527,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                 disabled={wishLocked}
                 onChange={(e) => setWishText(e.target.value)}
                 placeholder="Type your secret birthday wish here..."
-                className="flex-1 bg-[#fffdf0] border-2 border-[#16192e] px-3 py-2 text-xs font-mono text-[#16192e] placeholder-gray-500 focus:outline-none disabled:opacity-75"
+                className="flex-1 bg-[#1a1f2e] border border-[#ffffff1a] rounded-lg px-3.5 py-2 text-xs font-mono text-[#f5f5f7] placeholder-[#6b7280] focus:outline-none focus:border-[#f5a524] disabled:opacity-60 transition-colors"
               />
               {!wishLocked && (
                 <button
@@ -531,7 +538,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                       setWishLocked(true);
                     }
                   }}
-                  className="px-3.5 py-2 bg-[#22c55e] text-[#16192e] border-2 border-[#16192e] text-[10px] font-pixel font-bold brutal-btn-sm cursor-pointer"
+                  className="px-4 py-2 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-lg transition-all cursor-pointer shadow-md shadow-[#f5a524]/20"
                 >
                   SAVE
                 </button>
@@ -540,7 +547,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
 
             {/* Quick Preset Wish Pills */}
             {!wishLocked && (
-              <div className="mt-2.5 flex flex-wrap gap-1.5">
+              <div className="mt-3 flex flex-wrap gap-1.5">
                 {presetWishes.map((preset, idx) => (
                   <button
                     key={idx}
@@ -550,7 +557,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                       setSelectedPresetWish(preset);
                       soundEngine.playTone(520, 0.03, 'square', 0.05);
                     }}
-                    className="text-[10px] font-mono font-bold px-2 py-1 bg-[#fffdf0] hover:bg-[#fff9d9] border-2 border-[#16192e] text-[#16192e] brutal-btn-sm transition-all cursor-pointer"
+                    className="text-xs font-mono px-2.5 py-1 bg-[#1a1f2e] hover:bg-[#222838] border border-[#ffffff1a] hover:border-white/20 text-[#9ca3af] hover:text-[#f5f5f7] rounded-lg transition-all cursor-pointer"
                   >
                     {preset}
                   </button>
@@ -566,7 +573,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                 type="button"
                 id="blow-candles-btn"
                 onClick={handleBlowCandles}
-                className="flex-1 py-3.5 bg-[#22c55e] text-[#16192e] font-pixel font-bold text-xs sm:text-sm uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 py-3.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
               >
                 <Wind className="w-4 h-4" />
                 <span>BLOW OUT CANDLES [CELEBRATE!]</span>
@@ -576,7 +583,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                 <button
                   type="button"
                   onClick={handleRelightCandles}
-                  className="px-4 py-3 bg-[#fffdf0] border-2 border-[#16192e] text-[#16192e] font-pixel text-[10px] uppercase brutal-btn-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="px-4 py-3 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] text-[#f5f5f7] font-mono text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-all"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>RELIGHT CANDLES</span>
@@ -589,7 +596,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                     soundEngine.playSelect();
                     onNavigate(ScreenIndex.FINAL_MESSAGE);
                   }}
-                  className="flex-1 py-3.5 bg-[#ffd000] text-[#16192e] font-pixel font-bold text-xs sm:text-sm uppercase tracking-wider brutal-btn flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex-1 py-3.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
                 >
                   <span>READ FINAL LETTER</span>
                   <ArrowRight className="w-4 h-4" />
@@ -600,17 +607,17 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
 
         </div>
 
-      </div>
+      </motion.div>
 
       {/* Bottom Screen Navigation Bar */}
-      <div className="mt-4 flex items-center justify-between gap-4 font-mono">
+      <motion.div variants={cardVariants} className="mt-5 flex items-center justify-between gap-4 font-mono">
         <button
           type="button"
           onClick={() => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.MINIGAME);
           }}
-          className="px-3.5 py-2 bg-[#fffdf0] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
+          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
         >
           ◀ PREV: MINI-GAME
         </button>
@@ -621,7 +628,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.HERO);
           }}
-          className="px-3.5 py-2 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
+          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#9ca3af] hover:text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
         >
           [ HERO HUB ]
         </button>
@@ -632,12 +639,12 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.FINAL_MESSAGE);
           }}
-          className="px-4 py-2 bg-[#22c55e] border-2 border-[#16192e] text-[#16192e] text-xs font-pixel font-bold uppercase brutal-btn-sm cursor-pointer"
+          className="px-5 py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] text-xs font-semibold rounded-xl shadow-lg shadow-[#f5a524]/20 transition-all cursor-pointer hover:scale-[1.01]"
         >
           FINAL LETTER ▶
         </button>
-      </div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   );
 };

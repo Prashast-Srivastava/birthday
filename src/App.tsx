@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { ScreenIndex } from './types';
 import { soundEngine } from './utils/audio';
 import { birthdayConfig, cyberpunkTelemetryQuotes } from './birthdayData';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { HeaderStatusBar } from './components/common/HeaderStatusBar';
 import { CrtDustOverlay } from './components/common/CrtDustOverlay';
-import { PixelBlockTransition, PixelBlockTransitionPhase } from './components/common/PixelBlockTransition';
 import { EmergencyDiagnosticModal } from './components/common/EmergencyDiagnosticModal';
 import { Screen00_BootSequence } from './components/screens/Screen00_BootSequence';
 import { Screen01_Hero } from './components/screens/Screen01_Hero';
@@ -14,166 +15,35 @@ import { Screen04_Memories } from './components/screens/Screen04_Memories';
 import { Screen05_MiniGame } from './components/screens/Screen05_MiniGame';
 import { Screen06_Cake } from './components/screens/Screen06_Cake';
 import { Screen07_FinalMessage } from './components/screens/Screen07_FinalMessage';
-import { PixelHeart } from './components/common/PixelHeart';
-import { PixelStar } from './components/common/PixelStar';
-import { PixelPaw } from './components/common/PixelPaw';
-import { PixelConfetti } from './components/common/PixelConfetti';
-import { PixelSparkle } from './components/common/PixelSparkle';
 
-export default function App() {
+function PortalApp() {
+  const { theme, toggleTheme } = useTheme();
+
   // Screen state 0–7 (state-driven single page application, linear story flow)
   const [currentScreen, setCurrentScreen] = useState<ScreenIndex>(ScreenIndex.BOOT);
-  // Displayed screen state for hard-cut transition (holds previous view until blocks fully cover screen)
-  const [displayedScreen, setDisplayedScreen] = useState<ScreenIndex>(ScreenIndex.BOOT);
-  const [transitionPhase, setTransitionPhase] = useState<PixelBlockTransitionPhase>('idle');
-  const isFirstMountRef = useRef<boolean>(true);
-  
-  // Sound toggle defaults to ON in UI state (♫ AUDIO_SFX ON)
+
+  // Sound toggle defaults to ON in UI state
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
-
-  // Initialize sound engine state to true on mount and register first-interaction listener
-  useEffect(() => {
-    soundEngine.setEnabled(true);
-
-    // Browser audio autoplay fallback: kick in sound on very first click/keypress anywhere
-    const handleFirstInteraction = () => {
-      if (soundEngine.getEnabled()) {
-        soundEngine.setEnabled(true);
-      }
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
-    };
-
-    window.addEventListener('click', handleFirstInteraction, { passive: true });
-    window.addEventListener('keydown', handleFirstInteraction, { passive: true });
-    window.addEventListener('touchstart', handleFirstInteraction, { passive: true });
-
-    return () => {
-      window.removeEventListener('click', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
-    };
-  }, []);
-
-  // Cryptic cyberpunk quotes telemetry state (flashes every 30s)
-  const [telemetryQuote, setTelemetryQuote] = useState<string>('SYSTEM_STABLE: 98%');
-  const [quoteFlashKey, setQuoteFlashKey] = useState<number>(0);
-  const [isQuoteFlashing, setIsQuoteFlashing] = useState<boolean>(false);
-
-  // Audio Engine Hook: Play terminal chirp/glitch sound effect when navigating between screen states
-  useEffect(() => {
-    // Only play chirp if not on the very initial boot load (or play on all screen navigations)
-    soundEngine.playTerminalChirp();
-  }, [currentScreen]);
-
-  // Hard-cut Pixel-Block Screen Navigation Transition Hook
-  // When currentScreen changes, renders expanding pixel blocks that clear the previous view,
-  // execute the hard cut, and contract to reveal the new screen view.
-  useEffect(() => {
-    // Skip transition on initial app boot load
-    if (isFirstMountRef.current) {
-      isFirstMountRef.current = false;
-      return;
-    }
-
-    if (currentScreen === displayedScreen && transitionPhase === 'idle') {
-      return;
-    }
-
-    // Check prefers-reduced-motion: if enabled, swap instantly without animation
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) {
-      setDisplayedScreen(currentScreen);
-      setTransitionPhase('idle');
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      return;
-    }
-
-    // Phase 1: Expanding pixel blocks cover and clear the previous view
-    setTransitionPhase('covering');
-
-    // Hard-cut moment: when all 160 pixel blocks have expanded and fully blanket the screen (~230ms)
-    const hardCutTimer = setTimeout(() => {
-      // HARD CUT: swap displayed screen to target view while completely obscured
-      setDisplayedScreen(currentScreen);
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      setTransitionPhase('revealing');
-
-      // Phase 2: Contracting pixel blocks shrink away to reveal the new screen (~230ms)
-      const revealTimer = setTimeout(() => {
-        setTransitionPhase('idle');
-      }, 230);
-
-      return () => clearTimeout(revealTimer);
-    }, 230);
-
-    return () => clearTimeout(hardCutTimer);
-  }, [currentScreen]);
-
-  // Periodic 30-second timer to flash a random cryptic cyberpunk telemetry quote
-  useEffect(() => {
-    const quoteInterval = setInterval(() => {
-      // Pick a random quote distinct from the current one
-      const availableQuotes = cyberpunkTelemetryQuotes.filter(q => q !== telemetryQuote);
-      const nextQuote = availableQuotes[Math.floor(Math.random() * availableQuotes.length)] || cyberpunkTelemetryQuotes[0];
-      
-      setTelemetryQuote(nextQuote);
-      setQuoteFlashKey(prev => prev + 1);
-      setIsQuoteFlashing(true);
-
-      // Reset flashing state after animation duration
-      const timeout = setTimeout(() => {
-        setIsQuoteFlashing(false);
-      }, 2000);
-
-      return () => clearTimeout(timeout);
-    }, 30000);
-
-    return () => clearInterval(quoteInterval);
-  }, [telemetryQuote]);
-
-  // System Corruption Glitch Effect State
-  const [isCorrupted, setIsCorrupted] = useState<boolean>(false);
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState<boolean>(false);
   const [corruptionCount, setCorruptionCount] = useState<number>(0);
+  const [isCorrupted, setIsCorrupted] = useState<boolean>(false);
+  const [activeTelemetryQuote, setActiveTelemetryQuote] = useState<string>('');
 
-  // Secret Emergency Access Diagnostic Terminal Modal State (5-Click Logo Trigger)
-  const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState<boolean>(false);
-
-  const triggerCorruption = () => {
-    // Check prefers-reduced-motion
-    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    setIsCorrupted(true);
-    setCorruptionCount(prev => prev + 1);
-    
-    if (!prefersReducedMotion) {
-      soundEngine.playGlitch();
-    } else {
-      soundEngine.playTone(320, 0.05, 'square', 0.04);
-    }
-
-    const duration = prefersReducedMotion ? 150 : 450;
-    setTimeout(() => {
-      setIsCorrupted(false);
-    }, duration);
+  const handleNavigateScreen = (screen: ScreenIndex) => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    setCurrentScreen(screen);
   };
 
-  // Periodic System Corruption glitch timer (triggers every 35 to 45 seconds)
+  // Periodic subtle cyberpunk telemetry quote ticker
   useEffect(() => {
-    const scheduleNextGlitch = () => {
-      const delay = 35000 + Math.random() * 15000; // 35s - 50s
-      return setTimeout(() => {
-        triggerCorruption();
-        timer = scheduleNextGlitch();
-      }, delay);
-    };
-
-    let timer = scheduleNextGlitch();
-    return () => clearTimeout(timer);
+    const interval = setInterval(() => {
+      if (Math.random() > 0.65) {
+        const quote = cyberpunkTelemetryQuotes[Math.floor(Math.random() * cyberpunkTelemetryQuotes.length)];
+        setActiveTelemetryQuote(quote);
+        setTimeout(() => setActiveTelemetryQuote(''), 4500);
+      }
+    }, 12000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleToggleSound = () => {
@@ -181,311 +51,135 @@ export default function App() {
     setSoundEnabled(nextState);
     soundEngine.setEnabled(nextState);
     if (nextState) {
-      soundEngine.playCoin();
+      soundEngine.playTerminalChirp();
     }
   };
 
-  const handleNavigate = (index: ScreenIndex) => {
-    soundEngine.playTerminalChirp();
-    setCurrentScreen(index);
-  };
-
   const renderActiveScreen = () => {
-    switch (displayedScreen) {
+    switch (currentScreen) {
       case ScreenIndex.BOOT:
         return (
           <Screen00_BootSequence
+            onComplete={() => handleNavigateScreen(ScreenIndex.HERO)}
             soundEnabled={soundEnabled}
-            onComplete={() => setCurrentScreen(ScreenIndex.HERO)}
           />
         );
-
       case ScreenIndex.HERO:
         return (
           <Screen01_Hero
-            onNavigate={handleNavigate}
+            onNavigate={handleNavigateScreen}
           />
         );
-
       case ScreenIndex.STATS:
         return (
           <Screen02_Stats
-            onNavigate={handleNavigate}
+            onNavigate={handleNavigateScreen}
           />
         );
-
       case ScreenIndex.ANIME:
         return (
           <Screen03_Anime
-            onNavigate={handleNavigate}
+            onNavigate={handleNavigateScreen}
           />
         );
-
       case ScreenIndex.MEMORIES:
         return (
           <Screen04_Memories
-            onNavigate={handleNavigate}
+            onNavigate={handleNavigateScreen}
           />
         );
-
       case ScreenIndex.MINIGAME:
         return (
           <Screen05_MiniGame
-            onNavigate={handleNavigate}
+            onNavigate={handleNavigateScreen}
           />
         );
-
       case ScreenIndex.CAKE:
         return (
           <Screen06_Cake
-            onNavigate={handleNavigate}
+            onNavigate={handleNavigateScreen}
           />
         );
-
       case ScreenIndex.FINAL_MESSAGE:
         return (
           <Screen07_FinalMessage
-            onNavigate={handleNavigate}
+            onNavigate={handleNavigateScreen}
           />
         );
-
       default:
-        return <Screen01_Hero onNavigate={handleNavigate} />;
+        return null;
     }
   };
 
   return (
-    <div className={`relative min-h-screen bg-[#c92e68] text-[#16192e] font-mono flex flex-col justify-between overflow-x-hidden selection:bg-[#ffd000] selection:text-[#16192e] transition-all ${
-      isCorrupted ? 'animate-system-corruption' : ''
-    }`}>
-      
-      {/* 
-        ========================================================================
-        RETRO PIXEL-ART LAYER: SKY DOT-GRID & AMBIENT PIXEL CLOUDS
-        ========================================================================
-      */}
-      {/* 1. Global Pixel Sky Dot Grid */}
-      <div className="fixed inset-0 pixel-sky-grid pointer-events-none z-0 opacity-25" />
+    <div className={`min-h-screen ${theme === 'light' ? 'theme-light bg-[#f8fafc] text-[#090d16]' : 'theme-dark bg-[#0a0e17] text-[#f5f5f7]'} font-sans relative overflow-x-hidden dot-grid-bg transition-colors duration-200 ${isCorrupted ? 'animate-system-corruption' : ''}`}>
+      {/* 1. Subtle Atmospheric Particles */}
+      <CrtDustOverlay />
 
-      {/* 2. Ambient Retro Pixel Clouds & Pixel Hearts Floating in Background */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
-        {/* Slow drifting cloud 1 */}
-        <div className="absolute top-12 left-[-150px] animate-cloud-drift-slow opacity-85">
-          <svg width="120" height="48" viewBox="0 0 120 48" className="pixel-art drop-shadow-[4px_4px_0_#16192e]">
-            {/* 8-bit Chunky Pixel Cloud */}
-            <rect x="24" y="8" width="72" height="32" fill="#fffdf0" />
-            <rect x="12" y="16" width="96" height="24" fill="#fffdf0" />
-            <rect x="40" y="0" width="40" height="40" fill="#fffdf0" />
-            <rect x="0" y="24" width="120" height="16" fill="#fffdf0" />
-            {/* Outline highlights */}
-            <rect x="36" y="4" width="48" height="4" fill="#ffffff" />
-            <rect x="16" y="20" width="16" height="4" fill="#ffffff" />
-          </svg>
-        </div>
-
-        {/* Medium drifting cloud 2 */}
-        <div className="absolute top-36 left-[-200px] animate-cloud-drift-fast opacity-75" style={{ animationDelay: '14s' }}>
-          <svg width="90" height="36" viewBox="0 0 90 36" className="pixel-art drop-shadow-[3px_3px_0_#16192e]">
-            <rect x="18" y="6" width="54" height="24" fill="#fffdf0" />
-            <rect x="9" y="12" width="72" height="18" fill="#fffdf0" />
-            <rect x="30" y="0" width="30" height="30" fill="#fffdf0" />
-            <rect x="0" y="18" width="90" height="12" fill="#fffdf0" />
-          </svg>
-        </div>
-
-        {/* Decorative 16x16 Pixel Art Icons in Background (Heart, Star, Paw, Confetti, Sparkle) */}
-        {/* 1. Pixel Hearts */}
-        <div className="absolute top-[80px] right-[40px] opacity-90 animate-pixel-cat-bob" style={{ animationDelay: '0.2s' }}>
-          <PixelHeart size={16} color="#f43f5e" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-        <div className="absolute top-[130px] left-[50px] opacity-80 animate-pixel-cat-bob" style={{ animationDelay: '0.7s' }}>
-          <PixelHeart size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-        <div className="absolute top-[380px] left-[6%] hidden md:block opacity-75 animate-pixel-cat-bob" style={{ animationDelay: '0.4s' }}>
-          <PixelHeart size={16} color="#fffdf0" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-        <div className="absolute bottom-[100px] left-[32px] opacity-90 animate-pixel-cat-bob" style={{ animationDelay: '0.9s' }}>
-          <PixelHeart size={16} color="#f43f5e" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-        <div className="absolute bottom-[90px] right-[60px] opacity-85 animate-pixel-cat-bob" style={{ animationDelay: '0.3s' }}>
-          <PixelHeart size={16} color="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-
-        {/* 2. Pixel Stars (16x16 Yellow Stars with Twinkle Animation) */}
-        <div className="absolute top-[95px] left-[20%] hidden sm:block opacity-90">
-          <PixelStar size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.3s' }} />
-        </div>
-        <div className="absolute top-[190px] right-[8%] opacity-85">
-          <PixelStar size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.2s' }} />
-        </div>
-        <div className="absolute top-[480px] right-[14%] hidden md:block opacity-80">
-          <PixelStar size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.8s' }} />
-        </div>
-        <div className="absolute bottom-[150px] left-[14%] hidden sm:block opacity-85">
-          <PixelStar size={16} color="#ffd000" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.9s' }} />
-        </div>
-
-        {/* 3. Pixel Paws (16x16 Neko Cat Paw Prints) */}
-        <div className="absolute top-[220px] left-[36px] opacity-85 rotate-[-12deg]">
-          <PixelPaw size={16} padColor="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-        <div className="absolute top-[340px] right-[75px] hidden sm:block opacity-80 rotate-[15deg]">
-          <PixelPaw size={16} padColor="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-        <div className="absolute bottom-[230px] right-[40px] opacity-85 rotate-[-8deg]">
-          <PixelPaw size={16} padColor="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-        <div className="absolute bottom-[130px] left-[22%] hidden md:block opacity-75 rotate-[20deg]">
-          <PixelPaw size={16} padColor="#ff5e97" className="drop-shadow-[2px_2px_0_#16192e]" />
-        </div>
-
-        {/* 4. Pixel Confetti (16x16 Festive Shapes with Slow Drift Animation) */}
-        <div className="absolute top-[150px] left-[26%] hidden sm:block opacity-80">
-          <PixelConfetti size={16} variant="cyan" shape="square" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.4s' }} />
-        </div>
-        <div className="absolute top-[280px] left-[12%] hidden md:block opacity-85">
-          <PixelConfetti size={16} variant="pink" shape="triangle" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.5s' }} />
-        </div>
-        <div className="absolute top-[110px] right-[24%] hidden sm:block opacity-85">
-          <PixelConfetti size={16} variant="yellow" shape="ribbon" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '2.1s' }} />
-        </div>
-        <div className="absolute top-[430px] right-[22%] hidden lg:block opacity-80">
-          <PixelConfetti size={16} variant="green" shape="square" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.9s' }} />
-        </div>
-        <div className="absolute bottom-[190px] right-[16%] hidden sm:block opacity-85">
-          <PixelConfetti size={16} variant="cycle" shape="triangle" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.1s' }} />
-        </div>
-
-        {/* 5. Pixel Sparkles (16x16 Cyan 4-Point Starbursts with Pulse Animation) */}
-        <div className="absolute top-[65px] left-[34%] hidden md:block opacity-85">
-          <PixelSparkle size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.2s' }} />
-        </div>
-        <div className="absolute top-[250px] right-[26%] hidden lg:block opacity-80">
-          <PixelSparkle size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.4s' }} />
-        </div>
-        <div className="absolute top-[410px] left-[18%] hidden sm:block opacity-85">
-          <PixelSparkle size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '0.7s' }} />
-        </div>
-        <div className="absolute bottom-[160px] right-[28%] hidden md:block opacity-85">
-          <PixelSparkle size={16} color="#00f0ff" className="drop-shadow-[2px_2px_0_#16192e]" style={{ animationDelay: '1.8s' }} />
-        </div>
-      </div>
-
-      {/* 3. SYSTEM CORRUPTION FULL-SCREEN BRUTALIST ALERT OVERLAY */}
-      {isCorrupted && (
-        <div 
-          role="status" 
-          aria-live="polite"
-          className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center p-4 bg-[#16192e]/40"
-        >
-          <div className="px-6 py-4 bg-[#ffd000] border-4 border-[#16192e] brutal-shadow-lg text-[#16192e] font-pixel text-xs sm:text-sm tracking-wider uppercase flex items-center gap-3">
-            <span className="text-xl">⚠️</span>
-            <span>SYSTEM CORRUPTION DETECTED // GLITCH BURST #{corruptionCount}</span>
+      {/* 2. Dev Telemetry Quote Banner (if active) */}
+      {activeTelemetryQuote && (
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-35 pointer-events-none">
+          <div className="bg-[#121723]/90 border border-[#ffffff1a] text-[#f5a524] px-3.5 py-1.5 text-xs font-mono rounded-full shadow-lg backdrop-blur-md flex items-center gap-2 animate-pulse">
+            <span className="inline-block w-2 h-2 bg-[#f5a524] rounded-full" />
+            <span>{activeTelemetryQuote}</span>
           </div>
         </div>
       )}
 
-      {/* 4. HARD-CUT PIXEL-BLOCK SCREEN NAVIGATION TRANSITION OVERLAY */}
-      <PixelBlockTransition phase={transitionPhase} />
-
-      {/* Retro Status / Navigation Bar */}
+      {/* Retro Status / Navigation Bar with Theme and Audio Controls */}
       <HeaderStatusBar
         currentScreen={currentScreen}
         soundEnabled={soundEnabled}
         onToggleSound={handleToggleSound}
-        onNavigateScreen={handleNavigate}
-        onTriggerEmergencyAccess={() => setIsEmergencyModalOpen(true)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onNavigateScreen={handleNavigateScreen}
+        onTriggerEmergencyAccess={() => setIsDiagnosticOpen(true)}
       />
 
-      {/* Main Content Area */}
-      <main className="relative z-10 flex-1 flex flex-col justify-center px-3 sm:px-6 py-4 overflow-hidden">
-        {/* Subtle Pixel Sparkle Dust Layer */}
-        <CrtDustOverlay />
-        
-        {renderActiveScreen()}
+      {/* Main Screen Container with Graceful Framer Motion Route Transition */}
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 relative z-10">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentScreen}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full"
+          >
+            {renderActiveScreen()}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
-      {/* Secret Emergency Access Diagnostic Terminal Modal */}
+      {/* Emergency Diagnostic Modal */}
       <EmergencyDiagnosticModal
-        isOpen={isEmergencyModalOpen}
-        onClose={() => setIsEmergencyModalOpen(false)}
+        isOpen={isDiagnosticOpen}
+        onClose={() => setIsDiagnosticOpen(false)}
         currentScreen={currentScreen}
         soundEnabled={soundEnabled}
         corruptionCount={corruptionCount}
         isCorrupted={isCorrupted}
-        onNavigateScreen={handleNavigate}
-        onTriggerGlitch={triggerCorruption}
+        onNavigateScreen={(screen) => {
+          setCurrentScreen(screen);
+          setIsDiagnosticOpen(false);
+        }}
+        onTriggerGlitch={() => {
+          setIsCorrupted(true);
+          setCorruptionCount((c) => c + 1);
+          soundEngine.playGlitch();
+          setTimeout(() => setIsCorrupted(false), 2000);
+        }}
       />
-
-      {/* Global Footer with Authentic 8-bit Platform Brick Ground Strip */}
-      <footer className="relative z-20 w-full pixel-brick-strip py-3 px-3 sm:px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-[10px] font-pixel">
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              type="button"
-              onClick={triggerCorruption}
-              className={`px-3 py-1 font-pixel font-bold uppercase transition-all cursor-pointer flex items-center gap-1.5 border-2 border-[#16192e] brutal-btn-sm ${
-                isCorrupted
-                  ? 'bg-[#f43f5e] text-white'
-                  : 'bg-[#22c55e] text-[#16192e] hover:bg-white'
-              }`}
-              title="Click to trigger momentary Cyberpunk System Corruption glitch"
-            >
-              <span>{isCorrupted ? 'SYS_GLITCH!' : 'SYS_OK'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={triggerCorruption}
-              className="px-2.5 py-1 bg-[#ffd000] border-2 border-[#16192e] text-[#16192e] font-pixel text-[9px] uppercase tracking-wider brutal-btn-sm cursor-pointer hidden sm:inline-block"
-              title="Test System Corruption Inversion & Distortion"
-            >
-              [⚡ TRIGGER GLITCH]
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                soundEngine.playEmergencyAccess();
-                setIsEmergencyModalOpen(true);
-              }}
-              className="px-2.5 py-1 bg-[#fffdf0] border-2 border-[#16192e] text-[#16192e] font-pixel text-[9px] uppercase tracking-wider brutal-btn-sm cursor-pointer hidden md:inline-block"
-              title="Emergency Diagnostic Terminal (or click header logo 5 times)"
-            >
-              [⚠️ EMERGENCY DIAG]
-            </button>
-
-            <div className="px-2 py-0.5 bg-[#fffdf0] border-2 border-[#16192e] font-pixel font-bold text-[#16192e] brutal-shadow-sm">
-              SCREEN_0{currentScreen}
-            </div>
-            <span className="text-[#fffdf0] hidden sm:inline ml-1 drop-shadow-[1px_1px_0_#16192e]">
-              NEKO.EXE // V4.2
-            </span>
-          </div>
-
-          {/* Periodic Telemetry Quote Box */}
-          <div className="flex items-center gap-2 px-3 py-1 bg-[#fffdf0] border-2 border-[#16192e] brutal-shadow-sm max-w-full overflow-hidden">
-            <span className="w-2 h-2 bg-[#ffd000] border border-[#16192e] inline-block animate-pulse" />
-            <span className="text-[#16192e] font-pixel font-bold uppercase text-[8px] tracking-wider shrink-0">
-              [TELEMETRY]
-            </span>
-            <span
-              key={quoteFlashKey}
-              className={`text-[#16192e] font-mono text-[10px] font-bold truncate ${
-                isQuoteFlashing ? 'bg-[#ffd000] px-1' : ''
-              }`}
-            >
-              {telemetryQuote}
-            </span>
-          </div>
-
-          <div className="text-[9px] font-pixel text-[#fffdf0] drop-shadow-[1px_1px_0_#16192e]">
-            [ RECIPIENT: {birthdayConfig.recipientName} ] — [ {soundEnabled ? 'AUDIO: ON' : 'AUDIO: OFF'} ]
-          </div>
-        </div>
-      </footer>
-
     </div>
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <PortalApp />
+    </ThemeProvider>
+  );
+}
