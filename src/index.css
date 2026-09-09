@@ -42,6 +42,27 @@
     color-scheme: light;
   }
 
+  :root[data-theme="hacker"],
+  .theme-hacker {
+    --bg-primary: #020502;
+    --bg-surface: rgba(5, 15, 5, 0.92);
+    --bg-surface-solid: #050f05;
+    --bg-surface-alt: #0a1f0a;
+    --border-subtle: rgba(34, 197, 94, 0.35);
+    --border-subtle-hover: rgba(34, 197, 94, 0.65);
+    --accent: #22c55e; /* Classic terminal phosphor green */
+    --accent-hover: #4ade80;
+    --accent-soft: rgba(34, 197, 94, 0.18);
+    --accent-soft-border: rgba(34, 197, 94, 0.55);
+    --text-primary: #4ade80; /* Bright phosphor green */
+    --text-secondary: #22c55e; /* Medium phosphor green */
+    --text-muted: #15803d; /* Dark matrix green */
+    --success: #22c55e;
+    --success-soft: rgba(34, 197, 94, 0.25);
+    --radius: 12px;
+    color-scheme: dark;
+  }
+
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
@@ -418,4 +439,165 @@
 .theme-light .crt-vignette {
   opacity: 0.15;
 }
+
+/* =========================================================================
+   Hacker Mode: Classic Green-on-Black Terminal Matrix Theme
+   ========================================================================= */
+
+[data-theme="hacker"],
+.theme-hacker {
+  background-color: #020502 !important;
+  color: #4ade80 !important;
+}
+
+[data-theme="hacker"] body,
+.theme-hacker body {
+  background-color: #020502 !important;
+  color: #4ade80 !important;
+}
+
+/* Base background surfaces */
+[data-theme="hacker"] .bg-\[\#0a0e17\],
+.theme-hacker .bg-\[\#0a0e17\] {
+  background-color: #020502 !important;
+}
+
+[data-theme="hacker"] .bg-\[\#0a0e17\]\/80,
+.theme-hacker .bg-\[\#0a0e17\]\/80,
+[data-theme="hacker"] .bg-\[\#0a0e17\]\/90,
+.theme-hacker .bg-\[\#0a0e17\]\/90 {
+  background-color: rgba(2, 5, 2, 0.95) !important;
+}
+
+[data-theme="hacker"] .bg-\[\#121723\],
+.theme-hacker .bg-\[\#121723\] {
+  background-color: #050f05 !important;
+}
+
+[data-theme="hacker"] .bg-\[\#121723\]\/90,
+.theme-hacker .bg-\[\#121723\]\/90,
+[data-theme="hacker"] .bg-\[\#121723\]\/80,
+.theme-hacker .bg-\[\#121723\]\/80,
+[data-theme="hacker"] .bg-\[\#121723\]\/70,
+.theme-hacker .bg-\[\#121723\]\/70 {
+  background-color: rgba(5, 15, 5, 0.94) !important;
+}
+
+[data-theme="hacker"] .bg-\[\#1a1f2e\],
+.theme-hacker .bg-\[\#1a1f2e\],
+[data-theme="hacker"] .bg-\[\#0e131d\],
+.theme-hacker .bg-\[\#0e131d\],
+[data-theme="hacker"] .bg-\[\#0d121c\],
+.theme-hacker .bg-\[\#0d121c\],
+[data-theme="hacker"] .bg-\[\#0f141f\],
+.theme-hacker .bg-\[\#0f141f\] {
+  background-color: #0a1f0a !important;
+}
+
+[data-theme="hacker"] .bg-\[\#222838\],
+.theme-hacker .bg-\[\#222838\] {
+  background-color: #0d280d !important;
+}
+
+/* Phosphor green text overrides */
+[data-theme="hacker"] .text-\[\#f5f5f7\],
+.theme-hacker .text-\[\#f5f5f7\] {
+  color: #4ade80 !important;
+}
+
+[data-theme="hacker"] .text-\[\#9ca3af\],
+.theme-hacker .text-\[\#9ca3af\] {
+  color: #22c55e !important;
+}
+
+[data-theme="hacker"] .text-\[\#6b7280\],
+.theme-hacker .text-\[\#6b7280\] {
+  color: #16a34a !important;
+}
+
+[data-theme="hacker"] .text-\[\#f5a524\],
+.theme-hacker .text-\[\#f5a524\] {
+  color: #86efac !important;
+}
+
+/* Green borders */
+[data-theme="hacker"] .border-\[\#ffffff1a\],
+.theme-hacker .border-\[\#ffffff1a\],
+[data-theme="hacker"] .border-\[\#ffffff20\],
+.theme-hacker .border-\[\#ffffff20\],
+[data-theme="hacker"] .border-\[\#ffffff0f\],
+.theme-hacker .border-\[\#ffffff0f\],
+[data-theme="hacker"] .border-\[\#ffffff10\],
+.theme-hacker .border-\[\#ffffff10\] {
+  border-color: rgba(34, 197, 94, 0.35) !important;
+}
+
+/* Green dot grid matrix pattern */
+[data-theme="hacker"] .dot-grid-bg,
+.theme-hacker .dot-grid-bg {
+  background-image: radial-gradient(circle, rgba(34, 197, 94, 0.22) 1px, transparent 1px) !important;
+}
+
+/* Dev cards with terminal glow */
+[data-theme="hacker"] .dev-card,
+.theme-hacker .dev-card {
+  background: #050f05 !important;
+  border-color: rgba(34, 197, 94, 0.45) !important;
+  box-shadow: 0 0 20px -2px rgba(34, 197, 94, 0.22) !important;
+}
+
+[data-theme="hacker"] .dev-card-alt,
+.theme-hacker .dev-card-alt {
+  background: #0a1f0a !important;
+  border-color: rgba(34, 197, 94, 0.35) !important;
+}
+
+/* Header & status bar */
+[data-theme="hacker"] header,
+.theme-hacker header {
+  background-color: rgba(2, 8, 2, 0.96) !important;
+  border-color: rgba(34, 197, 94, 0.45) !important;
+  box-shadow: 0 2px 16px rgba(34, 197, 94, 0.18) !important;
+}
+
+/* Inputs & textareas */
+[data-theme="hacker"] input,
+[data-theme="hacker"] textarea,
+.theme-hacker input,
+.theme-hacker textarea {
+  background-color: #030a03 !important;
+  color: #4ade80 !important;
+  border-color: rgba(34, 197, 94, 0.5) !important;
+}
+
+/* Scrollbars in hacker mode */
+[data-theme="hacker"] ::-webkit-scrollbar-track,
+.theme-hacker ::-webkit-scrollbar-track {
+  background: #020502;
+}
+
+[data-theme="hacker"] ::-webkit-scrollbar-thumb,
+.theme-hacker ::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.35);
+}
+
+[data-theme="hacker"] ::-webkit-scrollbar-thumb:hover,
+.theme-hacker ::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.65);
+}
+
+/* Headings phosphor text glow */
+.theme-hacker h1,
+.theme-hacker h2,
+.theme-hacker h3 {
+  text-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
+}
+
+/* Green terminal CRT vignette */
+[data-theme="hacker"] .crt-vignette,
+.theme-hacker .crt-vignette {
+  opacity: 0.35;
+  background: radial-gradient(circle, transparent 60%, rgba(2, 25, 2, 0.8) 100%);
+}
+
 

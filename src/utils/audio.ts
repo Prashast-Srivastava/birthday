@@ -186,6 +186,17 @@ class SoundEngine {
     });
   }
 
+  public playHackerAccess() {
+    const ctx = this.getContext();
+    if (!ctx) return;
+    const freqs = [220, 440, 587.33, 880, 1174.66, 1760, 2349.32];
+    freqs.forEach((freq, idx) => {
+      setTimeout(() => {
+        this.playTone(freq, 0.06, 'square', 0.1);
+      }, idx * 45);
+    });
+  }
+
   public playMeow() {
     const ctx = this.getContext();
     if (!ctx) return;

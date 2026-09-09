@@ -17,7 +17,14 @@ import { Screen06_Cake } from './components/screens/Screen06_Cake';
 import { Screen07_FinalMessage } from './components/screens/Screen07_FinalMessage';
 
 function PortalApp() {
-  const { theme, toggleTheme } = useTheme();
+  const {
+    theme,
+    isHackerMode,
+    toggleTheme,
+    exitHackerMode,
+    hackerNotification,
+    clearHackerNotification
+  } = useTheme();
 
   // Screen state 0–7 (state-driven single page application, linear story flow)
   const [currentScreen, setCurrentScreen] = useState<ScreenIndex>(ScreenIndex.BOOT);
@@ -112,12 +119,53 @@ function PortalApp() {
   };
 
   return (
-    <div className={`min-h-screen ${theme === 'light' ? 'theme-light bg-[#f8fafc] text-[#090d16]' : 'theme-dark bg-[#0a0e17] text-[#f5f5f7]'} font-sans relative overflow-x-hidden dot-grid-bg transition-colors duration-200 ${isCorrupted ? 'animate-system-corruption' : ''}`}>
+    <div
+      className={`min-h-screen ${
+        theme === 'hacker'
+          ? 'theme-hacker bg-[#020502] text-[#4ade80]'
+          : theme === 'light'
+          ? 'theme-light bg-[#f8fafc] text-[#090d16]'
+          : 'theme-dark bg-[#0a0e17] text-[#f5f5f7]'
+      } font-sans relative overflow-x-hidden dot-grid-bg transition-colors duration-200 ${
+        isCorrupted ? 'animate-system-corruption' : ''
+      }`}
+    >
       {/* 1. Subtle Atmospheric Particles */}
       <CrtDustOverlay />
 
-      {/* 2. Dev Telemetry Quote Banner (if active) */}
-      {activeTelemetryQuote && (
+      {/* 2. Hacker Mode Notification Banner */}
+      {hackerNotification && (
+        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none max-w-md w-[92%] px-2">
+          <div className="bg-[#020502]/95 border border-[#22c55e] text-[#4ade80] px-4 py-2.5 text-xs font-mono rounded-xl shadow-[0_0_30px_rgba(34,197,94,0.5)] backdrop-blur-md flex items-center justify-between gap-3 animate-pulse">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e] animate-ping" />
+              <span className="font-semibold">{hackerNotification}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Hacker Mode Active Floating HUD */}
+      {isHackerMode && (
+        <div className="fixed bottom-4 right-4 z-40">
+          <div className="bg-[#050f05]/95 border border-[#22c55e]/60 text-[#4ade80] px-3 py-1.5 text-xs font-mono rounded-lg shadow-[0_0_20px_rgba(34,197,94,0.35)] backdrop-blur-md flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
+            <span className="hidden sm:inline font-medium">HACKER_OS // PHOSPHOR GREEN</span>
+            <span className="sm:hidden font-medium">MATRIX</span>
+            <button
+              type="button"
+              onClick={exitHackerMode}
+              className="px-2 py-0.5 rounded bg-[#22c55e]/20 hover:bg-[#22c55e]/35 text-[#86efac] border border-[#22c55e]/50 text-[10px] cursor-pointer transition-colors font-mono"
+              title="Exit Hacker Mode (ESC)"
+            >
+              EXIT (ESC)
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Dev Telemetry Quote Banner (if active) */}
+      {activeTelemetryQuote && !hackerNotification && (
         <div className="fixed top-14 left-1/2 -translate-x-1/2 z-35 pointer-events-none">
           <div className="bg-[#121723]/90 border border-[#ffffff1a] text-[#f5a524] px-3.5 py-1.5 text-xs font-mono rounded-full shadow-lg backdrop-blur-md flex items-center gap-2 animate-pulse">
             <span className="inline-block w-2 h-2 bg-[#f5a524] rounded-full" />

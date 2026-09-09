@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { soundEngine } from '../../utils/audio';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme, ThemeMode } from '../../context/ThemeContext';
 import mascotImageUrl from '../../assets/images/pixel_cat_mascot_1788680282571.jpg';
 
 export interface PixelCatPalette {
@@ -48,6 +48,21 @@ const LIGHT_PALETTE: Required<PixelCatPalette> = {
   cheeks: '#e11d48',      // rosy blush
 };
 
+const HACKER_PALETTE: Required<PixelCatPalette> = {
+  earsAndPaws: '#020502', // deep terminal black
+  innerEar: '#22c55e',    // phosphor green
+  bodyFur: '#050f05',     // matrix dark green
+  bodyOutline: '#00ff66', // vivid matrix neon green
+  hatBand1: '#00ff66',    // neon green
+  hatBand2: '#16a34a',    // medium green
+  hatBand3: '#4ade80',    // light green
+  pomPom: '#00ff66',      // neon green
+  eyes: '#00ff66',        // glowing matrix eyes
+  collar: '#15803d',      // emerald collar
+  bell: '#00ff66',        // glowing bell
+  cheeks: '#22c55e',      // phosphor blush
+};
+
 interface PixelCatProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   showSpeech?: boolean;
@@ -55,7 +70,7 @@ interface PixelCatProps {
   partyHat?: boolean;
   idleBob?: boolean;
   palette?: PixelCatPalette;
-  theme?: 'dark' | 'light';
+  theme?: ThemeMode;
   renderMode?: 'svg' | 'mascot';
   allowToggleMode?: boolean;
   onClick?: () => void;
@@ -77,7 +92,7 @@ export const PixelCat: React.FC<PixelCatProps> = ({
 }) => {
   const [displayMode, setDisplayMode] = useState<'svg' | 'mascot'>(renderMode);
 
-  let contextTheme: 'dark' | 'light' = 'dark';
+  let contextTheme: ThemeMode = 'dark';
   try {
     const ctx = useTheme();
     contextTheme = ctx.theme;
@@ -86,7 +101,12 @@ export const PixelCat: React.FC<PixelCatProps> = ({
   }
 
   const activeTheme = propTheme ?? contextTheme;
-  const basePalette = activeTheme === 'light' ? LIGHT_PALETTE : DARK_PALETTE;
+  const basePalette =
+    activeTheme === 'hacker'
+      ? HACKER_PALETTE
+      : activeTheme === 'light'
+      ? LIGHT_PALETTE
+      : DARK_PALETTE;
   const pal = { ...basePalette, ...customPalette };
 
   const [isBlinking, setIsBlinking] = useState(false);

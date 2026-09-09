@@ -3,6 +3,7 @@ import { Terminal, Copy, Check, X, ShieldAlert, Cpu, Activity, Play, Trash2, Ref
 import { ScreenIndex } from '../../types';
 import { birthdayConfig } from '../../birthdayData';
 import { soundEngine } from '../../utils/audio';
+import { useTheme } from '../../context/ThemeContext';
 
 interface LogEntry {
   id: string;
@@ -33,6 +34,7 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
   onNavigateScreen,
   onTriggerGlitch,
 }) => {
+  const { toggleHackerMode, isHackerMode } = useTheme();
   const [activeTab, setActiveTab] = useState<'logs' | 'state' | 'hardware' | 'console'>('logs');
   const [commandInput, setCommandInput] = useState<string>('');
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -229,9 +231,12 @@ export const EmergencyDiagnosticModal: React.FC<EmergencyDiagnosticModalProps> =
     let result = '';
 
     if (cmd === 'help') {
-      result = 'AVAILABLE COMMANDS:\n  help          - Show this command manual\n  status        - Print raw system diagnostic health\n  glitch        - Force trigger a system corruption burst\n  jump <0-7>    - Warp directly to screen index (0 to 7)\n  sound on/off  - Toggle audio synthesizer state\n  cake          - Quick jump to cake celebration\n  clear         - Clear command history\n  dump          - Output JSON state snapshot\n  reboot        - Restart boot sequence (Screen 00)\n  exit          - Close emergency diagnostic terminal';
+      result = 'AVAILABLE COMMANDS:\n  help          - Show this command manual\n  status        - Print raw system diagnostic health\n  hacker        - Toggle classic green-on-black terminal matrix theme (Konami code)\n  glitch        - Force trigger a system corruption burst\n  jump <0-7>    - Warp directly to screen index (0 to 7)\n  sound on/off  - Toggle audio synthesizer state\n  cake          - Quick jump to cake celebration\n  clear         - Clear command history\n  dump          - Output JSON state snapshot\n  reboot        - Restart boot sequence (Screen 00)\n  exit          - Close emergency diagnostic terminal';
     } else if (cmd === 'status') {
-      result = `[SYS STATUS: NOMINAL] Screen: 0${currentScreen} | Audio: ${soundEnabled ? 'ON' : 'OFF'} | Glitches: ${corruptionCount} | Uptime: ${sessionUptime}s`;
+      result = `[SYS STATUS: NOMINAL] Screen: 0${currentScreen} | Audio: ${soundEnabled ? 'ON' : 'OFF'} | Glitches: ${corruptionCount} | Uptime: ${sessionUptime}s | Mode: ${isHackerMode ? 'HACKER (GREEN)' : 'STANDARD'}`;
+    } else if (cmd === 'hacker' || cmd === 'konami' || cmd === 'matrix') {
+      toggleHackerMode();
+      result = '>>> 🔓 KONAMI PROTOCOL: Hacker Mode toggled (Classic green-on-black terminal theme).';
     } else if (cmd === 'glitch') {
       onTriggerGlitch();
       result = '>>> Glitch command issued: System corruption burst triggered.';

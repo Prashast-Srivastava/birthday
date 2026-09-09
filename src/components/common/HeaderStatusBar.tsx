@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, Sun, Moon } from 'lucide-react';
+import { Volume2, VolumeX, Sun, Moon, Terminal } from 'lucide-react';
 import { ScreenIndex } from '../../types';
 import { soundEngine } from '../../utils/audio';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme, ThemeMode } from '../../context/ThemeContext';
 
 interface HeaderStatusBarProps {
   currentScreen: ScreenIndex;
   soundEnabled: boolean;
   onToggleSound: () => void;
-  theme?: 'dark' | 'light';
+  theme?: ThemeMode;
   onToggleTheme?: () => void;
   onNavigateScreen?: (index: ScreenIndex) => void;
   onTriggerEmergencyAccess?: () => void;
@@ -45,7 +45,7 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
   onNavigateScreen,
   onTriggerEmergencyAccess
 }) => {
-  let contextTheme: 'dark' | 'light' = 'dark';
+  let contextTheme: ThemeMode = 'dark';
   let contextToggleTheme: () => void = () => {};
   try {
     const ctx = useTheme();
@@ -173,24 +173,36 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
 
         {/* Right: Theme Toggle, Audio Engine & System State */}
         <div className="flex gap-2 sm:gap-3 items-center uppercase text-xs self-end md:self-auto flex-wrap">
-          {/* Theme Accessibility Toggle (High-Contrast Light Mode / Dark Mode) */}
+          {/* Theme Accessibility Toggle (High-Contrast Light Mode / Dark Mode / Hacker Mode) */}
           <button
             id="theme-toggle-btn"
             type="button"
             onClick={handleToggleTheme}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all select-none cursor-pointer ${
-              currentTheme === 'light'
+              currentTheme === 'hacker'
+                ? 'bg-[#050f05] text-[#4ade80] border-[#22c55e]/60 hover:bg-[#0a1f0a] shadow-[0_0_12px_rgba(34,197,94,0.35)]'
+                : currentTheme === 'light'
                 ? 'bg-[#ffffff] text-[#d97706] border-[#cbd5e1] hover:bg-[#f1f5f9] shadow-sm'
                 : 'bg-[#121723] text-[#f5a524] border-[#ffffff1a] hover:bg-[#1a1f2e]'
             }`}
             title={
-              currentTheme === 'light'
+              currentTheme === 'hacker'
+                ? 'Hacker Terminal Mode Active (Phosphor Green-on-Black) // Click to revert'
+                : currentTheme === 'light'
                 ? 'High-Contrast Light Active // Click to switch to Dark Mode'
-                : 'Dark Dev-Tool Active // Click to switch to High-Contrast Light Mode for accessibility'
+                : 'Dark Dev-Tool Active // Click to switch to High-Contrast Light Mode (or enter Konami Code for Hacker Mode)'
             }
-            aria-label={currentTheme === 'light' ? 'Switch to Dark Mode' : 'Switch to High-Contrast Light Mode'}
+            aria-label={
+              currentTheme === 'hacker'
+                ? 'Revert from Hacker Mode'
+                : currentTheme === 'light'
+                ? 'Switch to Dark Mode'
+                : 'Switch to High-Contrast Light Mode'
+            }
           >
-            {currentTheme === 'light' ? (
+            {currentTheme === 'hacker' ? (
+              <Terminal className="w-3.5 h-3.5 text-[#4ade80] animate-pulse" />
+            ) : currentTheme === 'light' ? (
               <Sun className="w-3.5 h-3.5 text-[#d97706]" />
             ) : (
               <Moon className="w-3.5 h-3.5 text-[#f5a524]" />
@@ -198,7 +210,7 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
             <div className="flex flex-col items-start leading-tight text-left">
               <span className="text-[9px] tracking-wider text-[#9ca3af] font-mono">THEME</span>
               <span className="text-[10px] font-semibold font-mono">
-                {currentTheme === 'light' ? 'HI-CONTRAST' : 'DARK'}
+                {currentTheme === 'hacker' ? 'HACKER_OS' : currentTheme === 'light' ? 'HI-CONTRAST' : 'DARK'}
               </span>
             </div>
           </button>
