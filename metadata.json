@@ -1,6 +1,6 @@
 {
-  "name": "The Birthday Portal",
-  "description": "Dev-tool aesthetic birthday celebration portal with interactive memories, anime archive, mini-games, and ceremony.",
+  "name": "Anushka's 22nd Birthday Celebration",
+  "description": "A cute pastel glassmorphic birthday celebration portal with memories, anime favorites, mini-games, and sweet birthday wishes.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

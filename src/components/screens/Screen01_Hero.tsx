@@ -5,6 +5,7 @@ import { PixelCat } from '../common/PixelCat';
 import { soundEngine } from '../../utils/audio';
 import { ScreenIndex } from '../../types';
 import { screenContainerVariants, cardVariants } from '../../utils/animations';
+import { Sparkles, Heart, Star, Film, Image, Gamepad2, ArrowRight } from 'lucide-react';
 
 interface HeroScreenProps {
   onNavigate: (index: ScreenIndex) => void;
@@ -12,20 +13,21 @@ interface HeroScreenProps {
 
 export const Screen01_Hero: React.FC<HeroScreenProps> = ({ onNavigate }) => {
   const [speech, setSpeech] = useState<string>(
-    `HAPPY BIRTHDAY ${birthdayConfig.recipientName}! CLICK ME FOR PURRS!`
+    `HAPPY BIRTHDAY ${birthdayConfig.recipientName}! TAP ME FOR PURRS & LOVE!`
   );
 
   const meowPhrases = [
-    `HAPPY BIRTHDAY ${birthdayConfig.recipientName}!`,
-    "ANOTHER YEAR, ANOTHER EPIC BOSS DEFEATED!",
-    "DID YOU BRING CAKE? BIRTHDAY CAT REQUIRES CAKE!",
-    "LEVEL 22 UNLOCKED! STATS PERMANENTLY BUFFED!",
-    "CO-OP ADVENTURE CONTINUES! BEST FRIEND PROTOCOL ACTIVE!"
+    `HAPPY BIRTHDAY ${birthdayConfig.recipientName}! 🎉`,
+    "ANOTHER YEAR, ANOTHER EPIC ADVENTURE COMPLETE! ✨",
+    "DID YOU BRING CAKE? BIRTHDAY CAT REQUIRES CAKE! 🍰",
+    "LEVEL 22 UNLOCKED! ALL STATS BUFFED WITH JOY! 💖",
+    "BEST FRIEND PROTOCOL FOREVER ACTIVE! 🐾"
   ];
 
   const handleCatInteract = () => {
     const randomPhrase = meowPhrases[Math.floor(Math.random() * meowPhrases.length)];
     setSpeech(randomPhrase);
+    soundEngine.playCoin();
   };
 
   const handleStartJourney = () => {
@@ -40,160 +42,189 @@ export const Screen01_Hero: React.FC<HeroScreenProps> = ({ onNavigate }) => {
       animate="visible"
       className="w-full max-w-7xl mx-auto flex flex-col justify-center items-center py-2 sm:py-4 select-none"
     >
-      
       {/* Top Eyebrow Tag Row */}
       <motion.div variants={cardVariants} className="w-full flex items-center justify-between flex-wrap gap-2 mb-5">
         <div className="dev-eyebrow-pill">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#f5a524]" />
-          <span>SECTOR 01 // THE BIRTHDAY DASH · HERO HUB</span>
+          <Sparkles className="w-3.5 h-3.5 text-pink-500" />
+          <span>BIRTHDAY HUB • ANUSHKA'S 22ND CELEBRATION</span>
         </div>
-        <div className="text-xs font-mono text-[#9ca3af]">
-          RECIPIENT: <span className="text-[#f5f5f7] font-semibold">{birthdayConfig.recipientName}</span> (LVL 22)
+        <div className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
+          <span>STAR OF THE DAY:</span>
+          <span className="text-pink-600 font-bold px-2.5 py-0.5 bg-pink-100/80 rounded-full border border-pink-200">
+            {birthdayConfig.recipientName} (LEVEL 22 ✨)
+          </span>
         </div>
       </motion.div>
 
       {/* Main 3-Panel Dashboard Grid */}
       <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 my-2 items-stretch">
         
-        {/* Left HUD Panel: Target Parameters */}
-        <motion.section variants={cardVariants} className="lg:col-span-4 dev-card bg-[#121723]/90 border border-[#ffffff1a] rounded-xl p-5 flex flex-col justify-between shadow-xl">
+        {/* Left HUD Panel: Target Parameters / Birthday Star Profile */}
+        <motion.section
+          variants={cardVariants}
+          className="lg:col-span-4 bg-white/55 backdrop-blur-xl border border-white/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-pink-100/40"
+        >
           <div>
-            <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-[#ffffff1a]">
+            <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-pink-100/60">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#f5a524]" />
-                <span className="text-xs font-mono font-semibold text-[#f5f5f7] uppercase tracking-wider">
-                  Target Telemetry
-                </span>
+                <Heart className="w-4 h-4 fill-pink-500 text-pink-500" />
+                <h3 className="font-heading font-bold text-sm text-slate-800 uppercase tracking-wider">
+                  Birthday Star Profile
+                </h3>
               </div>
               <span className="dev-status-pill">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80]" />
-                LOCKED
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                CELEBRATING
               </span>
             </div>
 
-            <div className="space-y-3 text-xs font-mono">
-              <div className="flex justify-between items-center py-1.5 border-b border-[#ffffff0f]">
-                <span className="text-[#9ca3af] uppercase text-[11px]">Player Name</span>
-                <span className="font-semibold text-[#f5a524] bg-[#f5a524]/10 border border-[#f5a524]/30 px-2 py-0.5 rounded text-xs">
+            <div className="space-y-3 text-xs sm:text-sm">
+              <div className="flex justify-between items-center py-2 border-b border-pink-100/40">
+                <span className="text-slate-500 font-bold uppercase text-[11px]">Birthday Girl</span>
+                <span className="font-bold text-pink-600 bg-pink-100/80 border border-pink-200 px-3 py-0.5 rounded-full">
                   {birthdayConfig.recipientName}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-1.5 border-b border-[#ffffff0f]">
-                <span className="text-[#9ca3af] uppercase text-[11px]">Current Level</span>
-                <span className="font-medium text-[#f5f5f7]">Level 22 // Turning 22</span>
+              <div className="flex justify-between items-center py-2 border-b border-pink-100/40">
+                <span className="text-slate-500 font-bold uppercase text-[11px]">Milestone</span>
+                <span className="font-bold text-purple-700 bg-purple-100/80 border border-purple-200 px-3 py-0.5 rounded-full">
+                  Level 22 // Turning 22 ✨
+                </span>
               </div>
-              <div className="flex justify-between items-center py-1.5 border-b border-[#ffffff0f]">
-                <span className="text-[#9ca3af] uppercase text-[11px]">System Date</span>
-                <span className="font-medium text-[#f5f5f7]">{birthdayConfig.birthdayDate}</span>
+              <div className="flex justify-between items-center py-2 border-b border-pink-100/40">
+                <span className="text-slate-500 font-bold uppercase text-[11px]">Special Day</span>
+                <span className="font-semibold text-slate-700">{birthdayConfig.birthdayDate}</span>
               </div>
-              <div className="flex justify-between items-center py-1.5 border-b border-[#ffffff0f]">
-                <span className="text-[#9ca3af] uppercase text-[11px]">Friendship Sync</span>
-                <span className="font-semibold text-[#4ade80]">
+              <div className="flex justify-between items-center py-2 border-b border-pink-100/40">
+                <span className="text-slate-500 font-bold uppercase text-[11px]">Friendship Sync</span>
+                <span className="font-bold text-emerald-700 bg-emerald-100/80 border border-emerald-200 px-3 py-0.5 rounded-full">
                   {birthdayConfig.friendshipLevel}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-1.5">
-                <span className="text-[#9ca3af] uppercase text-[11px]">Co-Op Since</span>
-                <span className="font-medium text-[#f5f5f7]">{birthdayConfig.friendSinceYear}</span>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-slate-500 font-bold uppercase text-[11px]">Best Friends Since</span>
+                <span className="font-semibold text-slate-700">{birthdayConfig.friendSinceYear}</span>
               </div>
             </div>
           </div>
 
-          <div className="mt-5 p-3.5 bg-[#1a1f2e] border border-[#ffffff1a] rounded-lg text-xs leading-relaxed text-[#9ca3af]">
-            <span className="font-mono font-semibold text-[#f5a524] block mb-1 text-[11px] uppercase tracking-wider">DIRECTIVE:</span>
-            Clear all 8 birthday quest sectors to decrypt the Cake Ceremony & Decrypted Final Letter for <strong className="text-[#f5f5f7]">{birthdayConfig.recipientName}</strong>.
+          <div className="mt-5 p-4 bg-white/60 border border-white/80 rounded-2xl text-xs leading-relaxed text-slate-600 shadow-xs">
+            <span className="font-bold text-pink-600 block mb-1 text-[11px] uppercase tracking-wider flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5" /> CELEBRATION MISSION:
+            </span>
+            Explore our shared memories, anime favorites, arcade mini-game, and unwrap the sweet birthday cake ceremony for <strong className="text-slate-800">{birthdayConfig.recipientName}</strong>.
           </div>
         </motion.section>
 
-        {/* Center Panel: Pixel Cat Companion + Ambient 8-bit Balloons */}
-        <motion.section variants={cardVariants} className="lg:col-span-4 dev-card bg-[#121723]/90 border border-[#ffffff1a] rounded-xl p-6 flex flex-col items-center justify-center shadow-xl relative overflow-hidden">
-          {/* Corner Tags */}
-          <div className="absolute top-3 left-4 text-[10px] font-mono text-[#9ca3af] uppercase tracking-wider">
-            SYS_CO-PILOT
+        {/* Center Panel: Pixel Cat Companion + Floating Pastel Balloons */}
+        <motion.section
+          variants={cardVariants}
+          className="lg:col-span-4 bg-white/55 backdrop-blur-xl border border-white/80 rounded-3xl p-6 flex flex-col items-center justify-center shadow-xl shadow-pink-100/40 relative overflow-hidden"
+        >
+          {/* Corner Badges */}
+          <div className="absolute top-4 left-5 text-[11px] font-bold text-pink-600 bg-pink-100/70 border border-pink-200 rounded-full px-2.5 py-0.5">
+            PARTY CAT
           </div>
-          <div className="absolute top-3 right-4 text-[10px] font-mono text-[#9ca3af] uppercase tracking-wider">
-            AI_MASCOT
+          <div className="absolute top-4 right-5 text-[11px] font-bold text-purple-600 bg-purple-100/70 border border-purple-200 rounded-full px-2.5 py-0.5">
+            TAP TO PET
           </div>
 
-          {/* Decorative 8-Bit Pixel Balloons Flanking the Cat */}
-          <div className="absolute top-10 left-4 pointer-events-none animate-balloon-float opacity-80" aria-hidden="true">
-            <svg width="36" height="64" viewBox="0 0 36 64" className="pixel-art">
-              <rect x="6" y="0" width="24" height="28" fill="#a855f7" stroke="#121723" strokeWidth="2" />
-              <rect x="10" y="4" width="6" height="6" fill="#ffffff" />
-              <polygon points="18,28 14,32 22,32" fill="#a855f7" stroke="#121723" strokeWidth="1.5" />
-              <path d="M18,32 Q14,46 18,60" fill="none" stroke="#6b7280" strokeWidth="1.5" strokeDasharray="2,2" />
+          {/* Floating Pastel Balloons */}
+          <div className="absolute top-10 left-5 pointer-events-none animate-balloon-float opacity-85" aria-hidden="true">
+            <svg width="36" height="64" viewBox="0 0 36 64">
+              <rect x="6" y="0" width="24" height="28" rx="12" fill="#f472b6" />
+              <rect x="10" y="4" width="6" height="6" rx="3" fill="#ffffff" fillOpacity="0.6" />
+              <polygon points="18,28 14,32 22,32" fill="#f472b6" />
+              <path d="M18,32 Q14,46 18,60" fill="none" stroke="#f472b6" strokeWidth="1.5" strokeDasharray="2,2" />
             </svg>
           </div>
 
-          <div className="absolute top-10 right-4 pointer-events-none animate-balloon-float opacity-80" style={{ animationDelay: '1.5s' }} aria-hidden="true">
-            <svg width="36" height="64" viewBox="0 0 36 64" className="pixel-art">
-              <rect x="6" y="0" width="24" height="28" fill="#f5a524" stroke="#121723" strokeWidth="2" />
-              <rect x="10" y="4" width="6" height="6" fill="#ffffff" />
-              <polygon points="18,28 14,32 22,32" fill="#f5a524" stroke="#121723" strokeWidth="1.5" />
-              <path d="M18,32 Q22,46 18,60" fill="none" stroke="#6b7280" strokeWidth="1.5" strokeDasharray="2,2" />
+          <div className="absolute top-10 right-5 pointer-events-none animate-balloon-float opacity-85" style={{ animationDelay: '1.5s' }} aria-hidden="true">
+            <svg width="36" height="64" viewBox="0 0 36 64">
+              <rect x="6" y="0" width="24" height="28" rx="12" fill="#c084fc" />
+              <rect x="10" y="4" width="6" height="6" rx="3" fill="#ffffff" fillOpacity="0.6" />
+              <polygon points="18,28 14,32 22,32" fill="#c084fc" />
+              <path d="M18,32 Q22,46 18,60" fill="none" stroke="#c084fc" strokeWidth="1.5" strokeDasharray="2,2" />
             </svg>
           </div>
 
-          <PixelCat
-            size="lg"
-            partyHat={true}
-            idleBob={true}
-            showSpeech={true}
-            speechText={speech}
-            onClick={handleCatInteract}
-          />
+          <div className="my-3">
+            <PixelCat
+              size="lg"
+              partyHat={true}
+              idleBob={true}
+              showSpeech={true}
+              speechText={speech}
+              onClick={handleCatInteract}
+            />
+          </div>
         </motion.section>
 
         {/* Right HUD Panel: Mission Launch Actions */}
-        <motion.section variants={cardVariants} className="lg:col-span-4 dev-card bg-[#121723]/90 border border-[#ffffff1a] rounded-xl p-5 flex flex-col justify-between shadow-xl">
+        <motion.section
+          variants={cardVariants}
+          className="lg:col-span-4 bg-white/55 backdrop-blur-xl border border-white/80 rounded-3xl p-6 flex flex-col justify-between shadow-xl shadow-pink-100/40"
+        >
           <div>
-            <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-[#ffffff1a]">
+            <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-pink-100/60">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#4ade80]" />
-                <span className="text-xs font-mono font-semibold text-[#f5f5f7] uppercase tracking-wider">
-                  Mission Control
-                </span>
+                <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
+                <h3 className="font-heading font-bold text-sm text-slate-800 uppercase tracking-wider">
+                  Celebration Tour
+                </h3>
               </div>
-              <span className="text-xs font-mono text-[#9ca3af] px-2 py-0.5 bg-white/5 border border-[#ffffff1a] rounded-full">
+              <span className="text-xs font-bold text-purple-700 px-3 py-0.5 bg-purple-100/80 border border-purple-200 rounded-full">
                 8 STAGES
               </span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <button
                 type="button"
                 onClick={() => { soundEngine.playSelect(); onNavigate(ScreenIndex.STATS); }}
-                className="w-full text-left p-2.5 bg-[#1a1f2e] hover:bg-white/5 border border-[#ffffff1a] hover:border-[#f5a524]/40 rounded-lg text-[#f5f5f7] text-xs font-mono flex items-center justify-between cursor-pointer transition-all"
+                className="w-full text-left p-3 bg-white/60 hover:bg-white border border-white/80 hover:border-pink-300 rounded-2xl text-slate-700 text-xs font-bold flex items-center justify-between cursor-pointer transition-all shadow-xs hover:shadow-sm"
               >
-                <span>02 // FRIENDSHIP STATS</span>
-                <span className="text-[#9ca3af]">▶</span>
+                <div className="flex items-center gap-2">
+                  <Heart className="w-3.5 h-3.5 text-pink-500" />
+                  <span>02 // Friendship Synergy</span>
+                </div>
+                <span className="text-slate-400 font-bold">▶</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => { soundEngine.playSelect(); onNavigate(ScreenIndex.ANIME); }}
-                className="w-full text-left p-2.5 bg-[#1a1f2e] hover:bg-white/5 border border-[#ffffff1a] hover:border-[#f5a524]/40 rounded-lg text-[#f5f5f7] text-xs font-mono flex items-center justify-between cursor-pointer transition-all"
+                className="w-full text-left p-3 bg-white/60 hover:bg-white border border-white/80 hover:border-pink-300 rounded-2xl text-slate-700 text-xs font-bold flex items-center justify-between cursor-pointer transition-all shadow-xs hover:shadow-sm"
               >
-                <span>03 // ANIME ARCHIVE</span>
-                <span className="text-[#9ca3af]">▶</span>
+                <div className="flex items-center gap-2">
+                  <Film className="w-3.5 h-3.5 text-purple-500" />
+                  <span>03 // Anime Favorites</span>
+                </div>
+                <span className="text-slate-400 font-bold">▶</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => { soundEngine.playSelect(); onNavigate(ScreenIndex.MEMORIES); }}
-                className="w-full text-left p-2.5 bg-[#1a1f2e] hover:bg-white/5 border border-[#ffffff1a] hover:border-[#f5a524]/40 rounded-lg text-[#f5f5f7] text-xs font-mono flex items-center justify-between cursor-pointer transition-all"
+                className="w-full text-left p-3 bg-white/60 hover:bg-white border border-white/80 hover:border-pink-300 rounded-2xl text-slate-700 text-xs font-bold flex items-center justify-between cursor-pointer transition-all shadow-xs hover:shadow-sm"
               >
-                <span>04 // MEMORY DATABASE</span>
-                <span className="text-[#9ca3af]">▶</span>
+                <div className="flex items-center gap-2">
+                  <Image className="w-3.5 h-3.5 text-blue-500" />
+                  <span>04 // Memory Album</span>
+                </div>
+                <span className="text-slate-400 font-bold">▶</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => { soundEngine.playSelect(); onNavigate(ScreenIndex.MINIGAME); }}
-                className="w-full text-left p-2.5 bg-[#1a1f2e] hover:bg-white/5 border border-[#ffffff1a] hover:border-[#f5a524]/40 rounded-lg text-[#f5f5f7] text-xs font-mono flex items-center justify-between cursor-pointer transition-all"
+                className="w-full text-left p-3 bg-white/60 hover:bg-white border border-white/80 hover:border-pink-300 rounded-2xl text-slate-700 text-xs font-bold flex items-center justify-between cursor-pointer transition-all shadow-xs hover:shadow-sm"
               >
-                <span>05 // ARCADE QUEST</span>
-                <span className="text-[#f5a524]">★</span>
+                <div className="flex items-center gap-2">
+                  <Gamepad2 className="w-3.5 h-3.5 text-amber-500" />
+                  <span>05 // Arcade Quest</span>
+                </div>
+                <span className="text-pink-500">★</span>
               </button>
             </div>
           </div>
@@ -203,10 +234,10 @@ export const Screen01_Hero: React.FC<HeroScreenProps> = ({ onNavigate }) => {
               id="btn-start-birthday-journey"
               type="button"
               onClick={handleStartJourney}
-              className="w-full py-3 px-4 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-sm rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+              className="w-full py-3.5 px-6 bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-sm rounded-full shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-95"
             >
               <span>Start Birthday Journey</span>
-              <span className="text-xs">▶</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </motion.section>
@@ -218,48 +249,48 @@ export const Screen01_Hero: React.FC<HeroScreenProps> = ({ onNavigate }) => {
         <motion.div 
           variants={cardVariants}
           onClick={() => { soundEngine.playSelect(); onNavigate(ScreenIndex.STATS); }}
-          className="dev-card bg-[#121723]/80 hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-[#ffffff2a] rounded-xl p-5 transition-all cursor-pointer group shadow-lg"
+          className="bg-white/55 hover:bg-white/75 backdrop-blur-xl border border-white/80 hover:border-pink-200 rounded-3xl p-6 transition-all cursor-pointer group shadow-lg shadow-pink-100/30 hover:shadow-xl hover:shadow-pink-200/40 hover:-translate-y-1"
         >
-          <span className="block text-[10px] font-mono font-medium text-[#f5a524] mb-1.5 uppercase tracking-wider">
-            01 // ARCH
+          <span className="inline-block text-[11px] font-bold text-pink-600 bg-pink-100/70 border border-pink-200 rounded-full px-2.5 py-0.5 mb-2">
+            STAGE 02
           </span>
-          <h4 className="text-sm font-semibold text-[#f5f5f7] group-hover:text-[#f5a524] mb-2 transition-colors">
-            Friendship Telemetry
+          <h4 className="font-heading text-base font-bold text-slate-800 group-hover:text-pink-600 mb-1.5 transition-colors">
+            Friendship Synergy 💕
           </h4>
-          <p className="text-xs text-[#9ca3af] leading-relaxed">
-            Real-time calculation of shared gaming co-op hours, anime debates, and revive assist stats.
+          <p className="text-xs text-slate-600 leading-relaxed font-medium">
+            Look back at hours of late night calls, hilarious anime tier-list arguments, and endless loyalty.
           </p>
         </motion.div>
 
         <motion.div 
           variants={cardVariants}
           onClick={() => { soundEngine.playSelect(); onNavigate(ScreenIndex.MEMORIES); }}
-          className="dev-card bg-[#121723]/80 hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-[#ffffff2a] rounded-xl p-5 transition-all cursor-pointer group shadow-lg"
+          className="bg-white/55 hover:bg-white/75 backdrop-blur-xl border border-white/80 hover:border-purple-200 rounded-3xl p-6 transition-all cursor-pointer group shadow-lg shadow-purple-100/30 hover:shadow-xl hover:shadow-purple-200/40 hover:-translate-y-1"
         >
-          <span className="block text-[10px] font-mono font-medium text-[#f5a524] mb-1.5 uppercase tracking-wider">
-            02 // MEMORY
+          <span className="inline-block text-[11px] font-bold text-purple-600 bg-purple-100/70 border border-purple-200 rounded-full px-2.5 py-0.5 mb-2">
+            STAGE 04
           </span>
-          <h4 className="text-sm font-semibold text-[#f5f5f7] group-hover:text-[#f5a524] mb-2 transition-colors">
-            Database Archive
+          <h4 className="font-heading text-base font-bold text-slate-800 group-hover:text-purple-600 mb-1.5 transition-colors">
+            Cherished Memories 📸
           </h4>
-          <p className="text-xs text-[#9ca3af] leading-relaxed">
-            8-slot encrypted photo gallery with 4:3 polaroid cartridges and retro asset fallback.
+          <p className="text-xs text-slate-600 leading-relaxed font-medium">
+            8-card scrapbook album with polaroid snapshots and lovely memories from 2023 to 2026.
           </p>
         </motion.div>
 
         <motion.div 
           variants={cardVariants}
           onClick={() => { soundEngine.playSelect(); onNavigate(ScreenIndex.MINIGAME); }}
-          className="dev-card bg-[#121723]/80 hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-[#ffffff2a] rounded-xl p-5 transition-all cursor-pointer group shadow-lg"
+          className="bg-white/55 hover:bg-white/75 backdrop-blur-xl border border-white/80 hover:border-amber-200 rounded-3xl p-6 transition-all cursor-pointer group shadow-lg shadow-amber-100/30 hover:shadow-xl hover:shadow-amber-200/40 hover:-translate-y-1"
         >
-          <span className="block text-[10px] font-mono font-medium text-[#f5a524] mb-1.5 uppercase tracking-wider">
-            03 // QUEST
+          <span className="inline-block text-[11px] font-bold text-amber-600 bg-amber-100/70 border border-amber-200 rounded-full px-2.5 py-0.5 mb-2">
+            STAGE 05
           </span>
-          <h4 className="text-sm font-semibold text-[#f5f5f7] group-hover:text-[#f5a524] mb-2 transition-colors">
-            Save Birthday Cat
+          <h4 className="font-heading text-base font-bold text-slate-800 group-hover:text-amber-600 mb-1.5 transition-colors">
+            Catch the Birthday Cakes 🎮
           </h4>
-          <p className="text-xs text-[#9ca3af] leading-relaxed">
-            5-lane arcade mini-game: catch falling cakes, stars, and fish to unlock the candle ceremony.
+          <p className="text-xs text-slate-600 leading-relaxed font-medium">
+            Catch falling cakes, stars, and sweet treats to unlock the 22nd birthday cake ceremony!
           </p>
         </motion.div>
       </div>

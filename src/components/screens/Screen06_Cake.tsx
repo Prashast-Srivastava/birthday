@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Sparkles, Wind, RotateCcw, ArrowRight, Heart, Flame, Gift, Check, Send } from 'lucide-react';
+import { Sparkles, Wind, RotateCcw, ArrowRight, Heart, Flame, Gift, Check, Send, ArrowLeft } from 'lucide-react';
 import { ScreenIndex } from '../../types';
 import { birthdayConfig } from '../../birthdayData';
 import { soundEngine } from '../../utils/audio';
@@ -44,11 +44,11 @@ interface Candle {
 }
 
 const CANDLE_DEFS: Omit<Candle, 'lit'>[] = [
-  { id: 1, label: 'CHAOS SYNC', color: '#fbbf24' },
-  { id: 2, label: 'LATE NIGHT CO-OP', color: '#ec4899' },
-  { id: 3, label: 'LEVEL 22', color: '#4ade80' },
-  { id: 4, label: 'ANIME DEBATES', color: '#38bdf8' },
-  { id: 5, label: 'ENDLESS HAPPINESS', color: '#f43f5e' },
+  { id: 1, label: 'CHAOS SYNC', color: '#f472b6' },
+  { id: 2, label: 'LATE NIGHT CO-OP', color: '#c084fc' },
+  { id: 3, label: 'LEVEL 22', color: '#34d399' },
+  { id: 4, label: 'ANIME MARATHONS', color: '#38bdf8' },
+  { id: 5, label: 'ENDLESS HAPPINESS', color: '#facc15' },
 ];
 
 export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
@@ -72,13 +72,11 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
 
   const allCandlesOut = candles.every(c => !c.lit);
 
-  // Check prefers-reduced-motion
   const isReducedMotion = () => {
     if (typeof window === 'undefined') return false;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   };
 
-  // Trigger burst of PixelConfetti components radiating outward from center of screen
   const triggerPixelConfettiBurst = () => {
     if (burstCleanupTimerRef.current) {
       clearTimeout(burstCleanupTimerRef.current);
@@ -91,11 +89,9 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
 
     const items: BurstConfettiItem[] = [];
     for (let i = 0; i < count; i++) {
-      // 360-degree radial explosion
       const baseAngle = (i / count) * (Math.PI * 2);
       const angle = baseAngle + (Math.random() - 0.5) * 0.35;
 
-      // Burst outward distance from center (80px to 420px)
       const distance = 90 + Math.random() * 320;
       const burstX = Math.round(Math.cos(angle) * distance);
       const burstY = Math.round(Math.sin(angle) * distance * 0.85 - (Math.random() * 40));
@@ -117,13 +113,11 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
 
     setBurstConfetti(items);
 
-    // Clean up burst items after animation completes
     burstCleanupTimerRef.current = window.setTimeout(() => {
       setBurstConfetti([]);
     }, 3500);
   };
 
-  // Trigger Hand-rolled Canvas Confetti Burst
   const triggerConfetti = () => {
     setShowConfetti(true);
     confettiStartRef.current = Date.now();
@@ -136,17 +130,16 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
 
     const reduced = isReducedMotion();
     const count = reduced ? 20 : 160;
-    const duration = reduced ? 1000 : 3500; // 2-4s duration for standard
+    const duration = reduced ? 1000 : 3500;
 
-    // Colors strictly: yellow (#fbbf24), pink (#ec4899), white (#ffffff), red (#f43f5e)
-    const colors = ['#fbbf24', '#ec4899', '#ffffff', '#f43f5e'];
+    const colors = ['#f472b6', '#c084fc', '#34d399', '#fde047', '#38bdf8', '#ffffff'];
 
     const newParticles: ConfettiParticle[] = [];
     for (let i = 0; i < count; i++) {
       const originX = width / 2 + (Math.random() - 0.5) * (width * 0.4);
       const originY = height * 0.45;
 
-      const angle = (Math.random() * Math.PI) + Math.PI; // Explode upwards & outward
+      const angle = (Math.random() * Math.PI) + Math.PI;
       const speed = reduced ? (100 + Math.random() * 150) : (220 + Math.random() * 450);
 
       newParticles.push({
@@ -154,7 +147,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
         y: originY,
         vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 80,
         vy: Math.sin(angle) * speed - (reduced ? 80 : 180),
-        size: reduced ? 3 : (3 + Math.random() * 5), // Square pixels
+        size: reduced ? 3 : (3 + Math.random() * 5),
         color: colors[Math.floor(Math.random() * colors.length)],
         rotation: Math.random() * Math.PI * 2,
         rotationSpeed: (Math.random() - 0.5) * 8,
@@ -167,7 +160,6 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
     particlesRef.current = newParticles;
   };
 
-  // Canvas render loop for hand-rolled confetti
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -210,7 +202,6 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
           const p = particlesRef.current[i];
           p.life += dt * 1000;
 
-          // Physics update
           p.vy += gravity * dt;
           p.vx *= drag;
           p.x += p.vx * dt;
@@ -225,15 +216,13 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
             continue;
           }
 
-          // Draw Square Pixel Confetti Particle
           ctx.save();
           ctx.translate(p.x, p.y);
           ctx.rotate(p.rotation);
           ctx.globalAlpha = p.alpha;
           ctx.fillStyle = p.color;
           ctx.shadowColor = p.color;
-          ctx.shadowBlur = 3;
-          // Exact square pixel shape
+          ctx.shadowBlur = 4;
           ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
           ctx.restore();
         }
@@ -250,8 +239,6 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
     };
   }, []);
 
-  // 'Blow Candles' event handler: extinguishes candles, plays fanfare,
-  // locks wish, and triggers a burst of PixelConfetti components radiating outward from screen center
   const handleBlowCandles = () => {
     soundEngine.playFanfare();
     setCandles(prev => prev.map(c => ({ ...c, lit: false })));
@@ -260,7 +247,6 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
     triggerConfetti();
     triggerPixelConfettiBurst();
 
-    // Generate cute smoke puffs
     const puffs = CANDLE_DEFS.map((c, idx) => ({
       id: Date.now() + idx,
       x: idx * 60 + 20,
@@ -269,10 +255,6 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
     setSmokePuffs(puffs);
   };
 
-  // Backward compatible alias
-  const handleBlowAllCandles = handleBlowCandles;
-
-  // Handle Blow Single Candle
   const handleToggleCandle = (id: number) => {
     setCandles(prev => {
       const updated = prev.map(c => (c.id === id ? { ...c, lit: !c.lit } : c));
@@ -280,13 +262,12 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
       if (allOut && !isBlown) {
         setTimeout(() => handleBlowCandles(), 0);
       } else {
-        soundEngine.playTone(340, 0.05, 'triangle', 0.08);
+        soundEngine.playTone(340, 0.05, 'sine', 0.08);
       }
       return updated;
     });
   };
 
-  // Handle Relight Candles
   const handleRelightCandles = () => {
     soundEngine.playSelect();
     setCandles(CANDLE_DEFS.map(c => ({ ...c, lit: true })));
@@ -322,14 +303,13 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
         className="absolute inset-0 pointer-events-none z-30 w-full h-full"
       />
 
-      {/* Center-Screen Burst of PixelConfetti Components (Triggered on Blow Candles) */}
+      {/* Radial Burst of PixelConfetti Components */}
       {burstConfetti.length > 0 && (
         <div
           role="presentation"
           aria-hidden="true"
           className="fixed inset-0 pointer-events-none z-50 overflow-hidden select-none"
         >
-          {/* Exact Center Anchor of Screen */}
           <div className="absolute top-1/2 left-1/2 w-0 h-0">
             {burstConfetti.map((item) => (
               <div
@@ -347,7 +327,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                   variant={item.variant}
                   shape={item.shape}
                   animate={false}
-                  className="drop-shadow-[2px_2px_0_#16192e]"
+                  className="drop-shadow-md"
                 />
               </div>
             ))}
@@ -356,48 +336,44 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
       )}
 
       {/* Screen Top Header */}
-      <motion.div variants={cardVariants} className="dev-card bg-[#121723]/90 border border-[#ffffff1a] p-4 sm:p-5 mb-5 rounded-xl shadow-xl relative">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ffffff1a] pb-3">
+      <motion.div variants={cardVariants} className="bg-white/55 backdrop-blur-xl border border-white/80 p-5 sm:p-6 mb-5 rounded-3xl shadow-xl shadow-pink-100/40 relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-pink-100/60 pb-3">
           <div>
             <div className="dev-eyebrow-pill mb-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#f5a524]" />
-              <span>SECTOR 06 // BIRTHDAY CAKE & CANDLE CEREMONY</span>
+              <Sparkles className="w-3.5 h-3.5 text-pink-500" />
+              <span>CAKE & CANDLES CEREMONY</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-sans font-bold text-[#f5f5f7] tracking-tight">
-              Level 22 // <span className="text-[#f5a524]">Wish Protocol Engaged</span>
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-slate-800 tracking-tight">
+              Level 22 // <span className="text-pink-600">Make A Wish</span> 🎂
             </h2>
           </div>
 
-          <div className="flex items-center gap-2 font-mono text-xs">
-            <div className="bg-[#1a1f2e] px-3 py-1 border border-[#ffffff1a] rounded-lg flex items-center gap-1.5">
-              <span className="text-[#9ca3af]">RECIPIENT:</span>
-              <span className="text-[#f5f5f7] font-semibold">{birthdayConfig.recipientName} (LVL 22)</span>
+          <div className="flex items-center gap-2 text-xs">
+            <div className="bg-white/70 px-3.5 py-1.5 border border-pink-200 rounded-full flex items-center gap-1.5 shadow-xs">
+              <span className="text-slate-500 font-bold">RECIPIENT:</span>
+              <span className="text-slate-800 font-bold">{birthdayConfig.recipientName} (LVL 22)</span>
             </div>
-            <div className={`px-3 py-1 border rounded-lg font-semibold flex items-center gap-1.5 transition-colors ${
+            <div className={`px-3.5 py-1.5 border rounded-full font-bold flex items-center gap-1.5 transition-colors shadow-xs ${
               allCandlesOut 
-                ? 'bg-[#4ade80]/15 text-[#4ade80] border-[#4ade80]/30' 
-                : 'bg-[#f5a524]/15 text-[#f5a524] border-[#f5a524]/30'
+                ? 'bg-emerald-100 text-emerald-700 border-emerald-200' 
+                : 'bg-pink-100 text-pink-700 border-pink-200'
             }`}>
-              <Flame className="w-3.5 h-3.5" />
+              <Flame className="w-3.5 h-3.5 fill-current" />
               <span>{candles.filter(c => c.lit).length} / {candles.length} LIT</span>
             </div>
           </div>
         </div>
 
-        <p className="mt-2.5 text-xs font-mono text-[#9ca3af]">
-          Make a wish, input your custom birthday intention into the matrix, and blow out the candles to trigger the celebration protocol.
+        <p className="mt-3 text-xs text-slate-600 font-medium">
+          Make a sweet wish, type your birthday intention below, and blow out the candles to trigger the celebration!
         </p>
       </motion.div>
 
       {/* Main Cake Stage Container */}
-      <motion.div variants={cardVariants} className="relative border border-[#ffffff1a] bg-[#0a0e17] p-6 sm:p-8 flex flex-col items-center justify-center min-h-[380px] rounded-2xl shadow-2xl overflow-hidden">
+      <motion.div variants={cardVariants} className="relative border border-white/90 bg-white/40 backdrop-blur-xl p-6 sm:p-8 flex flex-col items-center justify-center min-h-[380px] rounded-3xl shadow-xl shadow-pink-100/30 overflow-hidden">
         
-        {/* Subtle Background Guide Grid Lines */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-white/[0.04] pointer-events-none" />
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-[1px] bg-white/[0.04] pointer-events-none" />
-
         {/* 1. CANDLE ROW (ABOVE CAKE) */}
-        <div className="relative z-20 flex items-end justify-center gap-3 sm:gap-6 mb-2">
+        <div className="relative z-20 flex items-end justify-center gap-4 sm:gap-7 mb-2">
           {candles.map((candle) => (
             <div
               key={candle.id}
@@ -408,35 +384,32 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
               {/* Animated Flame */}
               {candle.lit ? (
                 <div className="relative flex flex-col items-center mb-1 animate-pulse">
-                  {/* Outer Flame Glow */}
-                  <div className="w-4 h-6 bg-[#f5a524] rounded-full blur-[1px] shadow-[0_0_12px_#f5a524] transform group-hover:scale-110 transition-transform" />
-                  {/* Inner Core */}
-                  <div className="absolute bottom-1 w-2 h-3 bg-white rounded-full" />
+                  <div className="w-4 h-6 bg-gradient-to-t from-amber-400 via-rose-300 to-amber-200 rounded-full blur-[1px] shadow-[0_0_14px_#fbcfe8] transform group-hover:scale-110 transition-transform" />
+                  <div className="absolute bottom-1 w-2 h-3 bg-white rounded-full shadow-xs" />
                 </div>
               ) : (
                 <div className="flex flex-col items-center mb-1 h-6 justify-end">
-                  {/* Smoke Trail */}
-                  <div className="w-1.5 h-3 bg-white/20 animate-ping mb-1 rounded-full" />
-                  <div className="w-1 h-2 bg-[#9ca3af] rounded-full" />
+                  <div className="w-2 h-3 bg-pink-200/50 animate-ping mb-1 rounded-full" />
+                  <div className="w-1 h-2 bg-slate-300 rounded-full" />
                 </div>
               )}
 
               {/* Candle Wick */}
-              <div className="w-0.5 h-2 bg-white/40" />
+              <div className="w-0.5 h-2 bg-slate-400" />
 
               {/* Candle Body */}
               <div
-                className="w-4 sm:w-5 h-14 sm:h-16 rounded-t-sm border border-white/20 shadow-md flex flex-col justify-between p-0.5"
+                className="w-4 sm:w-5 h-14 sm:h-16 rounded-t-lg border border-white/60 shadow-md flex flex-col justify-between p-0.5"
                 style={{ backgroundColor: candle.color }}
               >
                 <div className="w-full h-1.5 bg-white/80 rounded-sm" />
-                <div className="w-full h-1.5 bg-black/25 rounded-sm" />
+                <div className="w-full h-1.5 bg-white/30 rounded-sm" />
                 <div className="w-full h-1.5 bg-white/80 rounded-sm" />
-                <div className="w-full h-1.5 bg-black/25 rounded-sm" />
+                <div className="w-full h-1.5 bg-white/30 rounded-sm" />
               </div>
 
               {/* Candle Tag / Meaning */}
-              <span className="mt-1.5 text-[9px] font-mono text-[#9ca3af] text-center max-w-[70px] line-clamp-1 font-medium">
+              <span className="mt-2 text-[10px] text-slate-500 text-center max-w-[75px] line-clamp-1 font-bold">
                 {candle.label}
               </span>
             </div>
@@ -447,59 +420,57 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
         <div className="relative z-10 flex flex-col items-center select-none">
           
           {/* Top Tier (Small) */}
-          <div className="w-48 sm:w-64 h-12 bg-[#1a1f2e] border border-[#ffffff20] rounded-t-lg relative flex flex-col justify-between shadow-lg">
+          <div className="w-48 sm:w-64 h-13 bg-gradient-to-b from-rose-100 to-pink-200 border border-white/90 rounded-t-2xl relative flex flex-col justify-between shadow-md">
             {/* White Cream Drippings */}
-            <div className="w-full h-3.5 bg-white/90 flex justify-between items-end px-1 rounded-t-lg border-b border-[#ffffff20]">
+            <div className="w-full h-4 bg-white/95 flex justify-between items-end px-1 rounded-t-2xl border-b border-pink-100 shadow-xs">
               {[...Array(12)].map((_, i) => (
-                <div key={i} className={`w-2.5 bg-white/90 rounded-b-md ${i % 2 === 0 ? 'h-3.5' : 'h-2'}`} />
+                <div key={i} className={`w-3 bg-white/95 rounded-b-full shadow-xs ${i % 2 === 0 ? 'h-4' : 'h-2.5'}`} />
               ))}
             </div>
             {/* Strawberry Jewels */}
             <div className="flex justify-around items-center px-2 py-0.5">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-3 h-3 bg-[#f43f5e] rounded-full shadow-sm" />
+                <div key={i} className="w-3.5 h-3.5 bg-rose-500 rounded-full shadow-xs border border-white/40" />
               ))}
             </div>
-            {/* Sponge Layer Separator */}
-            <div className="w-full h-2 bg-[#f5a524]/60" />
+            <div className="w-full h-2 bg-pink-300/40" />
           </div>
 
           {/* Middle Tier (Medium) */}
-          <div className="w-64 sm:w-80 h-14 bg-[#161c28] border border-[#ffffff20] rounded-t-lg relative flex flex-col justify-between shadow-lg -mt-0.5">
+          <div className="w-64 sm:w-80 h-15 bg-gradient-to-b from-pink-100 to-purple-100 border border-white/90 rounded-t-2xl relative flex flex-col justify-between shadow-md -mt-0.5">
             {/* Cream Frosting Pattern */}
-            <div className="w-full h-3.5 bg-white/90 flex justify-between items-end px-1 rounded-t-lg border-b border-[#ffffff20]">
+            <div className="w-full h-4 bg-white/95 flex justify-between items-end px-1 rounded-t-2xl border-b border-pink-100 shadow-xs">
               {[...Array(16)].map((_, i) => (
-                <div key={i} className={`w-3 bg-white/90 rounded-b-md ${i % 2 === 0 ? 'h-4' : 'h-2.5'}`} />
+                <div key={i} className={`w-3 bg-white/95 rounded-b-full shadow-xs ${i % 2 === 0 ? 'h-4.5' : 'h-3'}`} />
               ))}
             </div>
             {/* LEVEL 22 Frosting Text Badge */}
-            <div className="text-center text-xs font-mono font-bold text-[#f5a524] tracking-wider py-0.5 bg-[#121723]/90 border-y border-[#ffffff15]">
-              ★ LEVEL 22 // HAPPY BIRTHDAY ★
+            <div className="text-center text-xs font-heading font-bold text-pink-600 tracking-wider py-0.5 bg-white/80 border-y border-pink-100">
+              ✨ LEVEL 22 // HAPPY BIRTHDAY ✨
             </div>
-            {/* Sponge Layer Separator */}
-            <div className="w-full h-2.5 bg-[#f5a524]/60" />
+            <div className="w-full h-2.5 bg-purple-200/40" />
           </div>
 
           {/* Bottom Tier (Base) */}
-          <div className="w-80 sm:w-96 h-16 bg-[#121723] border border-[#ffffff20] rounded-t-lg relative flex flex-col justify-between shadow-lg -mt-0.5">
+          <div className="w-80 sm:w-96 h-17 bg-gradient-to-b from-purple-100 to-pink-100 border border-white/90 rounded-t-2xl relative flex flex-col justify-between shadow-md -mt-0.5">
             {/* Cream Base */}
-            <div className="w-full h-3.5 bg-white/90 flex justify-between items-end px-1 rounded-t-lg border-b border-[#ffffff20]">
+            <div className="w-full h-4 bg-white/95 flex justify-between items-end px-1 rounded-t-2xl border-b border-pink-100 shadow-xs">
               {[...Array(20)].map((_, i) => (
-                <div key={i} className={`w-3 bg-white/90 rounded-b-md ${i % 2 === 0 ? 'h-4.5' : 'h-2.5'}`} />
+                <div key={i} className={`w-3 bg-white/95 rounded-b-full shadow-xs ${i % 2 === 0 ? 'h-5' : 'h-3'}`} />
               ))}
             </div>
-            {/* Decorative Accents */}
+            {/* Decorative Mint Pearls */}
             <div className="flex justify-around items-center px-4">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="w-3 h-3 bg-[#4ade80] rounded-full shadow-sm" />
+                <div key={i} className="w-3.5 h-3.5 bg-emerald-400 rounded-full shadow-xs border border-white/40" />
               ))}
             </div>
-            <div className="w-full h-3 bg-[#f5a524]/60" />
+            <div className="w-full h-3 bg-pink-200/40" />
           </div>
 
           {/* Cake Stand / Plate */}
-          <div className="w-96 sm:w-[420px] h-4 bg-[#1a1f2e] border border-[#ffffff25] rounded-full shadow-xl flex items-center justify-center -mt-0.5">
-            <div className="w-48 h-1 bg-[#ffffff15] rounded-full" />
+          <div className="w-96 sm:w-[420px] h-4 bg-white/90 border border-white rounded-full shadow-xl flex items-center justify-center -mt-0.5">
+            <div className="w-48 h-1 bg-pink-200 rounded-full" />
           </div>
         </div>
 
@@ -507,15 +478,15 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
         <div className="relative z-20 mt-7 max-w-xl w-full flex flex-col items-center gap-3">
           
           {/* Wish Input Box */}
-          <div className="w-full bg-[#121723] border border-[#ffffff1a] rounded-xl p-4 shadow-xl">
-            <div className="flex items-center justify-between text-xs font-mono text-[#f5f5f7] mb-2.5">
-              <span className="flex items-center gap-1.5 font-medium">
-                <Sparkles className="w-3.5 h-3.5 text-[#f5a524]" />
+          <div className="w-full bg-white/70 backdrop-blur-xl border border-white/90 rounded-3xl p-5 shadow-lg shadow-pink-100/30">
+            <div className="flex items-center justify-between text-xs text-slate-700 mb-2.5">
+              <span className="flex items-center gap-1.5 font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-pink-500" />
                 MAKE A BIRTHDAY WISH:
               </span>
               {wishLocked && (
-                <span className="text-[#4ade80] bg-[#4ade80]/15 px-2 py-0.5 rounded-md border border-[#4ade80]/30 flex items-center gap-1 font-mono text-[10px]">
-                  <Check className="w-3 h-3" /> REGISTERED
+                <span className="text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1 text-[11px] font-bold">
+                  <Check className="w-3 h-3" /> WISH SAVED
                 </span>
               )}
             </div>
@@ -527,18 +498,18 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                 disabled={wishLocked}
                 onChange={(e) => setWishText(e.target.value)}
                 placeholder="Type your secret birthday wish here..."
-                className="flex-1 bg-[#1a1f2e] border border-[#ffffff1a] rounded-lg px-3.5 py-2 text-xs font-mono text-[#f5f5f7] placeholder-[#6b7280] focus:outline-none focus:border-[#f5a524] disabled:opacity-60 transition-colors"
+                className="flex-1 bg-white border border-pink-200 rounded-full px-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-pink-400 disabled:opacity-60 transition-colors shadow-xs"
               />
               {!wishLocked && (
                 <button
                   type="button"
                   onClick={() => {
                     if (wishText.trim()) {
-                      soundEngine.playTone(600, 0.05, 'square', 0.08);
+                      soundEngine.playTone(600, 0.05, 'sine', 0.08);
                       setWishLocked(true);
                     }
                   }}
-                  className="px-4 py-2 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-lg transition-all cursor-pointer shadow-md shadow-[#f5a524]/20"
+                  className="px-5 py-2.5 bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-xs rounded-full transition-all cursor-pointer shadow-md shadow-pink-200/40 hover:scale-105"
                 >
                   SAVE
                 </button>
@@ -555,9 +526,9 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                     onClick={() => {
                       setWishText(preset);
                       setSelectedPresetWish(preset);
-                      soundEngine.playTone(520, 0.03, 'square', 0.05);
+                      soundEngine.playTone(520, 0.03, 'sine', 0.05);
                     }}
-                    className="text-xs font-mono px-2.5 py-1 bg-[#1a1f2e] hover:bg-[#222838] border border-[#ffffff1a] hover:border-white/20 text-[#9ca3af] hover:text-[#f5f5f7] rounded-lg transition-all cursor-pointer"
+                    className="text-xs px-3 py-1 bg-white hover:bg-pink-50 border border-pink-200 text-slate-600 hover:text-slate-900 rounded-full transition-all cursor-pointer font-medium shadow-xs"
                   >
                     {preset}
                   </button>
@@ -573,7 +544,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                 type="button"
                 id="blow-candles-btn"
                 onClick={handleBlowCandles}
-                className="flex-1 py-3.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+                className="flex-1 py-3.5 bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs sm:text-sm rounded-full shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02]"
               >
                 <Wind className="w-4 h-4" />
                 <span>BLOW OUT CANDLES [CELEBRATE!]</span>
@@ -583,9 +554,9 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                 <button
                   type="button"
                   onClick={handleRelightCandles}
-                  className="px-4 py-3 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] text-[#f5f5f7] font-mono text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                  className="px-5 py-3 bg-white hover:bg-pink-50 border border-pink-200 text-slate-700 text-xs font-bold rounded-full flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-xs"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-3.5 h-3.5 text-pink-500" />
                   <span>RELIGHT CANDLES</span>
                 </button>
 
@@ -596,7 +567,7 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
                     soundEngine.playSelect();
                     onNavigate(ScreenIndex.FINAL_MESSAGE);
                   }}
-                  className="flex-1 py-3.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs sm:text-sm rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+                  className="flex-1 py-3.5 bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs sm:text-sm rounded-full shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02]"
                 >
                   <span>READ FINAL LETTER</span>
                   <ArrowRight className="w-4 h-4" />
@@ -610,16 +581,17 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
       </motion.div>
 
       {/* Bottom Screen Navigation Bar */}
-      <motion.div variants={cardVariants} className="mt-5 flex items-center justify-between gap-4 font-mono">
+      <motion.div variants={cardVariants} className="mt-5 flex items-center justify-between gap-4">
         <button
           type="button"
           onClick={() => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.MINIGAME);
           }}
-          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
+          className="px-5 py-2.5 bg-white/70 hover:bg-white border border-white/80 hover:border-pink-200 text-slate-700 text-xs font-bold rounded-full transition-all cursor-pointer flex items-center gap-2 shadow-xs"
         >
-          ◀ PREV: MINI-GAME
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>PREV: MINI-GAME</span>
         </button>
 
         <button
@@ -628,9 +600,9 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.HERO);
           }}
-          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#9ca3af] hover:text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
+          className="hidden sm:flex px-4 py-2 bg-white/50 hover:bg-white text-slate-600 text-xs font-bold rounded-full border border-white/70"
         >
-          [ HERO HUB ]
+          HERO HUB
         </button>
 
         <button
@@ -639,9 +611,10 @@ export const Screen06_Cake: React.FC<Screen06CakeProps> = ({ onNavigate }) => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.FINAL_MESSAGE);
           }}
-          className="px-5 py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] text-xs font-semibold rounded-xl shadow-lg shadow-[#f5a524]/20 transition-all cursor-pointer hover:scale-[1.01]"
+          className="px-6 py-2.5 bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white text-xs font-bold rounded-full shadow-md shadow-pink-300/40 transition-all cursor-pointer hover:scale-[1.01] flex items-center gap-2"
         >
-          FINAL LETTER ▶
+          <span>FINAL LETTER</span>
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </motion.div>
 

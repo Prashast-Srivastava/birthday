@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { Play, RotateCcw, Award, Heart, Sparkles, ChevronLeft, ChevronRight, Zap, Trophy, ShieldAlert, ArrowRight } from 'lucide-react';
+import { Play, RotateCcw, Award, Heart, Sparkles, ChevronLeft, ChevronRight, Zap, Trophy, ShieldAlert, ArrowLeft, ArrowRight } from 'lucide-react';
 import { ScreenIndex } from '../../types';
 import { birthdayConfig } from '../../birthdayData';
 import { soundEngine } from '../../utils/audio';
@@ -14,7 +14,7 @@ type ItemType = 'cake' | 'star' | 'heart' | 'fish' | 'bomb';
 
 interface FallingItem {
   id: number;
-  lane: number; // 0 to 4 (5 lanes)
+  lane: number;
   x: number;
   y: number;
   speed: number;
@@ -48,7 +48,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
   const [lives, setLives] = useState<number>(INITIAL_LIVES);
   const [combo, setCombo] = useState<number>(0);
   const [highScore, setHighScore] = useState<number>(0);
-  const [catLane, setCatLane] = useState<number>(2); // Start at middle lane (0,1,2,3,4)
+  const [catLane, setCatLane] = useState<number>(2);
 
   // Internal mutable refs for 60fps canvas loop
   const stateRef = useRef({
@@ -64,7 +64,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
     particles: [] as ParticleEffect[],
     screenShake: 0,
     lastSpawnTime: 0,
-    spawnInterval: 650, // ms between drops
+    spawnInterval: 650,
     invulnerableTime: 0,
     animationFrameId: 0,
     itemNextId: 1,
@@ -72,7 +72,6 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
     lastTimestamp: 0,
   });
 
-  // Keep stateRef in sync with React state when needed
   useEffect(() => {
     stateRef.current.gameState = gameState;
   }, [gameState]);
@@ -81,7 +80,6 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
     stateRef.current.catLane = catLane;
   }, [catLane]);
 
-  // Move cat left / right with boundary checks and retro click sound
   const moveCat = useCallback((direction: 'left' | 'right') => {
     if (stateRef.current.gameState !== 'PLAYING') return;
 
@@ -95,21 +93,19 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
     if (newLane !== stateRef.current.catLane) {
       stateRef.current.catLane = newLane;
       setCatLane(newLane);
-      soundEngine.playTone(480 + newLane * 60, 0.03, 'square', 0.05);
+      soundEngine.playTone(480 + newLane * 60, 0.03, 'sine', 0.05);
     }
   }, []);
 
-  // Jump directly to specific lane (for mouse/touch clicks on lanes)
   const jumpToLane = useCallback((laneIndex: number) => {
     if (stateRef.current.gameState !== 'PLAYING') return;
     if (laneIndex >= 0 && laneIndex < TOTAL_LANES) {
       stateRef.current.catLane = laneIndex;
       setCatLane(laneIndex);
-      soundEngine.playTone(480 + laneIndex * 60, 0.03, 'square', 0.05);
+      soundEngine.playTone(480 + laneIndex * 60, 0.03, 'sine', 0.05);
     }
   }, []);
 
-  // Start game handler
   const handleStartGame = () => {
     soundEngine.playPowerUp();
     setScore(0);
@@ -123,101 +119,89 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
     stateRef.current.catLane = 2;
     stateRef.current.items = [];
     stateRef.current.particles = [];
-    stateRef.current.screenShake = 0;
     stateRef.current.invulnerableTime = 0;
     stateRef.current.lastSpawnTime = Date.now();
     stateRef.current.gameState = 'PLAYING';
+
     setGameState('PLAYING');
   };
 
-  // Keyboard controls listener
+  // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-        e.preventDefault();
+      if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
         moveCat('left');
-      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-        e.preventDefault();
+      } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
         moveCat('right');
-      } else if (e.key === ' ' || e.key === 'Enter') {
-        if (stateRef.current.gameState === 'IDLE' || stateRef.current.gameState === 'GAMEOVER') {
-          e.preventDefault();
-          handleStartGame();
-        } else if (stateRef.current.gameState === 'WON') {
-          e.preventDefault();
-          soundEngine.playFanfare();
-          onNavigate(ScreenIndex.CAKE);
-        }
+      } else if (e.code === 'Space' && (gameState === 'IDLE' || gameState === 'GAMEOVER' || gameState === 'WON')) {
+        handleStartGame();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [moveCat, onNavigate]);
+  }, [moveCat, gameState]);
 
-  // Main Canvas Rendering and Physics Loop
+  // Main 60FPS Canvas Animation Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
     const resizeCanvas = () => {
-      const parent = canvas.parentElement;
-      if (!parent) return;
-      const width = parent.clientWidth;
-      const height = Math.min(540, Math.max(380, window.innerHeight * 0.52));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width || 640;
+      const h = Math.min(420, window.innerHeight * 0.48);
 
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
       ctx.scale(dpr, dpr);
     };
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Main animation frame loop
-    let running = true;
+    stateRef.current.lastTimestamp = performance.now();
 
-    const gameLoop = (timestamp: number) => {
-      if (!running) return;
-
-      const parent = canvas.parentElement;
-      const width = parent ? parent.clientWidth : 600;
-      const height = Math.min(540, Math.max(380, window.innerHeight * 0.52));
-
-      const dt = stateRef.current.lastTimestamp ? Math.min((timestamp - stateRef.current.lastTimestamp) / 1000, 0.1) : 0.016;
+    const renderLoop = (timestamp: number) => {
+      const dt = Math.min((timestamp - stateRef.current.lastTimestamp) / 1000, 0.1);
       stateRef.current.lastTimestamp = timestamp;
 
-      // Clear Canvas
-      ctx.save();
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = canvas.height / (Math.min(window.devicePixelRatio || 1, 2));
+
       ctx.clearRect(0, 0, width, height);
 
-      // Handle Screen Shake
+      // Screen shake decay
+      let shakeX = 0;
+      let shakeY = 0;
       if (stateRef.current.screenShake > 0) {
-        stateRef.current.screenShake -= dt * 15;
-        if (stateRef.current.screenShake < 0) stateRef.current.screenShake = 0;
-        const shakeMag = stateRef.current.screenShake * 8;
-        const shakeX = (Math.random() - 0.5) * shakeMag;
-        const shakeY = (Math.random() - 0.5) * shakeMag;
-        ctx.translate(shakeX, shakeY);
+        stateRef.current.screenShake -= dt * 2.5;
+        const mag = stateRef.current.screenShake * 8;
+        shakeX = (Math.random() - 0.5) * mag;
+        shakeY = (Math.random() - 0.5) * mag;
       }
 
-      // 1. Draw Dev-Tool Grid Background
+      ctx.save();
+      ctx.translate(shakeX, shakeY);
+
+      // 1. Soft Dreamy Pastel Sky Canvas Background
       const laneWidth = width / TOTAL_LANES;
 
-      ctx.fillStyle = '#0a0e17'; // near-black navy
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, '#fdf4ff'); // light lavender
+      bgGrad.addColorStop(0.5, '#fff1f2'); // blush pink
+      bgGrad.addColorStop(1, '#f0fdf4'); // soft mint
+      ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // Draw subtle hairline lane dividers
+      // Draw delicate hairline lane dividers
       for (let i = 0; i <= TOTAL_LANES; i++) {
         const lx = i * laneWidth;
-        ctx.strokeStyle = i === 0 || i === TOTAL_LANES ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.08)';
+        ctx.strokeStyle = i === 0 || i === TOTAL_LANES ? 'rgba(244, 114, 182, 0.3)' : 'rgba(244, 114, 182, 0.15)';
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
@@ -227,14 +211,14 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         ctx.setLineDash([]);
       }
 
-      // Highlight active cat lane with subtle amber sheen
+      // Highlight active cat lane with soft pastel glow
       const activeLaneX = stateRef.current.catLane * laneWidth;
-      ctx.fillStyle = 'rgba(245, 165, 36, 0.06)';
+      ctx.fillStyle = 'rgba(244, 114, 182, 0.08)';
       ctx.fillRect(activeLaneX, 0, laneWidth, height);
 
-      // Draw Danger Baseline
+      // Draw Danger / Catch Baseline
       const targetY = height - 55;
-      ctx.strokeStyle = 'rgba(245, 165, 36, 0.3)';
+      ctx.strokeStyle = 'rgba(244, 114, 182, 0.35)';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(0, targetY + 20);
@@ -250,8 +234,6 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
           stateRef.current.lastSpawnTime = now;
           const randomLane = Math.floor(Math.random() * TOTAL_LANES);
 
-          // Weighted item distribution:
-          // 30% Cake, 25% Star, 20% Heart, 10% Fish, 15% Glitch Bomb
           const rand = Math.random();
           let type: ItemType = 'cake';
           let points = 20;
@@ -293,12 +275,11 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         stateRef.current.catX += (targetCatX - stateRef.current.catX) * 0.35;
         stateRef.current.catY = targetY;
 
-        // Decrease invulnerability timer
         if (stateRef.current.invulnerableTime > 0) {
           stateRef.current.invulnerableTime -= dt;
         }
 
-        // Update & check falling items
+        // Collision box
         const catBox = {
           x: stateRef.current.catX - 26,
           y: stateRef.current.catY - 26,
@@ -311,7 +292,6 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
           item.y += item.speed * dt;
           item.rotation += dt * 1.5;
 
-          // Collision detection with Cat
           const itemBox = {
             x: item.x - 18,
             y: item.y - 18,
@@ -326,11 +306,10 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             catBox.y + catBox.h > itemBox.y;
 
           if (isColliding) {
-            // Collision event!
             if (item.type === 'bomb') {
               if (stateRef.current.invulnerableTime <= 0) {
                 soundEngine.playGlitch();
-                stateRef.current.screenShake = 0.8;
+                stateRef.current.screenShake = 0.6;
                 stateRef.current.invulnerableTime = 1.2;
                 stateRef.current.combo = 0;
                 setCombo(0);
@@ -339,20 +318,18 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                 stateRef.current.lives = newLives;
                 setLives(newLives);
 
-                // Spawn red damage glitch particles
                 for (let p = 0; p < 12; p++) {
                   stateRef.current.particles.push({
                     x: item.x,
                     y: item.y,
                     vx: (Math.random() - 0.5) * 200,
                     vy: (Math.random() - 0.5) * 200,
-                    color: '#ef4444',
+                    color: '#f43f5e',
                     size: 3 + Math.random() * 3,
                     alpha: 1,
                   });
                 }
 
-                // Check Game Over
                 if (newLives <= 0) {
                   stateRef.current.gameState = 'GAMEOVER';
                   setGameState('GAMEOVER');
@@ -360,24 +337,26 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                 }
               }
             } else {
-              // Positive item collected!
+              // Positive points
               soundEngine.playCoin();
-              const newCombo = stateRef.current.combo + 1;
-              stateRef.current.combo = newCombo;
-              setCombo(newCombo);
 
-              const bonus = newCombo > 3 ? 5 : 0;
+              const currentCombo = stateRef.current.combo + 1;
+              stateRef.current.combo = currentCombo;
+              setCombo(currentCombo);
+
+              const bonus = currentCombo > 2 ? (currentCombo - 2) * 5 : 0;
               const addedPoints = item.points + bonus;
-              const newScore = Math.min(TARGET_SCORE, stateRef.current.score + addedPoints);
+              const newScore = stateRef.current.score + addedPoints;
 
               stateRef.current.score = newScore;
               setScore(newScore);
 
-              setHighScore(prev => Math.max(prev, newScore));
+              if (newScore > highScore) {
+                setHighScore(newScore);
+              }
 
-              // Spawn positive particle pops & floating "+20" text
               const itemColor =
-                item.type === 'cake' ? '#fbbf24' :
+                item.type === 'cake' ? '#f472b6' :
                 item.type === 'star' ? '#f59e0b' :
                 item.type === 'heart' ? '#ec4899' : '#38bdf8';
 
@@ -404,15 +383,13 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                 });
               }
 
-              // Check WIN condition (Target 100 PTS)
               if (newScore >= TARGET_SCORE) {
                 stateRef.current.gameState = 'WON';
                 setGameState('WON');
                 soundEngine.playFanfare();
 
-                // Huge victory confetti burst particles
                 for (let c = 0; c < 50; c++) {
-                  const confColor = ['#4ade80', '#fbbf24', '#ec4899', '#38bdf8', '#ffffff'][Math.floor(Math.random() * 5)];
+                  const confColor = ['#f472b6', '#c084fc', '#facc15', '#34d399', '#38bdf8'][Math.floor(Math.random() * 5)];
                   stateRef.current.particles.push({
                     x: width / 2,
                     y: height / 2,
@@ -426,207 +403,187 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
               }
             }
 
-            // Remove item from falling array
             stateRef.current.items.splice(i, 1);
             continue;
           }
 
-          // Off-screen removal
           if (item.y > height + 30) {
             stateRef.current.items.splice(i, 1);
           }
         }
       }
 
-      // 3. Draw Falling Items (Procedural 8-bit Pixel Sprites)
+      // 3. Draw Falling Items (Cute Pastel Sprites)
       stateRef.current.items.forEach(item => {
         ctx.save();
         ctx.translate(item.x, item.y);
 
         if (item.type === 'cake') {
-          // 🎂 8-bit Birthday Cake Slice
-          ctx.fillStyle = '#fbbf24'; // Cake sponge
+          // 🎂 Pastel Cake Slice
+          ctx.fillStyle = '#fef08a';
           ctx.fillRect(-12, -4, 24, 14);
-          ctx.fillStyle = '#f43f5e'; // Strawberry cream
+          ctx.fillStyle = '#f472b6';
           ctx.fillRect(-12, 1, 24, 3);
-          ctx.fillStyle = '#ffffff'; // White frosting top
+          ctx.fillStyle = '#ffffff';
           ctx.fillRect(-14, -8, 28, 5);
           // Candle
-          ctx.fillStyle = '#38bdf8';
+          ctx.fillStyle = '#c084fc';
           ctx.fillRect(-2, -14, 4, 6);
           // Flame
-          ctx.fillStyle = '#ffedd5';
+          ctx.fillStyle = '#fde047';
           ctx.fillRect(-2, -18, 4, 4);
-          ctx.fillStyle = '#ea580c';
-          ctx.fillRect(-1, -17, 2, 2);
         } else if (item.type === 'star') {
-          // ⭐ 8-bit Super Star
-          ctx.fillStyle = '#fbbf24';
+          // ⭐ Pastel Star
+          ctx.fillStyle = '#facc15';
           ctx.fillRect(-10, -3, 20, 6);
           ctx.fillRect(-3, -10, 6, 20);
           ctx.fillRect(-7, -7, 14, 14);
-          ctx.fillStyle = '#000000'; // Eyes
+          ctx.fillStyle = '#1e293b';
           ctx.fillRect(-3, -2, 2, 4);
           ctx.fillRect(1, -2, 2, 4);
         } else if (item.type === 'heart') {
-          // 💖 8-bit Love Heart
-          ctx.fillStyle = '#ec4899';
+          // 💖 Pastel Heart
+          ctx.fillStyle = '#f472b6';
           ctx.fillRect(-10, -8, 8, 8);
           ctx.fillRect(2, -8, 8, 8);
           ctx.fillRect(-12, -4, 24, 8);
           ctx.fillRect(-10, 4, 20, 4);
           ctx.fillRect(-6, 8, 12, 4);
           ctx.fillRect(-2, 12, 4, 4);
-          ctx.fillStyle = '#ffffff'; // Shine
+          ctx.fillStyle = '#ffffff';
           ctx.fillRect(-8, -6, 2, 2);
         } else if (item.type === 'fish') {
-          // 🐟 8-bit Cat Fish Snack
+          // 🐟 Pastel Fish
           ctx.fillStyle = '#38bdf8';
           ctx.fillRect(-10, -6, 16, 12);
           ctx.fillRect(6, -8, 6, 16);
           ctx.fillRect(12, -10, 4, 20);
-          ctx.fillStyle = '#000000'; // Eye
+          ctx.fillStyle = '#1e293b';
           ctx.fillRect(-6, -3, 2, 2);
         } else if (item.type === 'bomb') {
-          // 💣 8-bit Glitch Bomb / Bug
-          ctx.fillStyle = '#ef4444';
+          // 💣 Pastel Storm Cloud / Obstacle
+          ctx.fillStyle = '#c084fc';
           ctx.fillRect(-10, -6, 20, 16);
           ctx.fillRect(-6, -10, 12, 20);
-          // Glitch fuse spark
-          ctx.fillStyle = '#fbbf24';
-          ctx.fillRect(-2, -14, 4, 4);
-          // Danger X icon
-          ctx.fillStyle = '#000000';
-          ctx.fillRect(-6, -3, 4, 4);
-          ctx.fillRect(2, -3, 4, 4);
-          ctx.fillRect(-2, 1, 4, 4);
-          ctx.fillRect(-6, 5, 4, 4);
-          ctx.fillRect(2, 5, 4, 4);
+          ctx.fillStyle = '#f43f5e';
+          ctx.fillRect(-4, -2, 8, 4);
         }
 
         ctx.restore();
       });
 
-      // 4. Draw The Birthday Cat Character at bottom
+      // 4. Draw Cute Pastel Birthday Cat
       const catX = stateRef.current.catX || (activeLaneX + laneWidth / 2);
       const catY = targetY;
 
       ctx.save();
       ctx.translate(catX, catY);
 
-      // Invulnerability flashing effect
       if (stateRef.current.invulnerableTime > 0 && Math.floor(Date.now() / 80) % 2 === 0) {
-        ctx.globalAlpha = 0.35;
+        ctx.globalAlpha = 0.4;
       }
 
-      // Draw Retro Pixel Cat Sprite on Canvas
-      // Ears
-      ctx.fillStyle = '#4ade80';
-      ctx.fillRect(-16, -26, 8, 8);
-      ctx.fillRect(8, -26, 8, 8);
-      ctx.fillStyle = '#ec4899'; // Inner pink ears
-      ctx.fillRect(-14, -24, 4, 4);
-      ctx.fillRect(10, -24, 4, 4);
-
-      // Birthday Party Hat
-      ctx.fillStyle = '#f43f5e';
+      // Party Hat
+      ctx.fillStyle = '#f472b6';
       ctx.fillRect(-4, -36, 8, 4);
       ctx.fillRect(-3, -42, 6, 6);
       ctx.fillRect(-2, -46, 4, 4);
-      ctx.fillStyle = '#fbbf24';
+      ctx.fillStyle = '#facc15';
       ctx.fillRect(-1, -48, 2, 2);
 
-      // Head Base
-      ctx.fillStyle = '#0a100a';
-      ctx.fillRect(-18, -18, 36, 22);
-      ctx.fillStyle = '#4ade80';
-      ctx.fillRect(-18, -18, 36, 2);
-      ctx.fillRect(-18, 2, 36, 2);
-      ctx.fillRect(-18, -18, 2, 22);
-      ctx.fillRect(16, -18, 2, 22);
+      // Cat Ears
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-16, -26, 8, 8);
+      ctx.fillRect(8, -26, 8, 8);
+      ctx.fillStyle = '#f472b6';
+      ctx.fillRect(-14, -24, 4, 4);
+      ctx.fillRect(10, -24, 4, 4);
 
-      // Cute Big Green Eyes
-      ctx.fillStyle = '#4ade80';
+      // Head Base (Creamy White)
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-18, -18, 36, 22);
+      ctx.strokeStyle = '#fce7f3';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-18, -18, 36, 22);
+
+      // Cute Eyes
+      ctx.fillStyle = '#1e293b';
       ctx.fillRect(-12, -12, 6, 6);
       ctx.fillRect(6, -12, 6, 6);
-      ctx.fillStyle = '#ffffff'; // Eye shine
+      ctx.fillStyle = '#ffffff';
       ctx.fillRect(-10, -12, 2, 2);
       ctx.fillRect(8, -12, 2, 2);
 
       // Pink Cheeks
-      ctx.fillStyle = '#ec4899';
+      ctx.fillStyle = '#fda4af';
       ctx.fillRect(-16, -4, 4, 3);
       ctx.fillRect(12, -4, 4, 3);
 
       // Nose & Mouth
-      ctx.fillStyle = '#ec4899';
+      ctx.fillStyle = '#f472b6';
       ctx.fillRect(-2, -6, 4, 2);
-      ctx.fillStyle = '#4ade80';
+      ctx.fillStyle = '#475569';
       ctx.fillRect(-4, -3, 3, 2);
       ctx.fillRect(1, -3, 3, 2);
 
       // Whiskers
-      ctx.fillStyle = '#4ade80';
+      ctx.fillStyle = '#cbd5e1';
       ctx.fillRect(-24, -8, 6, 1.5);
       ctx.fillRect(-24, -4, 6, 1.5);
       ctx.fillRect(18, -8, 6, 1.5);
       ctx.fillRect(18, -4, 6, 1.5);
 
-      // Catch Basket / Paws (Ready to catch falling cakes)
-      ctx.fillStyle = '#121a12';
+      // Catch Basket (Pastel Lavender)
+      ctx.fillStyle = '#f3e8ff';
       ctx.fillRect(-22, 6, 44, 10);
-      ctx.fillStyle = '#fbbf24';
+      ctx.fillStyle = '#c084fc';
       ctx.fillRect(-22, 6, 44, 2);
-      ctx.fillStyle = '#4ade80';
-      ctx.fillRect(-14, 10, 6, 4);
-      ctx.fillRect(8, 10, 6, 4);
+      ctx.strokeStyle = '#e9d5ff';
+      ctx.strokeRect(-22, 6, 44, 10);
 
       ctx.restore();
 
-      // 5. Update & Draw Particles (Pops, Sparks, Score Texts)
+      // 5. Draw Particles
       for (let p = stateRef.current.particles.length - 1; p >= 0; p--) {
-        const pt = stateRef.current.particles[p];
-        pt.x += pt.vx * dt;
-        pt.y += pt.vy * dt;
-        pt.alpha -= dt * 1.5;
+        const particle = stateRef.current.particles[p];
+        particle.x += particle.vx * dt;
+        particle.y += particle.vy * dt;
+        particle.alpha -= dt * 1.3;
 
-        if (pt.alpha <= 0) {
+        if (particle.alpha <= 0) {
           stateRef.current.particles.splice(p, 1);
           continue;
         }
 
         ctx.save();
-        ctx.globalAlpha = Math.max(0, pt.alpha);
+        ctx.globalAlpha = particle.alpha;
 
-        if (pt.text) {
-          ctx.font = 'bold 12px monospace';
-          ctx.fillStyle = pt.color;
-          ctx.textAlign = 'center';
-          ctx.shadowColor = pt.color;
-          ctx.shadowBlur = 6;
-          ctx.fillText(pt.text, pt.x, pt.y);
+        if (particle.text) {
+          ctx.font = 'bold 12px Nunito, sans-serif';
+          ctx.fillStyle = particle.color;
+          ctx.fillText(particle.text, particle.x - 15, particle.y);
         } else {
-          ctx.fillStyle = pt.color;
-          ctx.shadowColor = pt.color;
-          ctx.shadowBlur = 4;
-          ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
+          ctx.fillStyle = particle.color;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
         }
+
         ctx.restore();
       }
 
-      ctx.restore(); // Restore root translation
+      ctx.restore();
 
-      stateRef.current.animationFrameId = requestAnimationFrame(gameLoop);
+      stateRef.current.animationFrameId = requestAnimationFrame(renderLoop);
     };
 
-    stateRef.current.animationFrameId = requestAnimationFrame(gameLoop);
+    stateRef.current.animationFrameId = requestAnimationFrame(renderLoop);
 
     return () => {
-      running = false;
       cancelAnimationFrame(stateRef.current.animationFrameId);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, []);
+  }, [highScore]);
 
   const progressPercent = Math.min(100, Math.round((score / TARGET_SCORE) * 100));
 
@@ -638,65 +595,63 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
       className="w-full max-w-5xl mx-auto flex flex-col justify-between py-2 sm:py-4 select-none"
     >
       
-      {/* Screen Top Header & Quest HUD */}
-      <motion.div variants={cardVariants} className="dev-card bg-[#121723]/90 border border-[#ffffff1a] p-4 sm:p-5 mb-5 rounded-xl shadow-xl relative">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#ffffff1a] pb-3">
+      {/* Top HUD & Score Bar */}
+      <motion.div variants={cardVariants} className="bg-white/55 backdrop-blur-xl border border-white/80 p-5 sm:p-6 mb-5 rounded-3xl shadow-xl shadow-pink-100/40 relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-pink-100/60 pb-3">
           <div>
             <div className="dev-eyebrow-pill mb-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#f5a524]" />
-              <span>MINI-GAME SECTOR 05 // INTERACTIVE MODULE</span>
+              <Sparkles className="w-3.5 h-3.5 text-pink-500" />
+              <span>ARCADE QUEST • STAGE 05</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-sans font-bold text-[#f5f5f7] tracking-tight">
-              Save The Birthday Cat // <span className="text-[#f5a524]">Cake Rush</span>
+            <h2 className="text-xl sm:text-2xl font-heading font-bold text-slate-800 tracking-tight">
+              Catch the Birthday Treats // <span className="text-pink-600">Cake Rush</span> 🍰
             </h2>
           </div>
 
           {/* Quick HUD Metrics */}
-          <div className="flex items-center gap-2 font-mono text-xs">
-            <div className="bg-[#1a1f2e] px-3 py-1 border border-[#ffffff1a] rounded-lg flex items-center gap-1.5">
-              <span className="text-[#9ca3af]">TARGET:</span>
-              <span className="text-[#f5f5f7] font-semibold">{TARGET_SCORE} PTS</span>
+          <div className="flex items-center gap-2 text-xs">
+            <div className="bg-white/70 px-3.5 py-1.5 border border-pink-200 rounded-full flex items-center gap-1.5 shadow-xs">
+              <span className="text-slate-500 font-bold">TARGET:</span>
+              <span className="text-slate-800 font-bold">{TARGET_SCORE} PTS</span>
             </div>
-            <div className="bg-[#1a1f2e] px-3 py-1 border border-[#f5a524]/30 rounded-lg flex items-center gap-1.5">
-              <span className="text-[#9ca3af]">HIGH:</span>
-              <span className="text-[#f5a524] font-semibold">{highScore} PTS</span>
+            <div className="bg-pink-100/80 px-3.5 py-1.5 border border-pink-200 rounded-full flex items-center gap-1.5 shadow-xs">
+              <Trophy className="w-3 h-3 text-pink-600" />
+              <span className="text-pink-700 font-bold">{highScore} PTS</span>
             </div>
           </div>
         </div>
 
-        {/* Progress Bar & Sync Bar */}
-        <div className="mt-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+        {/* Progress Bar & Lives */}
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
           <div className="sm:col-span-2">
-            <div className="flex justify-between text-xs font-mono text-[#9ca3af] mb-1.5">
-              <span>AWAKENING PROGRESS:</span>
-              <span className="text-[#f5f5f7] font-medium">{progressPercent}% [{score} / {TARGET_SCORE} PTS]</span>
+            <div className="flex justify-between text-xs font-bold text-slate-600 mb-1.5">
+              <span>QUEST PROGRESS</span>
+              <span className="text-pink-600">{progressPercent}% [{score} / {TARGET_SCORE} PTS]</span>
             </div>
-            <div className="w-full h-2.5 bg-[#0a0e17] rounded-full border border-[#ffffff1a] overflow-hidden p-0.5">
+            <div className="w-full h-3 bg-pink-100/50 rounded-full border border-white/80 overflow-hidden p-0.5 shadow-inner">
               <div
-                className="h-full bg-gradient-to-r from-[#f5a524] to-[#fbbf24] rounded-full transition-all duration-300"
+                className="h-full bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 rounded-full transition-all duration-300 shadow-xs"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
           </div>
 
           {/* Lives & Combo Indicator */}
-          <div className="flex items-center justify-between sm:justify-end gap-3 font-mono text-xs">
-            <div className="flex items-center gap-1.5 bg-[#1a1f2e] px-3 py-1 border border-[#ffffff1a] rounded-lg">
-              <span className="text-xs text-[#9ca3af] mr-1">LIVES:</span>
+          <div className="flex items-center justify-between sm:justify-end gap-3 text-xs">
+            <div className="flex items-center gap-1.5 bg-white/70 px-3.5 py-1.5 border border-pink-200 rounded-full shadow-xs">
+              <span className="text-xs text-slate-500 font-bold mr-1">LIVES:</span>
               {[...Array(INITIAL_LIVES)].map((_, i) => (
-                <span
+                <Heart
                   key={i}
-                  className={`text-sm transition-transform ${
-                    i < lives ? 'text-[#f43f5e] scale-100' : 'text-[#4b5563] scale-90 opacity-40'
+                  className={`w-3.5 h-3.5 transition-transform ${
+                    i < lives ? 'fill-pink-500 text-pink-500 scale-100' : 'text-slate-300 scale-90 opacity-40'
                   }`}
-                >
-                  ♥
-                </span>
+                />
               ))}
             </div>
 
             {combo > 1 && (
-              <div className="px-2.5 py-1 bg-[#f5a524]/15 text-[#f5a524] border border-[#f5a524]/30 rounded-lg text-xs font-mono font-semibold">
+              <div className="px-3 py-1 bg-gradient-to-r from-amber-400 to-pink-400 text-white rounded-full text-xs font-bold shadow-sm animate-bounce">
                 x{combo} STREAK!
               </div>
             )}
@@ -704,60 +659,60 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
         </div>
       </motion.div>
 
-      {/* Main Interactive Canvas Area with Modern Frame */}
-      <motion.div variants={cardVariants} className="relative w-full border border-[#ffffff1a] bg-[#0a0e17] rounded-2xl shadow-2xl overflow-hidden">
+      {/* Main Interactive Canvas Area with Frosted Frame */}
+      <motion.div variants={cardVariants} className="relative w-full border border-white/90 bg-white/40 backdrop-blur-xl rounded-3xl shadow-xl shadow-pink-100/30 overflow-hidden">
         <canvas
           ref={canvasRef}
           id="birthday-cat-game-canvas"
           className="w-full block cursor-pointer"
         />
 
-        {/* 5 Lane Click Zones (Desktop & Mobile Tap Support) */}
+        {/* 5 Lane Click Zones */}
         <div className="absolute inset-0 grid grid-cols-5 pointer-events-auto">
           {[0, 1, 2, 3, 4].map(laneIndex => (
             <button
               key={laneIndex}
               type="button"
               onClick={() => jumpToLane(laneIndex)}
-              className="w-full h-full opacity-0 hover:opacity-10 bg-[#f5a524] active:bg-[#f5a524]/20 transition-opacity cursor-pointer flex flex-col justify-end pb-3 items-center text-[10px] font-mono text-[#f5f5f7]"
+              className="w-full h-full opacity-0 hover:opacity-15 bg-pink-300 active:bg-pink-400 transition-opacity cursor-pointer flex flex-col justify-end pb-3 items-center text-[11px] font-bold text-pink-800"
               title={`Move cat to Lane ${laneIndex + 1}`}
             >
-              <span className="opacity-70">LANE {laneIndex + 1}</span>
+              <span className="opacity-80">LANE {laneIndex + 1}</span>
             </button>
           ))}
         </div>
 
         {/* IDLE / START OVERLAY */}
         {gameState === 'IDLE' && (
-          <div className="absolute inset-0 bg-[#0a0e17]/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20">
-            <div className="dev-card p-6 bg-[#121723] border border-[#ffffff1a] rounded-2xl max-w-md w-full shadow-2xl text-[#f5f5f7]">
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-6 text-center z-20">
+            <div className="p-6 bg-white/90 border border-white rounded-3xl max-w-md w-full shadow-2xl shadow-pink-200/50 text-slate-800">
               <div className="dev-eyebrow-pill mb-2 mx-auto inline-flex">
-                <Sparkles className="w-3.5 h-3.5 text-[#f5a524]" />
+                <Sparkles className="w-3.5 h-3.5 text-pink-500" />
                 <span>MISSION BRIEFING</span>
               </div>
-              <h3 className="text-xl font-sans font-bold text-[#f5f5f7] mb-3">
-                Save The Birthday Cat
+              <h3 className="text-xl font-heading font-bold text-slate-800 mb-2">
+                Catch the Birthday Treats!
               </h3>
               
-              <div className="text-xs font-mono text-[#9ca3af] text-left space-y-2 bg-[#1a1f2e] p-3.5 rounded-xl border border-[#ffffff1a] mb-5">
-                <p>🎂 <b className="text-[#f5f5f7]">Cakes (+20 pts)</b> & 🐟 <b className="text-[#f5f5f7]">Fish Snacks (+25 pts)</b> fall down.</p>
-                <p>⭐ <b className="text-[#f5f5f7]">Stars (+15 pts)</b> & 💖 <b className="text-[#f5f5f7]">Hearts (+10 pts)</b> build combos.</p>
-                <p><b className="text-[#f43f5e]">💣 Avoid Glitch Bombs!</b> They cost 1 life.</p>
-                <p>🏆 Score <b className="text-[#f5a524]">100 PTS</b> to unlock the Birthday Cake Ceremony!</p>
+              <div className="text-xs text-slate-600 text-left space-y-2 bg-pink-50/60 p-4 rounded-2xl border border-pink-100 mb-5 font-medium">
+                <p>🎂 <b className="text-slate-800">Cakes (+20 pts)</b> & 🐟 <b className="text-slate-800">Fish (+25 pts)</b> fall down.</p>
+                <p>⭐ <b className="text-slate-800">Stars (+15 pts)</b> & 💖 <b className="text-slate-800">Hearts (+10 pts)</b> build combos.</p>
+                <p><b className="text-rose-600">Avoid stormy clouds!</b> They cost 1 heart.</p>
+                <p>🏆 Reach <b className="text-pink-600">100 PTS</b> to unlock the Cake & Candles Ceremony!</p>
               </div>
 
-              <div className="text-xs font-mono text-[#9ca3af] mb-5">
-                Keyboard: [◀ / ▶] Arrows or [A / D] • Tap: Touch lanes or buttons
+              <div className="text-xs text-slate-500 mb-5 font-medium">
+                Arrows [◀ / ▶] or [A / D] • Tap screen lanes or buttons
               </div>
 
               <button
                 type="button"
                 id="start-cat-game-btn"
                 onClick={handleStartGame}
-                className="w-full py-3 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+                className="w-full py-3.5 bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs rounded-full shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02] active:scale-95"
               >
                 <Play className="w-4 h-4 fill-current" />
-                <span>LAUNCH MISSION [START]</span>
+                <span>START CELEBRATION QUEST</span>
               </button>
             </div>
           </div>
@@ -765,30 +720,30 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
 
         {/* MISSION COMPLETE / LEVEL UNLOCKED CELEBRATION OVERLAY */}
         {gameState === 'WON' && (
-          <div className="absolute inset-0 bg-[#0a0e17]/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30 animate-fadeIn">
-            <div className="dev-card p-6 sm:p-7 bg-[#121723] border border-[#ffffff1a] rounded-2xl max-w-lg w-full shadow-2xl text-[#f5f5f7]">
-              <div className="inline-block px-3 py-1 bg-[#f5a524]/15 text-[#f5a524] border border-[#f5a524]/30 rounded-full text-xs font-mono font-medium mb-3">
-                ★ HIGH SCORE CONFIRMED ★
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30">
+            <div className="p-6 sm:p-7 bg-white/90 border border-white rounded-3xl max-w-lg w-full shadow-2xl shadow-pink-200/50 text-slate-800">
+              <div className="inline-block px-3 py-1 bg-pink-100 text-pink-600 border border-pink-200 rounded-full text-xs font-bold mb-3">
+                ★ VICTORY CONFIRMED ★
               </div>
-              <h3 className="text-2xl font-sans font-bold text-[#f5f5f7] mb-1">
-                Mission Complete!
+              <h3 className="text-2xl font-heading font-bold text-slate-800 mb-1">
+                Mission Complete! 🎉
               </h3>
-              <p className="text-sm font-mono text-[#4ade80] font-medium mb-4">
-                🎉 Birthday Level 22 Unlocked! 🎉
+              <p className="text-sm text-emerald-600 font-bold mb-4">
+                Level 22 Cake Ceremony Unlocked!
               </p>
 
-              <div className="p-4 bg-[#1a1f2e] border border-[#ffffff1a] rounded-xl text-xs font-mono space-y-2 mb-6">
-                <div className="flex justify-between items-center py-1 border-b border-[#ffffff0f]">
-                  <span className="text-[#9ca3af]">RECIPIENT:</span>
-                  <span className="font-semibold text-[#f5f5f7]">{birthdayConfig.recipientName} // LEVEL 22</span>
+              <div className="p-4 bg-pink-50/60 border border-pink-100 rounded-2xl text-xs space-y-2 mb-6 font-medium">
+                <div className="flex justify-between items-center py-1 border-b border-pink-100">
+                  <span className="text-slate-500">RECIPIENT:</span>
+                  <span className="font-bold text-slate-800">{birthdayConfig.recipientName} // LEVEL 22</span>
                 </div>
-                <div className="flex justify-between items-center py-1 border-b border-[#ffffff0f]">
-                  <span className="text-[#9ca3af]">FINAL SCORE:</span>
-                  <span className="font-semibold text-[#f5a524]">{score} PTS [VICTORY!]</span>
+                <div className="flex justify-between items-center py-1 border-b border-pink-100">
+                  <span className="text-slate-500">FINAL SCORE:</span>
+                  <span className="font-bold text-pink-600">{score} PTS [VICTORY!]</span>
                 </div>
                 <div className="flex justify-between items-center py-1">
-                  <span className="text-[#9ca3af]">NEXT PHASE:</span>
-                  <span className="font-medium text-[#4ade80]">CAKE & CANDLES CEREMONY</span>
+                  <span className="text-slate-500">NEXT STAGE:</span>
+                  <span className="font-bold text-purple-600">CAKE & CANDLES CEREMONY</span>
                 </div>
               </div>
 
@@ -796,9 +751,9 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                 <button
                   type="button"
                   onClick={handleStartGame}
-                  className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] text-[#f5f5f7] font-mono text-xs rounded-xl flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                  className="px-5 py-2.5 bg-white hover:bg-pink-50 border border-pink-200 text-slate-700 text-xs font-bold rounded-full flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-xs"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-3.5 h-3.5 text-pink-500" />
                   <span>PLAY AGAIN</span>
                 </button>
 
@@ -809,7 +764,7 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
                     soundEngine.playFanfare();
                     onNavigate(ScreenIndex.CAKE);
                   }}
-                  className="flex-1 py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.01]"
+                  className="flex-1 py-2.5 bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs rounded-full shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02]"
                 >
                   <span>PROCEED TO CAKE CEREMONY</span>
                   <ArrowRight className="w-4 h-4" />
@@ -821,29 +776,29 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
 
         {/* GAME OVER OVERLAY */}
         {gameState === 'GAMEOVER' && (
-          <div className="absolute inset-0 bg-[#0a0e17]/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30">
-            <div className="dev-card p-6 bg-[#121723] border border-[#ffffff1a] rounded-2xl max-w-md w-full shadow-2xl text-[#f5f5f7]">
-              <div className="dev-eyebrow-pill mb-2 mx-auto inline-flex border-[#f43f5e]/30 text-[#f43f5e]">
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-6 text-center z-30">
+            <div className="p-6 bg-white/90 border border-white rounded-3xl max-w-md w-full shadow-2xl shadow-pink-200/50 text-slate-800">
+              <div className="dev-eyebrow-pill mb-2 mx-auto inline-flex border-rose-200 text-rose-600 bg-rose-50">
                 <ShieldAlert className="w-3.5 h-3.5" />
-                <span>MISSION INTERRUPTED</span>
+                <span>PAUSE & TRY AGAIN</span>
               </div>
-              <h3 className="text-xl font-sans font-bold text-[#f5f5f7] mb-2">
-                Glitch Overload!
+              <h3 className="text-xl font-heading font-bold text-slate-800 mb-2">
+                Almost There!
               </h3>
-              <p className="text-xs font-mono text-[#9ca3af] mb-4 leading-relaxed">
-                The birthday cat bumped into glitch bombs. Friendship has unlimited continues!
+              <p className="text-xs text-slate-600 mb-4 leading-relaxed font-medium">
+                The birthday cat bumped into stormy clouds. Good news: friendship has unlimited tries!
               </p>
 
-              <div className="p-3 bg-[#1a1f2e] border border-[#ffffff1a] rounded-xl text-xs font-mono mb-5 flex justify-between">
-                <span className="text-[#9ca3af]">POINTS SCORED:</span>
-                <span className="text-[#f5f5f7] font-semibold">{score} / {TARGET_SCORE} PTS</span>
+              <div className="p-3 bg-pink-50/60 border border-pink-100 rounded-2xl text-xs mb-5 flex justify-between font-bold">
+                <span className="text-slate-500">POINTS SCORED:</span>
+                <span className="text-pink-600">{score} / {TARGET_SCORE} PTS</span>
               </div>
 
               <button
                 type="button"
                 id="retry-cat-game-btn"
                 onClick={handleStartGame}
-                className="w-full py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] font-semibold text-xs rounded-xl shadow-lg shadow-[#f5a524]/20 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                className="w-full py-3 bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs rounded-full shadow-lg shadow-pink-300/40 flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-[1.02]"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>RETRY QUEST // CONTINUE</span>
@@ -854,51 +809,52 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
       </motion.div>
 
       {/* Tactile D-Pad Controls */}
-      <motion.div variants={cardVariants} className="mt-4 p-4 dev-card bg-[#121723]/90 border border-[#ffffff1a] rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
-        <div className="text-xs font-mono text-[#9ca3af] flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#f5a524]" />
-          <span className="font-medium text-[#f5f5f7]">CONTROLS:</span>
-          <span className="hidden sm:inline">Use Left/Right arrow keys, A/D, or click the control buttons.</span>
+      <motion.div variants={cardVariants} className="mt-4 p-4 bg-white/55 backdrop-blur-xl border border-white/80 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md shadow-pink-100/30">
+        <div className="text-xs text-slate-500 flex items-center gap-2 font-medium">
+          <Sparkles className="w-3.5 h-3.5 text-pink-500" />
+          <span className="font-bold text-slate-800">CONTROLS:</span>
+          <span className="hidden sm:inline">Use Left/Right arrow keys, A/D, or tap the buttons below.</span>
           <span className="sm:hidden">Tap Left / Right buttons or screen lanes.</span>
         </div>
 
         {/* On-Screen D-Pad Buttons */}
-        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
             type="button"
             id="dpad-left-btn"
             onClick={() => moveCat('left')}
-            className="flex-1 sm:flex-none px-4 py-2 bg-[#1a1f2e] hover:bg-[#222838] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] font-mono text-xs rounded-lg flex items-center justify-center gap-1 cursor-pointer transition-all"
+            className="flex-1 sm:flex-none px-5 py-2.5 bg-white/80 hover:bg-white border border-pink-200 text-slate-700 text-xs font-bold rounded-full flex items-center justify-center gap-1.5 cursor-pointer shadow-xs hover:shadow-sm"
             aria-label="Move cat left"
           >
-            <ChevronLeft className="w-4 h-4" />
-            <span>◀ LEFT</span>
+            <ChevronLeft className="w-4 h-4 text-pink-500" />
+            <span>LEFT</span>
           </button>
 
           <button
             type="button"
             id="dpad-right-btn"
             onClick={() => moveCat('right')}
-            className="flex-1 sm:flex-none px-4 py-2 bg-[#1a1f2e] hover:bg-[#222838] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] font-mono text-xs rounded-lg flex items-center justify-center gap-1 cursor-pointer transition-all"
+            className="flex-1 sm:flex-none px-5 py-2.5 bg-white/80 hover:bg-white border border-pink-200 text-slate-700 text-xs font-bold rounded-full flex items-center justify-center gap-1.5 cursor-pointer shadow-xs hover:shadow-sm"
             aria-label="Move cat right"
           >
-            <span>RIGHT ▶</span>
-            <ChevronRight className="w-4 h-4" />
+            <span>RIGHT</span>
+            <ChevronRight className="w-4 h-4 text-pink-500" />
           </button>
         </div>
       </motion.div>
 
       {/* Bottom Screen Navigation Bar */}
-      <motion.div variants={cardVariants} className="mt-5 flex items-center justify-between gap-4 font-mono">
+      <motion.div variants={cardVariants} className="mt-5 flex items-center justify-between gap-4">
         <button
           type="button"
           onClick={() => {
             soundEngine.playSelect();
             onNavigate(ScreenIndex.MEMORIES);
           }}
-          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
+          className="px-5 py-2.5 bg-white/70 hover:bg-white border border-white/80 hover:border-pink-200 text-slate-700 text-xs font-bold rounded-full transition-all cursor-pointer flex items-center gap-2 shadow-xs"
         >
-          ◀ PREV: MEMORIES
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>PREV: MEMORIES</span>
         </button>
 
         <button
@@ -907,9 +863,9 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.HERO);
           }}
-          className="px-4 py-2.5 bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-white/20 text-[#9ca3af] hover:text-[#f5f5f7] text-xs font-mono rounded-xl transition-all cursor-pointer"
+          className="hidden sm:flex px-4 py-2 bg-white/50 hover:bg-white text-slate-600 text-xs font-bold rounded-full border border-white/70"
         >
-          [ HERO HUB ]
+          HERO HUB
         </button>
 
         <button
@@ -918,9 +874,10 @@ export const Screen05_MiniGame: React.FC<Screen05MiniGameProps> = ({ onNavigate 
             soundEngine.playSelect();
             onNavigate(ScreenIndex.CAKE);
           }}
-          className="px-5 py-2.5 bg-[#f5a524] hover:bg-[#fbbf24] text-[#0a0e17] text-xs font-semibold rounded-xl shadow-lg shadow-[#f5a524]/20 transition-all cursor-pointer hover:scale-[1.01]"
+          className="px-6 py-2.5 bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-500 hover:to-purple-500 text-white text-xs font-bold rounded-full shadow-md shadow-pink-300/40 transition-all cursor-pointer hover:scale-[1.02] flex items-center gap-2"
         >
-          SKIP TO CAKE ▶
+          <span>PROCEED TO CAKE</span>
+          <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </motion.div>
 

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScreenIndex } from './types';
 import { soundEngine } from './utils/audio';
-import { birthdayConfig, cyberpunkTelemetryQuotes } from './birthdayData';
-import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { birthdayConfig } from './birthdayData';
+import { ThemeProvider } from './context/ThemeContext';
 import { HeaderStatusBar } from './components/common/HeaderStatusBar';
 import { CrtDustOverlay } from './components/common/CrtDustOverlay';
 import { EmergencyDiagnosticModal } from './components/common/EmergencyDiagnosticModal';
@@ -15,41 +15,38 @@ import { Screen04_Memories } from './components/screens/Screen04_Memories';
 import { Screen05_MiniGame } from './components/screens/Screen05_MiniGame';
 import { Screen06_Cake } from './components/screens/Screen06_Cake';
 import { Screen07_FinalMessage } from './components/screens/Screen07_FinalMessage';
+import { Sparkles } from 'lucide-react';
+
+const CELEBRATION_QUOTES = [
+  "✨ Happy 22nd Birthday, Anushka! Here's to unforgettable adventures!",
+  "💖 Friendship level: Infinity & Beyond!",
+  "🍰 Don't forget to save room for extra birthday cake!",
+  "🌸 Another year of fun, anime discussions, and great memories!",
+  "🎉 Level 22 achieved — bonus joy unlocked!"
+];
 
 function PortalApp() {
-  const {
-    theme,
-    isHackerMode,
-    toggleTheme,
-    exitHackerMode,
-    hackerNotification,
-    clearHackerNotification
-  } = useTheme();
-
-  // Screen state 0–7 (state-driven single page application, linear story flow)
   const [currentScreen, setCurrentScreen] = useState<ScreenIndex>(ScreenIndex.BOOT);
-
-  // Sound toggle defaults to ON in UI state
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState<boolean>(false);
   const [corruptionCount, setCorruptionCount] = useState<number>(0);
   const [isCorrupted, setIsCorrupted] = useState<boolean>(false);
-  const [activeTelemetryQuote, setActiveTelemetryQuote] = useState<string>('');
+  const [activeCelebrationQuote, setActiveCelebrationQuote] = useState<string>('');
 
   const handleNavigateScreen = (screen: ScreenIndex) => {
     window.scrollTo({ top: 0, behavior: 'instant' });
     setCurrentScreen(screen);
   };
 
-  // Periodic subtle cyberpunk telemetry quote ticker
+  // Periodic celebratory quote ticker
   useEffect(() => {
     const interval = setInterval(() => {
       if (Math.random() > 0.65) {
-        const quote = cyberpunkTelemetryQuotes[Math.floor(Math.random() * cyberpunkTelemetryQuotes.length)];
-        setActiveTelemetryQuote(quote);
-        setTimeout(() => setActiveTelemetryQuote(''), 4500);
+        const quote = CELEBRATION_QUOTES[Math.floor(Math.random() * CELEBRATION_QUOTES.length)];
+        setActiveCelebrationQuote(quote);
+        setTimeout(() => setActiveCelebrationQuote(''), 5000);
       }
-    }, 12000);
+    }, 14000);
     return () => clearInterval(interval);
   }, []);
 
@@ -58,7 +55,7 @@ function PortalApp() {
     setSoundEnabled(nextState);
     soundEngine.setEnabled(nextState);
     if (nextState) {
-      soundEngine.playTerminalChirp();
+      soundEngine.playCoin();
     }
   };
 
@@ -119,81 +116,42 @@ function PortalApp() {
   };
 
   return (
-    <div
-      className={`min-h-screen ${
-        theme === 'hacker'
-          ? 'theme-hacker bg-[#020502] text-[#4ade80]'
-          : theme === 'light'
-          ? 'theme-light bg-[#f8fafc] text-[#090d16]'
-          : 'theme-dark bg-[#0a0e17] text-[#f5f5f7]'
-      } font-sans relative overflow-x-hidden dot-grid-bg transition-colors duration-200 ${
-        isCorrupted ? 'animate-system-corruption' : ''
-      }`}
-    >
-      {/* 1. Subtle Atmospheric Particles */}
+    <div className="min-h-screen bg-gradient-to-br from-[#fffbf5] via-[#fdf2f8] to-[#f3e8ff] text-slate-800 font-sans relative overflow-x-hidden selection:bg-pink-300/40 selection:text-pink-800">
+      
+      {/* Decorative Pastel Ambient Glows */}
+      <div className="pastel-mesh-bg" aria-hidden="true" />
+
+      {/* Floating Fairy Dust Sparkles */}
       <CrtDustOverlay />
 
-      {/* 2. Hacker Mode Notification Banner */}
-      {hackerNotification && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 pointer-events-none max-w-md w-[92%] px-2">
-          <div className="bg-[#020502]/95 border border-[#22c55e] text-[#4ade80] px-4 py-2.5 text-xs font-mono rounded-xl shadow-[0_0_30px_rgba(34,197,94,0.5)] backdrop-blur-md flex items-center justify-between gap-3 animate-pulse">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e] animate-ping" />
-              <span className="font-semibold">{hackerNotification}</span>
-            </div>
+      {/* Celebratory Floating Ribbon / Notification Banner */}
+      {activeCelebrationQuote && (
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-35 pointer-events-none w-[90%] max-w-md">
+          <div className="bg-white/85 border border-white text-pink-700 px-4 py-2 text-xs font-bold rounded-full shadow-lg shadow-pink-200/50 backdrop-blur-xl flex items-center justify-center gap-2 animate-bounce">
+            <Sparkles className="w-3.5 h-3.5 text-pink-500 shrink-0" />
+            <span className="truncate">{activeCelebrationQuote}</span>
           </div>
         </div>
       )}
 
-      {/* 3. Hacker Mode Active Floating HUD */}
-      {isHackerMode && (
-        <div className="fixed bottom-4 right-4 z-40">
-          <div className="bg-[#050f05]/95 border border-[#22c55e]/60 text-[#4ade80] px-3 py-1.5 text-xs font-mono rounded-lg shadow-[0_0_20px_rgba(34,197,94,0.35)] backdrop-blur-md flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-            <span className="hidden sm:inline font-medium">HACKER_OS // PHOSPHOR GREEN</span>
-            <span className="sm:hidden font-medium">MATRIX</span>
-            <button
-              type="button"
-              onClick={exitHackerMode}
-              className="px-2 py-0.5 rounded bg-[#22c55e]/20 hover:bg-[#22c55e]/35 text-[#86efac] border border-[#22c55e]/50 text-[10px] cursor-pointer transition-colors font-mono"
-              title="Exit Hacker Mode (ESC)"
-            >
-              EXIT (ESC)
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 4. Dev Telemetry Quote Banner (if active) */}
-      {activeTelemetryQuote && !hackerNotification && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-35 pointer-events-none">
-          <div className="bg-[#121723]/90 border border-[#ffffff1a] text-[#f5a524] px-3.5 py-1.5 text-xs font-mono rounded-full shadow-lg backdrop-blur-md flex items-center gap-2 animate-pulse">
-            <span className="inline-block w-2 h-2 bg-[#f5a524] rounded-full" />
-            <span>{activeTelemetryQuote}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Retro Status / Navigation Bar with Theme and Audio Controls */}
+      {/* Soft Pastel Glassmorphic Header / Navigation Bar */}
       <HeaderStatusBar
         currentScreen={currentScreen}
         soundEnabled={soundEnabled}
         onToggleSound={handleToggleSound}
-        theme={theme}
-        onToggleTheme={toggleTheme}
         onNavigateScreen={handleNavigateScreen}
         onTriggerEmergencyAccess={() => setIsDiagnosticOpen(true)}
       />
 
-      {/* Main Screen Container with Graceful Framer Motion Route Transition */}
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6 relative z-10">
+      {/* Main Screen Container with Gentle Framer Motion Route Transition */}
+      <main className="max-w-5xl mx-auto px-3 sm:px-5 py-4 sm:py-8 relative z-10">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentScreen}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 14, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.99 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="w-full"
           >
             {renderActiveScreen()}

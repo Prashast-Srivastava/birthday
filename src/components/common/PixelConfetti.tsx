@@ -30,28 +30,26 @@ export interface PixelConfettiProps {
 }
 
 const COLOR_MAP: Record<Exclude<ConfettiColor, 'cycle'>, string> = {
-  pink: '#ff5e97',
-  yellow: '#ffd000',
-  cyan: '#00f0ff',
-  green: '#22c55e',
+  pink: '#f472b6',
+  yellow: '#facc15',
+  cyan: '#38bdf8',
+  green: '#34d399',
 };
 
 /**
- * 16x16 Retro Pixel-Art Confetti Component
- * Features tilted square (diamond), triangle, or ribbon shapes with solid ink borders,
- * neo-brutalist color variants, and a slow falling/drifting CSS animation.
+ * 16x16 Soft Pixel Confetti Component
  */
 export const PixelConfetti: React.FC<PixelConfettiProps> = ({
   size = 16,
   variant = 'cycle',
   shape = 'square',
-  borderColor = '#16192e',
+  borderColor = 'rgba(244, 114, 182, 0.4)',
   animate = true,
   className = '',
   style,
 }) => {
   const isCycle = variant === 'cycle';
-  const fillColor = !isCycle ? COLOR_MAP[variant] : '#ffd000';
+  const fillColor = !isCycle ? COLOR_MAP[variant] : '#f472b6';
   const fillClass = isCycle ? 'animate-confetti-cycle' : '';
 
   return (

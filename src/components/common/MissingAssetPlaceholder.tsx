@@ -1,4 +1,5 @@
 import React from 'react';
+import { Camera, Sparkles } from 'lucide-react';
 
 interface MissingAssetPlaceholderProps {
   label?: string;
@@ -7,34 +8,27 @@ interface MissingAssetPlaceholderProps {
 }
 
 export const MissingAssetPlaceholder: React.FC<MissingAssetPlaceholderProps> = ({
-  label = '[ ASSET MISSING ]',
+  label = 'Cherished Memory Photo',
   className = '',
-  subLabel
+  subLabel = 'Drop real 4:3 photo in birthday data'
 }) => {
   return (
     <div
-      className={`w-full h-full min-h-[140px] bg-[#111111] border-4 border-dashed border-[#ffd000] flex flex-col items-center justify-center p-4 text-center transition-colors hover:border-[#ff5e97] font-pixel relative select-none ${className}`}
-      style={{ imageRendering: 'pixelated' }}
+      className={`w-full h-full min-h-[140px] bg-gradient-to-br from-pink-50 via-purple-50 to-pink-50 border-2 border-dashed border-pink-200/80 flex flex-col items-center justify-center p-4 text-center transition-colors hover:border-pink-300 relative select-none rounded-2xl ${className}`}
     >
-      {/* 8-bit Broken Cartridge Graphic Accent */}
-      <div className="mb-2 w-10 h-8 bg-[#16192e] border-2 border-[#ffd000] relative flex items-center justify-center brutal-shadow-sm">
-        <div className="w-5 h-2 bg-[#ffd000]/30 border-b border-[#ffd000]" />
-        <span className="absolute text-[8px] text-[#f43f5e] font-bold">✕</span>
+      <div className="mb-2 w-10 h-10 bg-white/80 border border-pink-200 shadow-xs flex items-center justify-center rounded-full text-pink-400">
+        <Camera className="w-5 h-5" />
       </div>
 
-      <div className="text-[#ffd000] text-[10px] sm:text-xs font-pixel font-bold tracking-wider uppercase">
-        {label}
+      <div className="text-pink-700 text-xs font-bold tracking-wide flex items-center gap-1">
+        <Sparkles className="w-3 h-3 text-pink-400" />
+        <span>{label}</span>
       </div>
       {subLabel && (
-        <div className="text-[#fffdf0] text-[9px] mt-1 font-mono tracking-wider opacity-80 uppercase">
+        <div className="text-slate-500 text-[11px] mt-1 font-medium max-w-[200px] leading-snug">
           {subLabel}
         </div>
       )}
-      <div className="mt-2.5 flex items-center space-x-1.5 opacity-70">
-        <div className="w-2 h-2 bg-[#ffd000] border border-black"></div>
-        <div className="w-2 h-2 bg-[#ff5e97] border border-black"></div>
-        <div className="w-2 h-2 bg-[#00f0ff] border border-black"></div>
-      </div>
     </div>
   );
 };

@@ -25,10 +25,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return saved;
       }
     }
-    return 'dark';
+    return 'light';
   });
 
-  const previousThemeRef = useRef<'dark' | 'light'>('dark');
+  const previousThemeRef = useRef<'dark' | 'light'>('light');
   const [hackerNotification, setHackerNotification] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,12 +44,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.classList.remove('theme-hacker', 'dark');
       root.classList.add('theme-light');
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', '#f8fafc');
+      if (meta) meta.setAttribute('content', '#fff1f2');
     } else {
       root.classList.remove('theme-hacker', 'theme-light');
       root.classList.add('dark');
       const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', '#0a0e17');
+      if (meta) meta.setAttribute('content', '#fff1f2');
     }
 
     if (theme !== 'hacker') {

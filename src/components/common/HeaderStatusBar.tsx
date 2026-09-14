@@ -1,73 +1,50 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, VolumeX, Sun, Moon, Terminal } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, Heart, Clock } from 'lucide-react';
 import { ScreenIndex } from '../../types';
 import { soundEngine } from '../../utils/audio';
-import { useTheme, ThemeMode } from '../../context/ThemeContext';
 
 interface HeaderStatusBarProps {
   currentScreen: ScreenIndex;
   soundEnabled: boolean;
   onToggleSound: () => void;
-  theme?: ThemeMode;
+  theme?: string;
   onToggleTheme?: () => void;
   onNavigateScreen?: (index: ScreenIndex) => void;
   onTriggerEmergencyAccess?: () => void;
 }
 
 const SCREEN_TITLES: Record<ScreenIndex, string> = {
-  [ScreenIndex.BOOT]: 'SCREEN_00 / BOOT_LOG',
-  [ScreenIndex.HERO]: 'SCREEN_01 / HERO',
-  [ScreenIndex.STATS]: 'SCREEN_02 / STATS',
-  [ScreenIndex.ANIME]: 'SCREEN_03 / ARCHIVE',
-  [ScreenIndex.MEMORIES]: 'SCREEN_04 / MEMORIES',
-  [ScreenIndex.MINIGAME]: 'SCREEN_05 / MINIGAME',
-  [ScreenIndex.CAKE]: 'SCREEN_06 / CEREMONY',
-  [ScreenIndex.FINAL_MESSAGE]: 'SCREEN_07 / TRANSMISSION'
+  [ScreenIndex.BOOT]: 'Welcome & Prep',
+  [ScreenIndex.HERO]: 'Birthday Hero',
+  [ScreenIndex.STATS]: 'Friendship Synergy',
+  [ScreenIndex.ANIME]: 'Anime Archive',
+  [ScreenIndex.MEMORIES]: 'Memory Album',
+  [ScreenIndex.MINIGAME]: 'Arcade Quest',
+  [ScreenIndex.CAKE]: 'Cake & Wishes',
+  [ScreenIndex.FINAL_MESSAGE]: 'Sweet Letter'
 };
 
 const SCREEN_LABELS: Record<ScreenIndex, string> = {
-  [ScreenIndex.BOOT]: 'BOOT',
+  [ScreenIndex.BOOT]: 'WELCOME',
   [ScreenIndex.HERO]: 'HERO',
-  [ScreenIndex.STATS]: 'STATS',
-  [ScreenIndex.ANIME]: 'ARCHIVE',
-  [ScreenIndex.MEMORIES]: 'DATABASE',
+  [ScreenIndex.STATS]: 'SYNERGY',
+  [ScreenIndex.ANIME]: 'ANIME',
+  [ScreenIndex.MEMORIES]: 'MEMORIES',
   [ScreenIndex.MINIGAME]: 'QUEST',
   [ScreenIndex.CAKE]: 'CAKE',
-  [ScreenIndex.FINAL_MESSAGE]: 'LETTER'
+  [ScreenIndex.FINAL_MESSAGE]: 'WISHES'
 };
 
 export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
   currentScreen,
   soundEnabled,
   onToggleSound,
-  theme: propTheme,
-  onToggleTheme: propToggleTheme,
   onNavigateScreen,
   onTriggerEmergencyAccess
 }) => {
-  let contextTheme: ThemeMode = 'dark';
-  let contextToggleTheme: () => void = () => {};
-  try {
-    const ctx = useTheme();
-    contextTheme = ctx.theme;
-    contextToggleTheme = ctx.toggleTheme;
-  } catch {
-    // Fallback if rendered outside ThemeProvider
-  }
-
-  const currentTheme = propTheme ?? contextTheme;
-  const handleToggleTheme = () => {
-    soundEngine.playSelect();
-    if (propToggleTheme) {
-      propToggleTheme();
-    } else {
-      contextToggleTheme();
-    }
-  };
-
   const [timeString, setTimeString] = useState('');
   const [logoClickCount, setLogoClickCount] = useState<number>(0);
-  const [showOverrideHint, setShowOverrideHint] = useState<boolean>(false);
+  const [showHeartSurprise, setShowHeartSurprise] = useState<boolean>(false);
   const resetTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -84,65 +61,64 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
   const handleLogoClick = () => {
     const nextCount = logoClickCount + 1;
     setLogoClickCount(nextCount);
-    setShowOverrideHint(true);
+    setShowHeartSurprise(true);
 
     if (resetTimerRef.current) {
       clearTimeout(resetTimerRef.current);
     }
 
     if (nextCount >= 5) {
-      // 5-click sequence complete -> Trigger Emergency Mode!
       setLogoClickCount(0);
-      setShowOverrideHint(false);
-      soundEngine.playEmergencyAccess();
+      setShowHeartSurprise(false);
+      soundEngine.playFanfare();
       if (onTriggerEmergencyAccess) {
         onTriggerEmergencyAccess();
       }
     } else {
-      // Ramping pitch feedback on each click
-      soundEngine.playTone(600 + nextCount * 140, 0.05, 'square', 0.08);
-      // Reset after 3.5s of inactivity
+      soundEngine.playTone(600 + nextCount * 140, 0.05, 'sine', 0.08);
       resetTimerRef.current = setTimeout(() => {
         setLogoClickCount(0);
-        setShowOverrideHint(false);
+        setShowHeartSurprise(false);
       }, 3500);
     }
   };
 
   return (
-    <header className="w-full bg-[#0a0e17]/90 backdrop-blur-md border-b border-[#ffffff1a] z-30 sticky top-0 px-3 sm:px-6 py-2.5">
+    <header className="w-full bg-white/60 backdrop-blur-xl border-b border-white/70 z-30 sticky top-0 px-3 sm:px-6 py-2.5 shadow-sm shadow-pink-100/40">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         
-        {/* Left: Terminal Identification (Interactive 5-Click Emergency Trigger) */}
+        {/* Left: Cute Brand Badge */}
         <button
           type="button"
           onClick={handleLogoClick}
-          className="flex flex-col text-left group cursor-pointer select-none bg-[#121723] hover:bg-[#1a1f2e] border border-[#ffffff1a] hover:border-[#f5a524]/40 rounded-lg px-3 py-1.5 transition-all"
-          title="Terminal Identity // [Emergency Access: 5-Click Sequence]"
+          className="flex items-center gap-2.5 text-left group cursor-pointer select-none bg-white/70 hover:bg-white/90 border border-white/80 hover:border-pink-300 rounded-full px-4 py-1.5 transition-all shadow-sm hover:shadow-md hover:shadow-pink-200/40"
+          title="Anushka's 22nd Birthday Celebration ✨ (Tap for surprise!)"
         >
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#f5a524]/10 border border-[#f5a524]/30 text-[#f5a524] rounded-full text-[10px] font-mono font-medium tracking-wider uppercase">
-              <span className={`w-1.5 h-1.5 rounded-full ${logoClickCount > 0 ? 'bg-[#f43f5e] animate-ping' : 'bg-[#4ade80]'}`} />
-              NEKO.EXE // V4.2
-            </span>
-            {showOverrideHint && (
-              <span className="text-[10px] px-2 py-0.5 bg-[#f43f5e]/20 text-[#f43f5e] border border-[#f43f5e]/40 rounded-full font-mono font-semibold uppercase tracking-wider shrink-0">
-                EMERGENCY: {logoClickCount}/5
-              </span>
-            )}
+          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-pink-400 to-purple-400 flex items-center justify-center text-white shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} />
           </div>
-          <div className="flex items-center mt-1">
-            <span className="font-sans font-bold tracking-tight text-sm text-[#f5f5f7]">
-              Happī Bāsudē
-            </span>
-            <span className="ml-2 text-[10px] text-[#9ca3af] font-mono">
-              [DEV_CORE]
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1.5">
+              <span className="font-heading font-bold text-sm text-slate-800 group-hover:text-pink-600 transition-colors">
+                Anushka's 22nd
+              </span>
+              <span className="text-[10px] px-2 py-0.5 bg-pink-100 text-pink-600 font-bold rounded-full border border-pink-200">
+                LEVEL 22 ✨
+              </span>
+              {showHeartSurprise && (
+                <span className="text-[10px] px-1.5 py-0.5 bg-rose-100 text-rose-600 font-bold rounded-full animate-bounce">
+                  ♥ {logoClickCount}/5
+                </span>
+              )}
+            </div>
+            <span className="text-[11px] text-slate-500 font-medium">
+              Birthday Celebration Hub
             </span>
           </div>
         </button>
 
-        {/* Center: Module Switcher (Minimal Ghost Pills / Underlined Tabs) */}
-        <div className="flex items-center gap-1 flex-wrap overflow-x-auto py-1 max-w-full">
+        {/* Center: Module Switcher (Soft Pastel Pill Buttons) */}
+        <div className="flex items-center gap-1.5 flex-wrap overflow-x-auto py-1 max-w-full">
           {Array.from({ length: 8 }).map((_, idx) => {
             const isActive = currentScreen === idx;
             const isCompleted = currentScreen > idx;
@@ -156,14 +132,14 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
                     onNavigateScreen(idx as ScreenIndex);
                   }
                 }}
-                className={`px-3 py-1.5 text-xs font-medium tracking-wide transition-all rounded-md cursor-pointer ${
+                className={`px-3 py-1.5 text-xs font-bold tracking-wide transition-all rounded-full cursor-pointer ${
                   isActive
-                    ? 'bg-[#f5a524]/15 text-[#f5a524] border border-[#f5a524]/40 shadow-sm'
+                    ? 'bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-md shadow-pink-300/40 scale-105'
                     : isCompleted
-                    ? 'text-[#f5f5f7] hover:text-[#f5a524] hover:bg-white/5 border border-transparent'
-                    : 'text-[#9ca3af] hover:text-[#f5f5f7] hover:bg-white/5 border border-transparent'
+                    ? 'bg-white/60 hover:bg-white text-slate-700 hover:text-pink-600 border border-white/80 shadow-xs'
+                    : 'bg-white/40 hover:bg-white/80 text-slate-500 hover:text-slate-800 border border-white/60'
                 }`}
-                title={`Screen 0${idx}: ${SCREEN_TITLES[idx as ScreenIndex]}`}
+                title={`Screen ${idx + 1}: ${SCREEN_TITLES[idx as ScreenIndex]}`}
               >
                 {SCREEN_LABELS[idx as ScreenIndex]}
               </button>
@@ -171,87 +147,43 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
           })}
         </div>
 
-        {/* Right: Theme Toggle, Audio Engine & System State */}
-        <div className="flex gap-2 sm:gap-3 items-center uppercase text-xs self-end md:self-auto flex-wrap">
-          {/* Theme Accessibility Toggle (High-Contrast Light Mode / Dark Mode / Hacker Mode) */}
-          <button
-            id="theme-toggle-btn"
-            type="button"
-            onClick={handleToggleTheme}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all select-none cursor-pointer ${
-              currentTheme === 'hacker'
-                ? 'bg-[#050f05] text-[#4ade80] border-[#22c55e]/60 hover:bg-[#0a1f0a] shadow-[0_0_12px_rgba(34,197,94,0.35)]'
-                : currentTheme === 'light'
-                ? 'bg-[#ffffff] text-[#d97706] border-[#cbd5e1] hover:bg-[#f1f5f9] shadow-sm'
-                : 'bg-[#121723] text-[#f5a524] border-[#ffffff1a] hover:bg-[#1a1f2e]'
-            }`}
-            title={
-              currentTheme === 'hacker'
-                ? 'Hacker Terminal Mode Active (Phosphor Green-on-Black) // Click to revert'
-                : currentTheme === 'light'
-                ? 'High-Contrast Light Active // Click to switch to Dark Mode'
-                : 'Dark Dev-Tool Active // Click to switch to High-Contrast Light Mode (or enter Konami Code for Hacker Mode)'
-            }
-            aria-label={
-              currentTheme === 'hacker'
-                ? 'Revert from Hacker Mode'
-                : currentTheme === 'light'
-                ? 'Switch to Dark Mode'
-                : 'Switch to High-Contrast Light Mode'
-            }
-          >
-            {currentTheme === 'hacker' ? (
-              <Terminal className="w-3.5 h-3.5 text-[#4ade80] animate-pulse" />
-            ) : currentTheme === 'light' ? (
-              <Sun className="w-3.5 h-3.5 text-[#d97706]" />
-            ) : (
-              <Moon className="w-3.5 h-3.5 text-[#f5a524]" />
-            )}
-            <div className="flex flex-col items-start leading-tight text-left">
-              <span className="text-[9px] tracking-wider text-[#9ca3af] font-mono">THEME</span>
-              <span className="text-[10px] font-semibold font-mono">
-                {currentTheme === 'hacker' ? 'HACKER_OS' : currentTheme === 'light' ? 'HI-CONTRAST' : 'DARK'}
-              </span>
-            </div>
-          </button>
-
-          {/* Audio Toggle */}
+        {/* Right: Audio Control & Gentle Status */}
+        <div className="flex gap-2 sm:gap-3 items-center text-xs self-end md:self-auto flex-wrap">
+          {/* Audio Toggle Pill */}
           <button
             id="sound-toggle-btn"
             type="button"
             onClick={onToggleSound}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#ffffff1a] bg-[#121723] hover:bg-[#1a1f2e] transition-all select-none cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full border transition-all select-none cursor-pointer shadow-sm ${
               soundEnabled
-                ? 'text-[#4ade80] border-[#4ade80]/30'
-                : 'text-[#9ca3af] opacity-80'
+                ? 'bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100 shadow-pink-200/30'
+                : 'bg-white/60 border-white/80 text-slate-400 hover:bg-white/80'
             }`}
-            title={soundEnabled ? 'Web Audio Synthesizer: ACTIVE (Click to mute)' : 'Web Audio Synthesizer: MUTED (Click to enable)'}
-            aria-label={soundEnabled ? 'Mute sound' : 'Unmute sound'}
+            title={soundEnabled ? 'Music & Sound: ON (Click to mute)' : 'Music & Sound: MUTED (Click to play)'}
+            aria-label={soundEnabled ? 'Mute audio' : 'Unmute audio'}
           >
             {soundEnabled ? (
-              <Volume2 className="w-3.5 h-3.5 text-[#4ade80]" />
+              <Volume2 className="w-3.5 h-3.5 text-pink-500" />
             ) : (
-              <VolumeX className="w-3.5 h-3.5 text-[#9ca3af]" />
+              <VolumeX className="w-3.5 h-3.5 text-slate-400" />
             )}
-            <div className="flex flex-col items-start leading-tight text-left">
-              <span className="text-[9px] tracking-wider text-[#9ca3af] font-mono">AUDIO</span>
-              <span className="text-[10px] font-semibold">
-                {soundEnabled ? 'ONLINE' : 'MUTED'}
-              </span>
-            </div>
+            <span className="text-[11px] font-bold">
+              {soundEnabled ? 'SOUND ON' : 'MUTED'}
+            </span>
           </button>
 
-          {/* System State & Clock */}
-          <div className="hidden lg:flex flex-col items-end border-l border-[#ffffff1a] pl-3">
-            <span className="text-[#9ca3af] text-[9px] font-mono">STATUS</span>
-            <span className="font-mono text-[11px] text-[#f5f5f7] truncate max-w-[140px]">
-              {SCREEN_TITLES[currentScreen].split(' / ')[1] || 'ACTIVE'}
+          {/* Current Screen Title Pill */}
+          <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-white/60 border border-white/80 rounded-full text-slate-600 shadow-xs">
+            <Heart className="w-3 h-3 text-pink-400 fill-pink-400" />
+            <span className="font-bold text-[11px] text-slate-700 truncate max-w-[130px]">
+              {SCREEN_TITLES[currentScreen]}
             </span>
           </div>
 
-          <div className="hidden xl:flex flex-col items-end border-l border-[#ffffff1a] pl-3 text-[#f5f5f7]">
-            <span className="text-[#9ca3af] text-[9px] font-mono">TIME</span>
-            <span className="font-mono font-medium text-[11px] text-[#9ca3af]">{timeString}</span>
+          {/* Gentle Clock */}
+          <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 bg-white/40 border border-white/60 rounded-full text-slate-500 text-[11px] font-medium">
+            <Clock className="w-3 h-3 text-purple-400" />
+            <span>{timeString}</span>
           </div>
         </div>
 
@@ -259,5 +191,3 @@ export const HeaderStatusBar: React.FC<HeaderStatusBarProps> = ({
     </header>
   );
 };
-
-

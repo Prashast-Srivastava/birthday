@@ -12,7 +12,7 @@ interface Particle {
   twinklePhase: number;
   wobbleSpeed: number;
   wobbleAmplitude: number;
-  colorType: 'yellow' | 'cyan' | 'white' | 'purple';
+  colorType: 'pink' | 'lavender' | 'mint' | 'gold' | 'sky';
 }
 
 export const CrtDustOverlay: React.FC = () => {
@@ -27,13 +27,14 @@ export const CrtDustOverlay: React.FC = () => {
 
     let animationFrameId: number;
     let particles: Particle[] = [];
-    const particleCount = 45; // Subtle, atmospheric density
+    const particleCount = 38; // Delicate, airy density
 
     const colors = {
-      yellow: '245, 165, 36',   // amber
-      cyan: '74, 222, 128',     // dev green
-      white: '245, 245, 247',   // text primary
-      purple: '156, 163, 175',  // text secondary
+      pink: '244, 114, 182',     // pastel blush pink
+      lavender: '192, 132, 252', // pastel lavender
+      mint: '110, 231, 183',     // pastel mint
+      gold: '251, 191, 36',      // soft pastel gold
+      sky: '125, 211, 252',      // pastel sky blue
     };
 
     const resizeCanvas = () => {
@@ -51,25 +52,24 @@ export const CrtDustOverlay: React.FC = () => {
 
     const createParticles = (w: number, h: number) => {
       const list: Particle[] = [];
-      const colorTypes: ('yellow' | 'cyan' | 'white' | 'purple')[] = [
-        'yellow', 'yellow', 'white', 'cyan', 'purple'
+      const colorTypes: ('pink' | 'lavender' | 'mint' | 'gold' | 'sky')[] = [
+        'pink', 'pink', 'lavender', 'gold', 'mint', 'sky'
       ];
 
       for (let i = 0; i < particleCount; i++) {
-        const baseAlpha = 0.15 + Math.random() * 0.35;
+        const baseAlpha = 0.25 + Math.random() * 0.45;
         list.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          // Gentle drifting velocity: mostly slow upwards/horizontal drift
           vx: (Math.random() - 0.5) * 0.35,
-          vy: -0.15 - Math.random() * 0.3,
-          size: 1 + Math.random() * 1.8,
+          vy: -0.2 - Math.random() * 0.35,
+          size: 1.5 + Math.random() * 3.2,
           alpha: baseAlpha,
           baseAlpha,
           twinkleSpeed: 0.02 + Math.random() * 0.04,
           twinklePhase: Math.random() * Math.PI * 2,
           wobbleSpeed: 0.01 + Math.random() * 0.03,
-          wobbleAmplitude: 0.2 + Math.random() * 0.4,
+          wobbleAmplitude: 0.3 + Math.random() * 0.5,
           colorType: colorTypes[Math.floor(Math.random() * colorTypes.length)],
         });
       }
@@ -91,35 +91,32 @@ export const CrtDustOverlay: React.FC = () => {
 
       time += 0.02;
 
-      // Draw each drifting CRT dust speckle
       particles.forEach((p) => {
-        // Apply sinusoidal drift wobble
         p.x += p.vx + Math.sin(time * p.wobbleSpeed + p.twinklePhase) * p.wobbleAmplitude;
         p.y += p.vy;
 
-        // Twinkle alpha calculation
         p.twinklePhase += p.twinkleSpeed;
         p.alpha = p.baseAlpha * (0.6 + 0.4 * Math.sin(p.twinklePhase));
 
-        // Screen boundary wrap around
-        if (p.x < -10) p.x = currentWidth + 10;
-        if (p.x > currentWidth + 10) p.x = -10;
-        if (p.y < -10) {
-          p.y = currentHeight + 10;
+        if (p.x < -15) p.x = currentWidth + 15;
+        if (p.x > currentWidth + 15) p.x = -15;
+        if (p.y < -15) {
+          p.y = currentHeight + 15;
           p.x = Math.random() * currentWidth;
         }
-        if (p.y > currentHeight + 10) p.y = -10;
+        if (p.y > currentHeight + 15) p.y = -15;
 
         const rgb = colors[p.colorType];
 
-        // Draw soft glowing square pixel mote / micro-particle
         ctx.save();
         ctx.fillStyle = `rgba(${rgb}, ${p.alpha.toFixed(3)})`;
-        ctx.shadowColor = `rgba(${rgb}, ${(p.alpha * 0.8).toFixed(3)})`;
-        ctx.shadowBlur = p.size * 2.5;
+        ctx.shadowColor = `rgba(${rgb}, ${(p.alpha * 0.7).toFixed(3)})`;
+        ctx.shadowBlur = p.size * 3;
 
-        // Pixel-aesthetic square dust speck
-        ctx.fillRect(Math.floor(p.x), Math.floor(p.y), p.size, p.size);
+        // Draw soft glowing circular pastel fairy-sparkle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
       });
 
@@ -143,9 +140,9 @@ export const CrtDustOverlay: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      id="crt-dust-overlay-canvas"
+      id="pastel-sparkles-overlay-canvas"
       aria-hidden="true"
-      className="absolute inset-0 pointer-events-none z-20 w-full h-full opacity-75"
+      className="fixed inset-0 pointer-events-none z-20 w-full h-full opacity-80"
     />
   );
 };
