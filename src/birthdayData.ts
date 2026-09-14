@@ -1,4 +1,12 @@
 import { BirthdayConfig, FriendshipStat, AnimeItem, MemoryItem } from './types';
+import mem01 from './assets/images/memories/mem-01.jpeg';
+import mem02 from './assets/images/memories/mem-02.jpeg';
+import mem03 from './assets/images/memories/mem-03.jpeg';
+import mem04 from './assets/images/memories/mem-04.jpeg';
+import mem05 from './assets/images/memories/mem-05.jpeg';
+import mem06 from './assets/images/memories/mem-06.jpeg';
+import mem07 from './assets/images/memories/mem-07.jpeg';
+import mem08 from './assets/images/memories/mem-08.jpeg';
 
 export const birthdayConfig: BirthdayConfig = {
   recipientName: 'ANUSHKA',
@@ -43,10 +51,10 @@ export const friendshipStats: FriendshipStat[] = [
     color: 'amber'
   },
   {
-    label: 'LATE NIGHT CO-OP HOURS',
-    value: 95,
-    displayValue: '1,420+ HRS',
-    description: 'Discord calls past 3:00 AM talking about lore',
+    label: 'MARATHON SESSIONS CLEARED',
+    value: 93,
+    displayValue: '300+ EPS',
+    description: 'Full seasons binged in one sitting, zero cliffhangers survived',
     color: 'pink'
   },
   {
@@ -120,7 +128,7 @@ export const memoryDatabaseData: MemoryItem[] = [
     date: '',
     location: '',
     description: '',
-    imageUrl: '/assets/memories/WhatsApp_Image_01.jpeg',
+    imageUrl: mem01,
     tag: 'SLOT_01'
   },
   {
@@ -129,7 +137,7 @@ export const memoryDatabaseData: MemoryItem[] = [
     date: '',
     location: '',
     description: '',
-    imageUrl: '/assets/memories/WhatsApp_Image_02.jpeg',
+    imageUrl: mem02,
     tag: 'SLOT_02'
   },
   {
@@ -138,7 +146,7 @@ export const memoryDatabaseData: MemoryItem[] = [
     date: '',
     location: '',
     description: '',
-    imageUrl: '/assets/memories/WhatsApp_Image_03.jpeg',
+    imageUrl: mem03,
     tag: 'SLOT_03'
   },
   {
@@ -147,7 +155,7 @@ export const memoryDatabaseData: MemoryItem[] = [
     date: '',
     location: '',
     description: '',
-    imageUrl: '/assets/memories/WhatsApp_Image_04.jpeg',
+    imageUrl: mem04,
     tag: 'SLOT_04'
   },
   {
@@ -156,7 +164,7 @@ export const memoryDatabaseData: MemoryItem[] = [
     date: '',
     location: '',
     description: 'Badhaai Ho',
-    imageUrl: '/assets/memories/WhatsApp_Image_2025-12-26_at_10_23_10_AM.jpeg',
+    imageUrl: mem05,
     tag: 'SLOT_05'
   },
   {
@@ -165,7 +173,7 @@ export const memoryDatabaseData: MemoryItem[] = [
     date: '',
     location: '',
     description: '',
-    imageUrl: '/assets/memories/WhatsApp_Image_06.jpeg',
+    imageUrl: mem06,
     tag: 'SLOT_06'
   },
   {
@@ -174,7 +182,7 @@ export const memoryDatabaseData: MemoryItem[] = [
     date: '',
     location: '',
     description: '',
-    imageUrl: '/assets/memories/WhatsApp_Image_07.jpeg',
+    imageUrl: mem07,
     tag: 'SLOT_07'
   },
   {
@@ -183,7 +191,7 @@ export const memoryDatabaseData: MemoryItem[] = [
     date: '',
     location: '',
     description: '',
-    imageUrl: '/assets/memories/WhatsApp_Image_08.jpeg',
+    imageUrl: mem08,
     tag: 'SLOT_08'
   }
 ];
@@ -204,4 +212,3 @@ export const cyberpunkTelemetryQuotes: string[] = [
   'SYNAPSE_LINK: LATENCY 0.04ms // SYNERGY_MAX',
   'KERNEL_LOG: FRIENDSHIP_INTEGRITY_100%'
 ];
-
