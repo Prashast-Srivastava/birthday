@@ -6,6 +6,7 @@ import { birthdayConfig } from './birthdayData';
 import { ThemeProvider } from './context/ThemeContext';
 import { HeaderStatusBar } from './components/common/HeaderStatusBar';
 import { CrtDustOverlay } from './components/common/CrtDustOverlay';
+import { Hearts } from './components/common/Hearts';
 import { EmergencyDiagnosticModal } from './components/common/EmergencyDiagnosticModal';
 import { Screen00_BootSequence } from './components/screens/Screen00_BootSequence';
 import { Screen01_Hero } from './components/screens/Screen01_Hero';
@@ -123,6 +124,9 @@ function PortalApp() {
 
       {/* Floating Fairy Dust Sparkles */}
       <CrtDustOverlay />
+
+      {/* Floaty Pastel Hearts Across Screen & Card Interaction Spawner */}
+      <Hearts />
 
       {/* Celebratory Floating Ribbon / Notification Banner */}
       {activeCelebrationQuote && (

@@ -15,6 +15,7 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
   const [selectedMemory, setSelectedMemory] = useState<MemoryItem | null>(null);
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('ALL');
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   const tags = ['ALL', 'TRIP', 'CO-OP', 'PARTY', 'MEMORY'];
 
@@ -130,11 +131,12 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
 
               {/* Fixed 4:3 Aspect Ratio Viewport */}
               <div className="relative w-full aspect-[4/3] bg-pink-50/50 rounded-2xl overflow-hidden flex items-center justify-center border border-white/80 shadow-inner">
-                {mem.imageUrl && mem.imageUrl.trim() !== '' ? (
+                {mem.imageUrl && mem.imageUrl.trim() !== '' && !failedImages[mem.id] ? (
                   <img
                     src={mem.imageUrl}
                     alt={mem.title}
                     referrerPolicy="no-referrer"
+                    onError={() => setFailedImages(prev => ({ ...prev, [mem.id]: true }))}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
@@ -155,10 +157,12 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
                   </div>
                 )}
 
-                {/* Slot date badge */}
-                <div className="absolute bottom-2 left-2 px-2.5 py-0.5 bg-white/85 backdrop-blur-md border border-white/80 rounded-full text-slate-600 text-[10px] font-bold shadow-xs">
-                  {mem.date}
-                </div>
+                {/* Slot date badge - only render when non-empty */}
+                {mem.date && mem.date.trim() !== '' && (
+                  <div className="absolute bottom-2 left-2 px-2.5 py-0.5 bg-white/85 backdrop-blur-md border border-white/80 rounded-full text-slate-600 text-[10px] font-bold shadow-xs">
+                    {mem.date}
+                  </div>
+                )}
               </div>
 
               {/* Card Meta Body */}
@@ -168,15 +172,10 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
                     {mem.title}
                   </h3>
                   
-                  {mem.location && mem.location.trim() !== '' ? (
+                  {mem.location && mem.location.trim() !== '' && (
                     <div className="flex items-center gap-1.5 mt-1 text-xs text-slate-500 font-medium truncate">
                       <MapPin className="w-3 h-3 text-pink-500 shrink-0" />
                       <span className="truncate">{mem.location}</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5 mt-1 text-xs text-slate-400 font-medium truncate">
-                      <MapPin className="w-3 h-3 opacity-60 shrink-0" />
-                      <span className="truncate">Co-Op Hangout</span>
                     </div>
                   )}
 
@@ -236,11 +235,12 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
             <div className="p-5 sm:p-6 overflow-y-auto space-y-4">
               {/* 4:3 Image Viewport */}
               <div className="relative w-full aspect-[4/3] bg-pink-50 rounded-2xl border border-white/80 overflow-hidden flex items-center justify-center shadow-inner">
-                {selectedMemory.imageUrl && selectedMemory.imageUrl.trim() !== '' ? (
+                {selectedMemory.imageUrl && selectedMemory.imageUrl.trim() !== '' && !failedImages[selectedMemory.id] ? (
                   <img
                     src={selectedMemory.imageUrl}
                     alt={selectedMemory.title}
                     referrerPolicy="no-referrer"
+                    onError={() => setFailedImages(prev => ({ ...prev, [selectedMemory.id]: true }))}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -259,24 +259,23 @@ export const Screen04_Memories: React.FC<Screen04MemoriesProps> = ({ onNavigate 
                     {selectedMemory.title}
                   </h3>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="px-3 py-1 bg-white border border-pink-200 rounded-full text-slate-700 text-xs font-bold">
-                      {selectedMemory.date}
-                    </span>
-                    <span className="px-3 py-1 bg-pink-100 text-pink-700 border border-pink-200 rounded-full text-xs font-bold">
-                      {selectedMemory.tag || 'CO-OP'}
-                    </span>
+                    {selectedMemory.date && selectedMemory.date.trim() !== '' && (
+                      <span className="px-3 py-1 bg-white border border-pink-200 rounded-full text-slate-700 text-xs font-bold">
+                        {selectedMemory.date}
+                      </span>
+                    )}
+                    {selectedMemory.tag && selectedMemory.tag.trim() !== '' && (
+                      <span className="px-3 py-1 bg-pink-100 text-pink-700 border border-pink-200 rounded-full text-xs font-bold">
+                        {selectedMemory.tag}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                {selectedMemory.location && selectedMemory.location.trim() !== '' ? (
+                {selectedMemory.location && selectedMemory.location.trim() !== '' && (
                   <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
                     <MapPin className="w-4 h-4 text-pink-500 shrink-0" />
                     <span>Location: {selectedMemory.location}</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                    <MapPin className="w-4 h-4 opacity-50 shrink-0" />
-                    <span>Location: Co-Op Hangout</span>
                   </div>
                 )}
 

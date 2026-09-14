@@ -117,73 +117,73 @@ export const memoryDatabaseData: MemoryItem[] = [
   {
     id: 'mem-01',
     title: 'EPISODE_01',
-    date: 'YYYY.MM.DD',
-    location: 'LOCATION_NAME',
+    date: '',
+    location: '',
     description: '',
-    imageUrl: '',
+    imageUrl: '/assets/memories/WhatsApp_Image_01.jpeg',
     tag: 'SLOT_01'
   },
   {
     id: 'mem-02',
     title: 'EPISODE_02',
-    date: 'YYYY.MM.DD',
-    location: 'LOCATION_NAME',
+    date: '',
+    location: '',
     description: '',
-    imageUrl: '',
+    imageUrl: '/assets/memories/WhatsApp_Image_02.jpeg',
     tag: 'SLOT_02'
   },
   {
     id: 'mem-03',
     title: 'EPISODE_03',
-    date: 'YYYY.MM.DD',
-    location: 'LOCATION_NAME',
+    date: '',
+    location: '',
     description: '',
-    imageUrl: '',
+    imageUrl: '/assets/memories/WhatsApp_Image_03.jpeg',
     tag: 'SLOT_03'
   },
   {
     id: 'mem-04',
     title: 'EPISODE_04',
-    date: 'YYYY.MM.DD',
-    location: 'LOCATION_NAME',
+    date: '',
+    location: '',
     description: '',
-    imageUrl: '',
+    imageUrl: '/assets/memories/WhatsApp_Image_04.jpeg',
     tag: 'SLOT_04'
   },
   {
     id: 'mem-05',
     title: 'EPISODE_05',
-    date: 'YYYY.MM.DD',
-    location: 'LOCATION_NAME',
-    description: '',
-    imageUrl: '',
+    date: '',
+    location: '',
+    description: 'Badhaai Ho',
+    imageUrl: '/assets/memories/WhatsApp_Image_2025-12-26_at_10_23_10_AM.jpeg',
     tag: 'SLOT_05'
   },
   {
     id: 'mem-06',
     title: 'EPISODE_06',
-    date: 'YYYY.MM.DD',
-    location: 'LOCATION_NAME',
+    date: '',
+    location: '',
     description: '',
-    imageUrl: '',
+    imageUrl: '/assets/memories/WhatsApp_Image_06.jpeg',
     tag: 'SLOT_06'
   },
   {
     id: 'mem-07',
     title: 'EPISODE_07',
-    date: 'YYYY.MM.DD',
-    location: 'LOCATION_NAME',
+    date: '',
+    location: '',
     description: '',
-    imageUrl: '',
+    imageUrl: '/assets/memories/WhatsApp_Image_07.jpeg',
     tag: 'SLOT_07'
   },
   {
     id: 'mem-08',
     title: 'EPISODE_08',
-    date: 'YYYY.MM.DD',
-    location: 'LOCATION_NAME',
+    date: '',
+    location: '',
     description: '',
-    imageUrl: '',
+    imageUrl: '/assets/memories/WhatsApp_Image_08.jpeg',
     tag: 'SLOT_08'
   }
 ];
